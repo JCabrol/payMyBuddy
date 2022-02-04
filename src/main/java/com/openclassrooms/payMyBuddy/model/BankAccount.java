@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "BankAccount")
+@Table(name = "Bank_Account")
 public class BankAccount {
 
     @Id
@@ -20,9 +20,13 @@ public class BankAccount {
     @Column(name = "bic")
     private String bic;
 
-    @ManyToOne(
-            cascade = CascadeType.ALL
-    )
-    @JoinColumn (name = "bankAccountList")
+    @Column(name="usual_Name")
+    private String usualName;
+
+    @Column(name= "active_Bank_Account")
+    private boolean activeBankAccount = true;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn (name="owner_Id", referencedColumnName="email")
     private Person owner;
 }

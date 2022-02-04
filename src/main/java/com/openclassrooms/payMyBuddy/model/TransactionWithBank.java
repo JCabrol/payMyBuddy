@@ -10,12 +10,22 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "TransactionWithBank")
+@Table(name = "Transaction_With_Bank")
 public class TransactionWithBank extends Transaction{
 
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "iban")
+    @JoinColumn(name="receiver_Id", referencedColumnName="iban")
     private BankAccount recipient;
+
+    public TransactionWithBank(Person sender,float amount,BankAccount recipient){
+        super(sender,amount);
+        this.recipient = recipient;
+    }
+
+    public TransactionWithBank(Person sender,float amount,BankAccount recipient,String description){
+        super(sender,amount,description);
+        this.recipient = recipient;
+    }
 
 }
