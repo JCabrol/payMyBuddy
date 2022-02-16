@@ -11,8 +11,13 @@ import java.util.List;
 @AllArgsConstructor
 public class ListTransactionPagesDTO {
 
-    private int totalNumberOfPage;
-    private int currentPage;
+    private Integer totalNumberOfPage;
+    private Integer currentPage;
+    private Integer beforePreviousPage;
+    private Integer previousPage;
+    private Integer nextPage;
+    private Integer afterNextPage;
     private List<TransactionDTO> transactionsToDisplay;
+    private String transactionType;
 
 }

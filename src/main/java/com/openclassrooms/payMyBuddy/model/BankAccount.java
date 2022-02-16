@@ -29,4 +29,15 @@ public class BankAccount {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn (name="owner_Id", referencedColumnName="email")
     private Person owner;
+
+    public BankAccount(String iban,String bic,String usualName){
+        this.setIban(iban);
+        this.setBic(bic);
+        this.setUsualName(usualName);
+    }
+
+    public BankAccount(String iban,String bic){
+        this.setIban(iban);
+        this.setBic(bic);
+    }
 }

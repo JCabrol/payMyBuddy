@@ -1,0 +1,75 @@
+2022-02-16 06:34:47.634  INFO 3100 --- [main] c.o.payMyBuddy.PayMyBuddyApplication     : Starting PayMyBuddyApplication using Java 13.0.1 on LAPTOP-FJNEE5I2 with PID 3100 (C:\Users\CABROL\Documents\Justine\OpenClassrooms\projet6\payMyBuddy\target\classes started by CABROL in C:\Users\CABROL\Documents\Justine\OpenClassrooms\projet6\payMyBuddy)
+2022-02-16 06:34:47.704  INFO 3100 --- [main] c.o.payMyBuddy.PayMyBuddyApplication     : No active profile set, falling back to default profiles: default
+2022-02-16 06:35:04.299  INFO 3100 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-02-16 06:35:06.604  INFO 3100 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 2021 ms. Found 4 JPA repository interfaces.
+2022-02-16 06:35:15.805  INFO 3100 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-02-16 06:35:16.034  INFO 3100 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-02-16 06:35:16.034  INFO 3100 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.56]
+2022-02-16 06:35:16.854  INFO 3100 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-02-16 06:35:16.854  INFO 3100 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 28630 ms
+2022-02-16 06:35:18.454  INFO 3100 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-02-16 06:35:18.884  INFO 3100 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.4.Final
+2022-02-16 06:35:19.784  INFO 3100 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2022-02-16 06:35:20.415  INFO 3100 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2022-02-16 06:35:24.514  INFO 3100 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2022-02-16 06:35:25.269  INFO 3100 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL57InnoDBDialect
+2022-02-16 06:35:27.474  INFO 3100 --- [main] o.hibernate.id.enhanced.TableGenerator   : HHH000398: Explicit segment value for id generator [hibernate_sequences.sequence_name] suggested; using default [default]
+2022-02-16 06:35:39.934  INFO 3100 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-02-16 06:35:39.954  INFO 3100 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-02-16 06:35:43.069  INFO 3100 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@70a24463, org.springframework.security.web.context.SecurityContextPersistenceFilter@236f3885, org.springframework.security.web.header.HeaderWriterFilter@44df834c, org.springframework.security.web.csrf.CsrfFilter@166a5659, org.springframework.security.web.authentication.logout.LogoutFilter@43120a77, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@4fd00e10, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@78324e97, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5f2ad3d5, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@684430c1, org.springframework.security.web.session.SessionManagementFilter@7df23848, org.springframework.security.web.access.ExceptionTranslationFilter@796613b7, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@6c96346b]
+2022-02-16 06:35:48.754  INFO 3100 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-02-16 06:35:48.789  INFO 3100 --- [main] c.o.payMyBuddy.PayMyBuddyApplication     : Started PayMyBuddyApplication in 63.349 seconds (JVM running for 64.766)
+2022-02-16 06:36:09.883  INFO 3100 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-02-16 06:36:09.885  INFO 3100 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-02-16 06:36:09.887  INFO 3100 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2022-02-16 06:36:11.659  WARN 3100 --- [http-nio-8080-exec-2] o.a.c.util.SessionIdGeneratorBase        : Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [470] milliseconds.
+2022-02-16 06:45:20.993  INFO 12392 --- [main] c.o.payMyBuddy.PayMyBuddyApplication     : Starting PayMyBuddyApplication using Java 13.0.1 on LAPTOP-FJNEE5I2 with PID 12392 (C:\Users\CABROL\Documents\Justine\OpenClassrooms\projet6\payMyBuddy\target\classes started by CABROL in C:\Users\CABROL\Documents\Justine\OpenClassrooms\projet6\payMyBuddy)
+2022-02-16 06:45:21.003  INFO 12392 --- [main] c.o.payMyBuddy.PayMyBuddyApplication     : No active profile set, falling back to default profiles: default
+2022-02-16 06:45:22.117  INFO 12392 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-02-16 06:45:22.343  INFO 12392 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 211 ms. Found 4 JPA repository interfaces.
+2022-02-16 06:45:23.503  INFO 12392 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-02-16 06:45:23.519  INFO 12392 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-02-16 06:45:23.519  INFO 12392 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.56]
+2022-02-16 06:45:23.708  INFO 12392 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-02-16 06:45:23.708  INFO 12392 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2635 ms
+2022-02-16 06:45:23.883  INFO 12392 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-02-16 06:45:23.948  INFO 12392 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.4.Final
+2022-02-16 06:45:24.123  INFO 12392 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2022-02-16 06:45:24.328  INFO 12392 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2022-02-16 06:45:24.793  INFO 12392 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2022-02-16 06:45:24.813  INFO 12392 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL57InnoDBDialect
+2022-02-16 06:45:25.182  INFO 12392 --- [main] o.hibernate.id.enhanced.TableGenerator   : HHH000398: Explicit segment value for id generator [hibernate_sequences.sequence_name] suggested; using default [default]
+2022-02-16 06:45:26.263  INFO 12392 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-02-16 06:45:26.273  INFO 12392 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-02-16 06:45:27.053  INFO 12392 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@386f88b3, org.springframework.security.web.context.SecurityContextPersistenceFilter@691a5c3a, org.springframework.security.web.header.HeaderWriterFilter@4b552b13, org.springframework.security.web.csrf.CsrfFilter@2681185e, org.springframework.security.web.authentication.logout.LogoutFilter@58fbfefb, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@37d3e740, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1477d4e6, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@9fd3b61, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@662e5590, org.springframework.security.web.session.SessionManagementFilter@5ca3acad, org.springframework.security.web.access.ExceptionTranslationFilter@4e481512, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@575cfec1]
+2022-02-16 06:45:27.973  INFO 12392 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-02-16 06:45:27.973  INFO 12392 --- [main] c.o.payMyBuddy.PayMyBuddyApplication     : Started PayMyBuddyApplication in 7.563 seconds (JVM running for 8.062)
+2022-02-16 06:45:40.182  INFO 12392 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-02-16 06:45:40.184  INFO 12392 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-02-16 06:45:40.185  INFO 12392 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2022-02-16 06:45:41.216  WARN 12392 --- [http-nio-8080-exec-2] o.a.c.util.SessionIdGeneratorBase        : Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [516] milliseconds.
+2022-02-16 07:02:05.842  INFO 13748 --- [main] c.o.payMyBuddy.PayMyBuddyApplication     : Starting PayMyBuddyApplication using Java 13.0.1 on LAPTOP-FJNEE5I2 with PID 13748 (C:\Users\CABROL\Documents\Justine\OpenClassrooms\projet6\payMyBuddy\target\classes started by CABROL in C:\Users\CABROL\Documents\Justine\OpenClassrooms\projet6\payMyBuddy)
+2022-02-16 07:02:05.842  INFO 13748 --- [main] c.o.payMyBuddy.PayMyBuddyApplication     : No active profile set, falling back to default profiles: default
+2022-02-16 07:02:06.847  INFO 13748 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-02-16 07:02:07.063  INFO 13748 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 208 ms. Found 4 JPA repository interfaces.
+2022-02-16 07:02:08.152  INFO 13748 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-02-16 07:02:08.163  INFO 13748 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-02-16 07:02:08.163  INFO 13748 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.56]
+2022-02-16 07:02:08.352  INFO 13748 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-02-16 07:02:08.352  INFO 13748 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2450 ms
+2022-02-16 07:02:08.528  INFO 13748 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-02-16 07:02:08.590  INFO 13748 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.4.Final
+2022-02-16 07:02:08.763  INFO 13748 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2022-02-16 07:02:08.893  INFO 13748 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2022-02-16 07:02:09.233  INFO 13748 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2022-02-16 07:02:09.253  INFO 13748 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL57InnoDBDialect
+2022-02-16 07:02:09.522  INFO 13748 --- [main] o.hibernate.id.enhanced.TableGenerator   : HHH000398: Explicit segment value for id generator [hibernate_sequences.sequence_name] suggested; using default [default]
+2022-02-16 07:02:10.672  INFO 13748 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-02-16 07:02:10.682  INFO 13748 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-02-16 07:02:11.432  INFO 13748 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@60251ddb, org.springframework.security.web.context.SecurityContextPersistenceFilter@27691ee8, org.springframework.security.web.header.HeaderWriterFilter@48da5106, org.springframework.security.web.csrf.CsrfFilter@1bcf2c64, org.springframework.security.web.authentication.logout.LogoutFilter@6a261998, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@66f5770e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@77648321, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5ec3689b, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2059c3ff, org.springframework.security.web.session.SessionManagementFilter@510bd87a, org.springframework.security.web.access.ExceptionTranslationFilter@9fd3b61, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@662e5590]
+2022-02-16 07:02:12.433  INFO 13748 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-02-16 07:02:12.448  INFO 13748 --- [main] c.o.payMyBuddy.PayMyBuddyApplication     : Started PayMyBuddyApplication in 7.158 seconds (JVM running for 7.736)
+2022-02-16 07:02:20.779  INFO 13748 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-02-16 07:02:20.780  INFO 13748 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-02-16 07:02:20.781  INFO 13748 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2022-02-16 07:02:21.279  WARN 13748 --- [http-nio-8080-exec-2] o.a.c.util.SessionIdGeneratorBase        : Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [425] milliseconds.
