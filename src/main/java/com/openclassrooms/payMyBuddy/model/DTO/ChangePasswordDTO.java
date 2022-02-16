@@ -9,13 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BankAccountDTO {
-    private String iban;
-    private String bic;
-    private String usualName;
-
-    public BankAccountDTO(String iban,String bic){
-        this.iban=iban;
-        this.bic=bic;
-    }
+public class ChangePasswordDTO {
+    private String password;
+    private String confirmationPassword;
 }

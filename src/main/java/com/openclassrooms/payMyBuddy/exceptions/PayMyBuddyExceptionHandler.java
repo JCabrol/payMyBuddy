@@ -83,4 +83,13 @@ public class PayMyBuddyExceptionHandler {
         return buildResponseEntity(payMyBuddyError);
     }
 
+    @ExceptionHandler(EmptyObjectException.class)
+    protected ResponseEntity<Object> handleEmptyObject(
+            EmptyObjectException ex) {
+        PayMyBuddyError payMyBuddyError = new PayMyBuddyError(NOT_FOUND);
+        payMyBuddyError.setMessage(ex.getMessage());
+        log.error(ex.getMessage());
+        return buildResponseEntity(payMyBuddyError);
+    }
+
 }

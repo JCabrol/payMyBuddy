@@ -1,10 +1,7 @@
 package com.openclassrooms.payMyBuddy.repository;
 
 import com.openclassrooms.payMyBuddy.model.Person;
-import com.openclassrooms.payMyBuddy.model.Transaction;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
