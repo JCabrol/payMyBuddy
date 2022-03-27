@@ -13,10 +13,7 @@ public class ListTransactionPagesDTO {
 
     private Integer totalNumberOfPage;
     private Integer currentPage;
-    private Integer beforePreviousPage;
-    private Integer previousPage;
-    private Integer nextPage;
-    private Integer afterNextPage;
+    private Integer[] pagesToDisplay;
     private List<TransactionDTO> transactionsToDisplay;
     private String transactionType;
 

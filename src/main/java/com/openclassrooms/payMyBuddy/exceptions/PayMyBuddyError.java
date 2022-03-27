@@ -1,21 +1,44 @@
 package com.openclassrooms.payMyBuddy.exceptions;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+import java.io.Serializable;
+
+//@Data
+//public class PayMyBuddyError {
+//
+//    private HttpStatus status;
+//
+//    private String message;
+//
+//    PayMyBuddyError(HttpStatus status) {
+//        this.status = status;
+//    }
+//
+//    PayMyBuddyError(HttpStatus status, String message) {
+//        this.status = status;
+//        this.message = message;
+//    }
+//}
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class PayMyBuddyError {
+public class PayMyBuddyError implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private HttpStatus status;
-
     private String message;
 
     PayMyBuddyError(HttpStatus status) {
         this.status = status;
     }
-
-    PayMyBuddyError(HttpStatus status, String message) {
-        this.status = status;
-        this.message = message;
-    }
+//
+//    PayMyBuddyError(HttpStatus status, String message) {
+//        this.status = status;
+//        this.message = message;
+//    }
 }

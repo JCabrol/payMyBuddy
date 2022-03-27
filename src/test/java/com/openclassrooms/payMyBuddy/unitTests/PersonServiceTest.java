@@ -1,5 +1,6 @@
 package com.openclassrooms.payMyBuddy.unitTests;
 
+import com.openclassrooms.payMyBuddy.configuration.SpringSecurityConfiguration;
 import com.openclassrooms.payMyBuddy.exceptions.EmptyObjectException;
 import com.openclassrooms.payMyBuddy.exceptions.NotFoundObjectException;
 import com.openclassrooms.payMyBuddy.exceptions.ObjectNotExistingAnymoreException;
@@ -7,6 +8,7 @@ import com.openclassrooms.payMyBuddy.model.BankAccount;
 import com.openclassrooms.payMyBuddy.model.DTO.BankAccountDTO;
 import com.openclassrooms.payMyBuddy.model.DTO.PersonDTO;
 import com.openclassrooms.payMyBuddy.model.Person;
+import com.openclassrooms.payMyBuddy.model.Role;
 import com.openclassrooms.payMyBuddy.repository.PersonRepository;
 import com.openclassrooms.payMyBuddy.service.BankAccountService;
 import com.openclassrooms.payMyBuddy.service.PersonService;
@@ -16,10 +18,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +56,8 @@ public class PersonServiceTest {
 
     @Nested
     @Tag("PersonServiceTests")
-    @DisplayName("getAllPersonsDTO tests:")
-    class getAllPersonsDTOTest {
+    @DisplayName("Get all personsDTO tests:")
+    class GetAllPersonsDTOTest {
 
         @DisplayName("GIVEN persons returned by personRepository " +
                 "WHEN the function getAllPersonsDTO() is called " +
@@ -74,9 +81,9 @@ public class PersonServiceTest {
             //THEN
             //it returns the correct list of PersonDTO
             assertThat(result.size()).isEqualTo(3);
-            assertThat(result.get(0).getAvailableBalance()).isEqualTo(0);
-            assertThat(result.get(1).getAvailableBalance()).isEqualTo(0);
-            assertThat(result.get(2).getAvailableBalance()).isEqualTo(0);
+            assertThat(result.get(0).getAvailableBalance()).isEqualTo("0");
+            assertThat(result.get(1).getAvailableBalance()).isEqualTo("0");
+            assertThat(result.get(2).getAvailableBalance()).isEqualTo("0");
             assertThat(result.get(0).getEmail()).isEqualTo("person1@mail.fr");
             assertThat(result.get(1).getEmail()).isEqualTo("person2@mail.fr");
             assertThat(result.get(2).getEmail()).isEqualTo("person3@mail.fr");
@@ -112,8 +119,8 @@ public class PersonServiceTest {
 
     @Nested
     @Tag("PersonServiceTests")
-    @DisplayName("getAllActivePersonsDTO tests:")
-    class getAllActivePersonsDTOTest {
+    @DisplayName("Get all active personsDTO tests:")
+    class GetAllActivePersonsDTOTest {
         @DisplayName("GIVEN active persons returned by personRepository " +
                 "WHEN the function getAllActivePersonsDTO() is called " +
                 "THEN it returns the correct list of PersonDTO.")
@@ -136,9 +143,9 @@ public class PersonServiceTest {
             //THEN
             //it returns the correct list of PersonDTO
             assertThat(result.size()).isEqualTo(3);
-            assertThat(result.get(0).getAvailableBalance()).isEqualTo(0);
-            assertThat(result.get(1).getAvailableBalance()).isEqualTo(0);
-            assertThat(result.get(2).getAvailableBalance()).isEqualTo(0);
+            assertThat(result.get(0).getAvailableBalance()).isEqualTo("0");
+            assertThat(result.get(1).getAvailableBalance()).isEqualTo("0");
+            assertThat(result.get(2).getAvailableBalance()).isEqualTo("0");
             assertThat(result.get(0).getEmail()).isEqualTo("person1@mail.fr");
             assertThat(result.get(1).getEmail()).isEqualTo("person2@mail.fr");
             assertThat(result.get(2).getEmail()).isEqualTo("person3@mail.fr");
@@ -174,8 +181,8 @@ public class PersonServiceTest {
 
     @Nested
     @Tag("PersonServiceTests")
-    @DisplayName("getPerson tests:")
-    class getPersonTest {
+    @DisplayName("Get person tests:")
+    class GetPersonTest {
         @DisplayName("GIVEN an existing person " +
                 "WHEN the function getPerson() is called " +
                 "THEN it returns the correct person.")
@@ -236,8 +243,8 @@ public class PersonServiceTest {
 
     @Nested
     @Tag("PersonServiceTests")
-    @DisplayName("getPersonDTO tests:")
-    class getPersonDTOTest {
+    @DisplayName("Get personDTO tests:")
+    class GetPersonDTOTest {
         @DisplayName("GIVEN an existing person " +
                 "WHEN the function getPersonDTO() is called " +
                 "THEN it returns a personDTO with all correct information.")
@@ -250,13 +257,13 @@ public class PersonServiceTest {
             Person person2 = new Person("person2@mail.fr", "password2", "firstName2", "lastName2");
             List<Person> relationsList = List.of(person2);
             person1.setRelations(relationsList);
-            person1.setAvailableBalance(12);
+            person1.setAvailableBalance(12.25F);
             String iban = "123456789123";
             String bic = "12345678";
             BankAccount bankAccount = new BankAccount(iban, bic);
             List<BankAccount> bankAccountList = List.of(bankAccount);
             person1.setBankAccountList(bankAccountList);
-            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban,bic);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic);
             doReturn(bankAccountDTO).when(bankAccountService).transformBankAccountToBankAccountDTO(bankAccount);
             doReturn(Optional.of(person1)).when(personRepository).findById(email);
             //WHEN
@@ -268,7 +275,7 @@ public class PersonServiceTest {
             assertThat(returnedPerson.getLastName()).isEqualTo(person1.getLastName());
             assertThat(returnedPerson.getEmail()).isEqualTo(person1.getEmail());
             assertThat(returnedPerson.getPassword()).isNull();
-            assertThat(returnedPerson.getAvailableBalance()).isEqualTo(person1.getAvailableBalance());
+//            assertThat(returnedPerson.getAvailableBalance()).isEqualTo(String.valueOf(person1.getAvailableBalance()));
             assertThat(returnedPerson.getGroup().size()).isEqualTo(1);
             assertThat(returnedPerson.getGroup().get(0).getEmail()).isEqualTo(person2.getEmail());
             assertThat(returnedPerson.getGroup().get(0).getFirstName()).isEqualTo(person2.getFirstName());
@@ -276,31 +283,31 @@ public class PersonServiceTest {
             assertThat(returnedPerson.getBankAccountDTOList().size()).isEqualTo(1);
             assertThat(returnedPerson.getBankAccountDTOList().get(0).getIban()).isEqualTo(person1.getBankAccountList().get(0).getIban());
             assertThat(returnedPerson.getBankAccountDTOList().get(0).getBic()).isEqualTo(person1.getBankAccountList().get(0).getBic());
-            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(2)).findById(email);
             verify(bankAccountService, Mockito.times(1)).transformBankAccountToBankAccountDTO(bankAccount);
         }
 
         @Test
         @DisplayName("GIVEN a non-existing person " +
-                "WHEN the function getPerson() is called " +
+                "WHEN the function getPersonDTO() is called " +
                 "THEN a NotFoundObjectException should be thrown with the expected error message.")
-        void getPersonNotExistingTest() {
+        void getPersonDTONotExistingTest() {
             // GIVEN
             //a non-existing person
             String email = "person1@mail.fr";
             doReturn(Optional.empty()).when(personRepository).findById(email);
             //WHEN
-            //the function getPerson() is called
+            //the function getPersonDTO() is called
             //THEN
             //an NotFoundObjectException is thrown with the expected error message
-            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.getPerson(email));
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.getPersonDTO(email));
             assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
             verify(personRepository, Mockito.times(1)).findById(email);
         }
 
         @Test
         @DisplayName("GIVEN a person which is unsubscribed from application " +
-                "WHEN the function getPerson() is called " +
+                "WHEN the function getPersonDTO() is called " +
                 "THEN an ObjectNotExistingAnymoreException is thrown with the expected error message.")
         void getPersonNotActiveTest() {
             // GIVEN
@@ -310,15 +317,152 @@ public class PersonServiceTest {
             person.setActive(false);
             doReturn(Optional.of(person)).when(personRepository).findById(email);
             //WHEN
-            //the function getPerson() is called
+            //the function getPersonDTO() is called
             //THEN
             //an ObjectNotExistingAnymoreException is thrown with the expected error message
-            Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.getPerson(email));
+            Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.getPersonDTO(email));
             assertEquals("The person whose mail is " + email + " doesn't exist anymore in the application.\n", exception.getMessage());
             verify(personRepository, Mockito.times(1)).findById(email);
         }
     }
 
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("Get current user mail tests:")
+    class GetCurrentUserMailTests {
+
+        @DisplayName("GIVEN a connected user" +
+                "WHEN the function getCurrentUserMail() is called " +
+                "THEN it returns the correct email.")
+        @Test
+        public void getCurrentUserMailConnected() {
+
+            //GIVEN
+            //a connected user
+            Authentication authentication = Mockito.mock(Authentication.class);
+            SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+            Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+            Mockito.when(authentication.isAuthenticated()).thenReturn(true);
+            SecurityContextHolder.setContext(securityContext);
+            String idCurrentUser = "person1@mail.fr";
+            Mockito.when(authentication.getName()).thenReturn(idCurrentUser);
+            //WHEN
+            //the function getCurrentUserMail() is called
+            String result = personService.getCurrentUserMail();
+            //THEN
+            //it returns the correct email
+            assertThat(result).isEqualTo(idCurrentUser);
+        }
+
+        @DisplayName("GIVEN a not connected user" +
+                "WHEN the function getCurrentUserMail() is called " +
+                "THEN a NotFoundObjectException should be thrown with the expected error message.")
+        @Test
+        public void getCurrentUserMailNotConnected() {
+
+            //GIVEN
+            //a not connected user
+            Authentication authentication = Mockito.mock(Authentication.class);
+            Mockito.when(authentication.isAuthenticated()).thenReturn(false);
+            SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+            Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+            SecurityContextHolder.setContext(securityContext);
+            //WHEN
+            //the function getCurrentUserMail() is called
+            //THEN
+            //an NotFoundObjectException is thrown with the expected error message
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.getCurrentUserMail());
+            assertEquals("The current user's mail couldn't have been found.\n", exception.getMessage());
+        }
+    }
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("Create person tests:")
+    class CreatePersonTests {
+
+        @DisplayName("GIVEN a personDTO with all information" +
+                "WHEN the function createPerson() is called " +
+                "THEN a person with correct information is created.")
+        @Test
+        public void createPersonTest() {
+
+            //GIVEN
+            //a personDTO with all information
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "firstName1";
+            SpringSecurityConfiguration springSecurityConfiguration = Mockito.mock(SpringSecurityConfiguration.class);
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String encodedPassword = passwordEncoder.encode(password);
+            Person person = new Person(email, encodedPassword, firstName, lastname);
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            person.setRole(Role.USER);
+
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person);
+            Mockito.when(springSecurityConfiguration.passwordEncoder()).thenReturn(passwordEncoder);
+
+            //WHEN
+            //the function createPerson() is called
+            String result = personService.createPerson(personDTO);
+
+            //THEN
+            //a person with correct information is created.
+            assertThat(result).isEqualTo("The person firstName1 firstName1 have been created.\n");
+            verify(personRepository).save(arg.capture());
+            assertEquals(person.getFirstName(), arg.getValue().getFirstName());
+            assertEquals(person.getLastName(), arg.getValue().getLastName());
+            assertEquals(person.getEmail(), arg.getValue().getEmail());
+            assertEquals(person.getPassword().substring(0, 7), arg.getValue().getPassword().substring(0, 7));
+            assertEquals(person.getRole(), arg.getValue().getRole());
+        }
+    }
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("Change password tests:")
+    class ChangePasswordTests {
+
+        @DisplayName("GIVEN a personDTO with all information" +
+                "WHEN the function createPerson() is called " +
+                "THEN a person with correct information is created.")
+        @Test
+        public void changePasswordTest() {
+
+            //GIVEN
+            //a personDTO with all information
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "firstName1";
+            SpringSecurityConfiguration springSecurityConfiguration = Mockito.mock(SpringSecurityConfiguration.class);
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String encodedPassword = passwordEncoder.encode(password);
+            Person person = new Person(email, encodedPassword, firstName, lastname);
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            person.setRole(Role.USER);
+
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person);
+            Mockito.when(springSecurityConfiguration.passwordEncoder()).thenReturn(passwordEncoder);
+
+            //WHEN
+            //the function createPerson() is called
+            String result = personService.createPerson(personDTO);
+
+            //THEN
+            //a person with correct information is created.
+            assertThat(result).isEqualTo("The person firstName1 firstName1 have been created.\n");
+            verify(personRepository).save(arg.capture());
+            assertEquals(person.getFirstName(), arg.getValue().getFirstName());
+            assertEquals(person.getLastName(), arg.getValue().getLastName());
+            assertEquals(person.getEmail(), arg.getValue().getEmail());
+            assertEquals(person.getPassword().substring(0, 7), arg.getValue().getPassword().substring(0, 7));
+            assertEquals(person.getRole(), arg.getValue().getRole());
+        }
+    }
 
 }
 
