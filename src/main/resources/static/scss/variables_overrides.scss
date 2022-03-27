@@ -1,0 +1,87 @@
+/*-----------------------------------------------principal theme colors-----------------------------------------------*/
+
+$success: #7dd076;
+$light: #f4f7fd;
+$primary: #1173dc;
+$secondary:#b1b1b1;
+
+/*----------------------------------------------principal theme settings----------------------------------------------*/
+
+$form-select-indicator:
+url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///xUVFf///yH5BAEAAAMALAAAAAALAAsAAAIPnI+py+0/hJzz0IruwjsVADs=);
+$enable-negative-margins: true;
+
+$border-radius:.5rem;
+
+$font-size-base:              1rem;
+$h6-font-size:$font-size-base * 0.5;
+
+$position-values: (
+  0: 0,
+  25: 25%,
+  50: 50%,
+  75: 75%,
+  100: 100%
+);
+
+
+/*-------------------------------------------breadcrumb and navbar colors---------------------------------------------*/
+$breadcrumb-active-color: $secondary;
+
+$navbar-light-color: black;
+$navbar-light-hover-color: $secondary;
+$navbar-light-active-color: $primary;
+
+/*--------------------------------------------------spaces settings---------------------------------------------------*/
+
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * .25,
+  2: $spacer * .5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3,
+  6: $spacer * 4,
+  7: $spacer * 1.25,
+  8: $spacer * 5,
+  9: $spacer * 6,
+  10: $spacer * 0.75,
+  11: $spacer * 1.75
+);
+
+/*--------------------------------------------------accordion settings------------------------------------------------*/
+
+$accordion-button-active-bg:white;
+$accordion-button-active-color:black;
+$accordion-button-focus-box-shadow: none;
+
+/*---------------------------------------------------table settings---------------------------------------------------*/
+
+$table-cell-padding-y:1.5rem;
+$table-striped-color:         black;
+$table-striped-bg-factor:     0;
+$table-striped-bg:            $light;
+$table-border-factor:         0;
+$table-border-width:          0;
+
+/*--------------------------------------------------checkbox settings-------------------------------------------------*/
+
+$form-check-input-bg:                    white;
+$form-check-input-border:                 1px solid;
+$form-check-input-border-radius:          .15em;
+$form-check-input-focus-border:           none;
+$form-check-input-focus-box-shadow:       none;
+
+$form-check-input-checked-bg-color:       white;
+$form-check-input-checked-color:          black;
+$form-check-input-checked-border-color:   $secondary;
+$form-check-input-border-color:   $secondary;
+$form-check-input-focus-border-color:   $secondary;
+$input-focus-border-color:$secondary;
+
+$form-check-input-width:1.5em;
+$form-check-input-bg:none;
+$form-check-input-checked-bg-image: url("/images/check.png");
+
+$modal-md:                          400px;

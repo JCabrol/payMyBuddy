@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width = device-width, initial-scale = 1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="/css/style.css" rel="stylesheet">
+    <title>Pay My Buddy</title>
+</head>
+
+<body>
+
+<!-----------------------------------  Navigation bar, breadcrumb and logout modal ------------------------------------>
+
+<div class="container-fluid">
+    <header th:insert="navigation.html :: navigationBar"></header>
+</div>
+
+<!-----------------------------------  Welcome phrase and manage connections link ------------------------------------->
+
+<div class="container justify-content-center pt-9">
+
+    <div class="row m-0 p-0 align-items-between">
+        <div class="col-6 m-0 p-0">
+            <h4>Send money</h4>
+        </div>
+        <div class="col-6 m-0 p-0">
+            <a th:href="@{/home/transfer/manageConnections}" type="submit"
+               class="btn btn-primary d-block offset-md-6 col-md-6 me-0 pe-0">Manage
+                Connections
+            </a>
+        </div>
+    </div>
+
+    <!---------------------------------------------  Transfer money form  ------------------------------------------------->
+
+    <div class="row justify-content-center bg-light py-3 m-0">
+        <div class="col mb-3">
+            <h5 class="text-success text-center">Your available balance : <span
+                    th:text="${personDTO.availableBalance + ' &#x20AC;'}">0 &#x20AC;</span></h5>
+        </div>
+        <form method="post" th:action="@{/home/transfer}" th:object="${transactionDTO}">
+            <div class="row">
+                <div class="col-md-4 order-1 offset-md-1">
+                    <select th:field="*{receiver}" class="form-select border-dark rounded-0"
+                            aria-label="Select connection">
+                        <option selected value="">Select A Connection</option>
+                        <option th:each="personDTO2 : ${personDTO.group}" th:value="${personDTO2.email}"
+                                th:text="${personDTO2.firstName + ' ' + personDTO2.lastName}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3 order-2 mt-3 mt-md-0">
+                    <div class="input-group mb-3 p-0 m-0">
+                        <input type="number" th:placeholder="0 + ' &#x20AC;'" step="0.01" th:field="*{amount}"
+                               class="form-control inputAmount border-dark rounded-0 text-end" min=0>
+
+                        <span class="input-group-text rounded-0 my-0 p-0 bg-white border border-dark">
+                            <div class="btn-group-vertical " role="group">
+                                <button type="button"
+                                        onclick="this.parentNode.parentNode.parentNode.querySelector('[type=number]').stepUp();"
+                                        class="btn btn-outline-dark border-0 border-bottom border-dark fs-6 my-0 pt-1 pb-0 rounded-0">
+                                    <i class="fa fa-caret-up fa-lg"></i>
+                                </button>
+                                <button type="button"
+                                        onclick="this.parentNode.parentNode.parentNode.querySelector('[type=number]').stepDown();"
+                                        class="btn btn-outline-dark border-0 fs-6 mw-100 my-0 pt-0 pb-1 rounded-0">
+                                    <i class="fa fa-caret-down fa-lg"></i>
+                                </button>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-3 order-4 order-md-3 mt-3 mb-3 mb-md-0 mt-md-0">
+                    <button type="submit" class="btn btn-success text-light d-block col-12">Pay</button>
+                </div>
+                <div class="col-md-10 order-3 order-md-4 offset-md-1 mt-3 mb-md-3">
+                    <input type="text" th:field="*{description}" class="form-control border-dark rounded-0"
+                           placeholder="You can add a description to your transaction.">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!------------------------------------------  Transactions made section  ---------------------------------------------->
+
+    <div class="row justify-content-center bg-white p-0 mx-0 mt-0 mb-3">
+        <div class="accordion m-0 p-0" id="accordion2">
+
+            <button class="accordion-button collapsed m-0 ps-0 pb-0 border-0" type="button"
+                    data-toggle="collapse"
+                    data-target="#collapseThree" aria-expanded="false" aria-controls="collapseOne">
+                <h5>My Transactions Made</h5>
+            </button>
+            <div id="collapseThree" class="accordion-collapse collapse m-0 p-0"
+                 aria-labelledby="headingThree" data-parent="#accordion2">
+                <div class="table-responsive m-0 p-0">
+                    <table class="table table-striped table-borderless border rounded-1 border-dark align-middle p-0 m-0">
+                        <caption th:if="${listTransactionsMade.totalNumberOfPage == 0}">You didn't make any
+                            transaction yet.
+                        </caption>
+                        <thead class="bg-success text-white">
+                        <tr>
+                            <th scope="col" class="text-center mw-100 col-1 col-md-3">Receiver</th>
+                            <th scope="col" class="text-center mw-100 col-1 col-md-2">Description</th>
+                            <th scope="col" class="text-center mw-100 col-1 col-md-2">Amount</th>
+                            <th scope="col" class="text-center col-md-1 d-none d-md-table-cell">Date</th>
+                            <th scope="col" class="text-center col-md-1 d-none d-md-table-cell">Time</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr scope="row" th:each="transactionDTO : ${listTransactionsMade.transactionsToDisplay}">
+                            <td class="text-center mw-100 col-1 col-md-3" th:text="${transactionDTO.receiver}"></td>
+                            <td class="text-center mw-100 col-1 col-md-2" th:text="${transactionDTO.description}"></td>
+                            <td class="text-center mw-100 col-1 col-md-2"
+                                th:text="${transactionDTO.amount}+ ' &#x20AC;'"></td>
+                            <td class="text-center col-md-1 d-none d-md-table-cell"
+                                th:text="${transactionDTO.date}"></td>
+                            <td class="text-center col-md-1 d-none d-md-table-cell"
+                                th:text="${transactionDTO.time}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!--------  Pagination transactions made  --------->
+
+                <div class="row justify-content-center mt-0">
+                    <div class="col-8 col-sm-6 col-lg-4 col-xl-3 text-center">
+                        <div th:if="${listTransactionsMade.totalNumberOfPage != 0}" class="btn-group"
+                             role="group">
+                            <a th:href="@{/home/transfer(currentPageMade=1,transactionType='made',currentPageReceived=${listTransactionsReceived.currentPage})}"
+                               type="button" class="btn d-block border border-secondary text-primary">&laquo;</a>
+                            <a th:each="page : ${listTransactionsMade.pagesToDisplay}" th:if="${page != null}"
+                               th:href="@{/home/transfer(currentPageMade=${page},transactionType='made',currentPageReceived=${listTransactionsReceived.currentPage})}"
+                               type="button" class="btn d-block border border-secondary text-primary"
+                               th:text="${page}"></a>
+                            <a th:href="@{/home/transfer(currentPageMade=${listTransactionsMade.totalNumberOfPage},transactionType='made',currentPageReceived=${listTransactionsReceived.currentPage})}"
+                               type="button" class="btn d-block border border-secondary text-primary">&raquo;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!----------------------------------------  Transactions received section  -------------------------------------------->
+        <button class="accordion-button m-0 ps-0 pb-0 border-0" type="button" aria-controls="collapseFour"
+                aria-expanded="true"
+                data-target="#collapseFour"
+                data-toggle="collapse">
+            <h5>My Transactions Received</h5>
+        </button>
+        <div id="collapseFour" class="accordion-collapse collapse show m-0 p-0" aria-labelledby="headingFour"
+             data-parent="#accordion2">
+            <div class="table-responsive m-0 p-0">
+                <table class="table table-striped table-borderless border rounded-1 border-dark align-middle p-0 m-0">
+                    <caption th:if="${listTransactionsReceived.totalNumberOfPage == 0}">You didn't receive any
+                        transaction yet.
+                    </caption>
+                    <thead class="bg-success text-white">
+                    <tr>
+                        <th scope="col" class="text-center mw-100 col-1 col-md-3">Sender</th>
+                        <th scope="col" class="text-center mw-100 col-1 col-md-2">Description</th>
+                        <th scope="col" class="text-center mw-100 col-1 col-md-2">Amount</th>
+                        <th scope="col" class="text-center col-md-1 d-none d-md-table-cell">Date</th>
+                        <th scope="col" class="text-center col-md-1 d-none d-md-table-cell">Time</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr scope="row" th:each="transactionDTO : ${listTransactionsReceived.transactionsToDisplay}">
+                        <td class="text-center mw-100 col-1 col-md-3" th:text="${transactionDTO.sender}"></td>
+                        <td class="text-center mw-100 col-1 col-md-2" th:text="${transactionDTO.description}"></td>
+                        <td class="text-center mw-100 col-1 col-md-2"
+                            th:text="${transactionDTO.amount}+ ' &#x20AC;'"></td>
+                        <td class="text-center col-md-1 d-none d-md-table-cell" th:text="${transactionDTO.date}"></td>
+                        <td class="text-center col-md-1 d-none d-md-table-cell" th:text="${transactionDTO.time}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!--------  Pagination transactions received  --------->
+
+            <div class="row justify-content-center mt-0">
+                <div class="col-8 col-sm-6 col-lg-4 col-xl-3 text-center">
+                    <div th:if="${listTransactionsReceived.totalNumberOfPage != 0}" class="btn-group"
+                         role="group">
+                        <a th:href="@{/home/transfer(currentPageReceived=1,transactionType='received',currentPageMade=${listTransactionsMade.currentPage})}"
+                           type="button" class="btn d-block border border-secondary text-primary">&laquo;</a>
+                        <a th:each="page : ${listTransactionsReceived.pagesToDisplay}" th:if="${page != null}"
+                           th:href="@{/home/transfer(currentPageReceived=${page},transactionType='received',currentPageMade=${listTransactionsMade.currentPage})}"
+                           type="button" class="btn d-block border border-secondary text-primary"
+                           th:text="${page}"></a>
+                        <a th:href="@{/home/transfer(currentPageReceived=${listTransactionsReceived.totalNumberOfPage},transactionType='received',currentPageMade=${listTransactionsMade.currentPage})}"
+                           type="button" class="btn d-block border border-secondary text-primary">&raquo;</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!--------------------------------------------------------------------------------------------------------------------->
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/f923d597fd.js" crossorigin="anonymous"></script>
+
+</body>
+</html>

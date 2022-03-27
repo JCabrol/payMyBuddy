@@ -18,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -117,9 +119,13 @@ public class PersonServiceImpl implements PersonService {
         log.debug("The function getCurrentUserMail in PersonService is beginning.");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            String currentUserMail = authentication.getName();
-            log.debug("The function getCurrentUserMail in PersonService is ending without exception.");
-            return currentUserMail;
+            if (!authentication.isAuthenticated()) {
+                throw new NotFoundObjectException("The current user's mail couldn't have been found.\n");
+            } else {
+                String currentUserMail = authentication.getName();
+                log.debug("The function getCurrentUserMail in PersonService is ending without exception.");
+                return currentUserMail;
+            }
         } else {
             throw new NotFoundObjectException("The current user's mail couldn't have been found.\n");
         }
@@ -132,7 +138,7 @@ public class PersonServiceImpl implements PersonService {
         person.setPassword(springSecurityConfiguration.passwordEncoder().encode(personDTO.getPassword()));
         person.setRole(Role.USER);
         person = personRepository.save(person);
-        String message = "The person " + person.getFirstName() + " " + person.getLastName() + "have been created.\n";
+        String message = "The person " + person.getFirstName() + " " + person.getLastName() + " have been created.\n";
         log.info(message);
         log.debug("The function createPerson in PersonService is ending without exception.");
         return message;
@@ -274,11 +280,13 @@ public class PersonServiceImpl implements PersonService {
         return message;
     }
 
+    @Transactional
     private PersonDTO transformPersonToPersonDTO(Person person) {
         log.debug("The function transformPersonToPersonDTO in PersonService is beginning.");
         PersonDTO personDTO = new PersonDTO(person.getEmail(), person.getFirstName(), person.getLastName());
-        personDTO.setAvailableBalance(person.getAvailableBalance());
-        if (person.getRelations().isEmpty()) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        personDTO.setAvailableBalance(df.format(person.getAvailableBalance()));
+        if (person.getRelations().equals(Collections.emptyList())) {
             personDTO.setGroup(new ArrayList<>());
         } else {
             personDTO.setGroup(person.getRelations()
@@ -286,7 +294,7 @@ public class PersonServiceImpl implements PersonService {
                     .map(person1 -> new PersonDTO(person1.getEmail(), person1.getFirstName(), person1.getLastName()))
                     .collect(Collectors.toList()));
         }
-        if (person.getTransactionMadeList().isEmpty()) {
+        if (person.getTransactionMadeList().equals(Collections.emptyList())) {
             personDTO.setTransactionMadeList(new ArrayList<>());
         } else {
             personDTO.setTransactionMadeList(person.getTransactionMadeList()
@@ -294,7 +302,7 @@ public class PersonServiceImpl implements PersonService {
                     .map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction))
                     .collect(Collectors.toList()));
         }
-        if (person.getTransactionReceivedList().isEmpty()) {
+        if (person.getTransactionReceivedList().equals(Collections.emptyList())) {
             personDTO.setTransactionReceivedList(new ArrayList<>());
         } else {
             personDTO.setTransactionReceivedList(person.getTransactionReceivedList()
@@ -302,7 +310,7 @@ public class PersonServiceImpl implements PersonService {
                     .map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction))
                     .collect(Collectors.toList()));
         }
-        if (person.getBankAccountList().isEmpty()) {
+        if (person.getBankAccountList().equals(Collections.emptyList())) {
             personDTO.setBankAccountDTOList(new ArrayList<>());
         } else {
             personDTO.setBankAccountDTOList(getPersonActiveBankAccounts(personDTO)
@@ -310,7 +318,6 @@ public class PersonServiceImpl implements PersonService {
                     .map(bankAccount -> bankAccountService.transformBankAccountToBankAccountDTO(bankAccount))
                     .collect(Collectors.toList()));
         }
-
         log.debug("The function transformPersonToPersonDTO in PersonService is ending without exception.");
         return personDTO;
     }
@@ -372,34 +379,31 @@ public class PersonServiceImpl implements PersonService {
             transactionsToDisplay = allTransactions.subList(firstTransactionToDisplay, numberOfTransactions);
         }
 
-        int beforePreviousPage = pageNumber - 2;
-        int previousPage = pageNumber - 1;
-        int nextPage = pageNumber + 1;
-        int afterNextPage = pageNumber + 2;
-
-      if(pageNumber==1) {
-                beforePreviousPage = 0;
-                if (nextPage > totalNumberOfPage) {
-                    nextPage = 0;
+        Integer[] pagesToDisplay = new Integer[5];
+        if (totalNumberOfPage < 5) {
+            for (int i = 0; i < totalNumberOfPage; i++) {
+                pagesToDisplay[i] = i + 1;
+            }
+        } else {
+            if (pageNumber < 3) {
+                for (int i = 0; i < 5; i++) {
+                    pagesToDisplay[i] = i + 1;
                 }
-                if (afterNextPage > totalNumberOfPage) {
-                    afterNextPage = 0;
+            } else {
+                if (pageNumber > (totalNumberOfPage - 2)) {
+                    for (int i = 0; i < 5; i++) {
+                        pagesToDisplay[i] = totalNumberOfPage - 4 + i;
+                    }
+                } else {
+                    for (int i = 0; i < 5; i++) {
+                        pagesToDisplay[i] = i + pageNumber - 2;
+                    }
                 }
-            }else{
-          if(pageNumber==totalNumberOfPage){
-              nextPage=0;
-              afterNextPage=0;
-              if (beforePreviousPage < 0) {
-            beforePreviousPage = 0;
+            }
         }
-          }else{
-              beforePreviousPage=0;
-              afterNextPage=0;
-          }
-      }
-        ListTransactionPagesDTO result = new ListTransactionPagesDTO(totalNumberOfPage, pageNumber, beforePreviousPage, previousPage, nextPage, afterNextPage, transactionsToDisplay, transactionType);
+
+        ListTransactionPagesDTO result = new ListTransactionPagesDTO(totalNumberOfPage, pageNumber, pagesToDisplay, transactionsToDisplay, transactionType);
         log.debug("The function displayTransactionsByPage in PersonService is ending without any exception.");
         return result;
     }
-
 }

@@ -1,0 +1,18 @@
+@import "variables_overrides.scss";
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+th,td{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
