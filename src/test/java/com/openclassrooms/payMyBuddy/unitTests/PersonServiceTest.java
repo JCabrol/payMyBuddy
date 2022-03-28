@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.openclassrooms.payMyBuddy.model.Role.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -309,7 +310,7 @@ public class PersonServiceTest {
         @DisplayName("GIVEN a person which is unsubscribed from application " +
                 "WHEN the function getPersonDTO() is called " +
                 "THEN an ObjectNotExistingAnymoreException is thrown with the expected error message.")
-        void getPersonNotActiveTest() {
+        void getPersonDTONotActiveTest() {
             // GIVEN
             //a person which is unsubscribed from application
             String email = "person1@mail.fr";
@@ -392,13 +393,13 @@ public class PersonServiceTest {
             String email = "person1@mail.fr";
             String password = "password1";
             String firstName = "firstName1";
-            String lastname = "firstName1";
+            String lastname = "lastName1";
             SpringSecurityConfiguration springSecurityConfiguration = Mockito.mock(SpringSecurityConfiguration.class);
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String encodedPassword = passwordEncoder.encode(password);
             Person person = new Person(email, encodedPassword, firstName, lastname);
             PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
-            person.setRole(Role.USER);
+            person.setRole(USER);
 
             final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
             Mockito.when(personRepository.save(any(Person.class))).thenReturn(person);
@@ -410,7 +411,7 @@ public class PersonServiceTest {
 
             //THEN
             //a person with correct information is created.
-            assertThat(result).isEqualTo("The person firstName1 firstName1 have been created.\n");
+            assertThat(result).isEqualTo("The person firstName1 lastName1 have been created.\n");
             verify(personRepository).save(arg.capture());
             assertEquals(person.getFirstName(), arg.getValue().getFirstName());
             assertEquals(person.getLastName(), arg.getValue().getLastName());
@@ -425,43 +426,79 @@ public class PersonServiceTest {
     @DisplayName("Change password tests:")
     class ChangePasswordTests {
 
-        @DisplayName("GIVEN a personDTO with all information" +
-                "WHEN the function createPerson() is called " +
-                "THEN a person with correct information is created.")
+        @DisplayName("GIVEN an existing personDTO and a new password " +
+                "WHEN the function changePassword() is called " +
+                "THEN a success message is returned.")
         @Test
         public void changePasswordTest() {
-
             //GIVEN
-            //a personDTO with all information
+            //an existing personDTO and a new password
             String email = "person1@mail.fr";
             String password = "password1";
             String firstName = "firstName1";
-            String lastname = "firstName1";
+            String lastname = "lastName1";
+            String newPassword = "newPassword1";
             SpringSecurityConfiguration springSecurityConfiguration = Mockito.mock(SpringSecurityConfiguration.class);
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            String encodedPassword = passwordEncoder.encode(password);
-            Person person = new Person(email, encodedPassword, firstName, lastname);
-            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            String newEncodedPassword = passwordEncoder.encode(newPassword);
+            Person person = new Person(email, newEncodedPassword, firstName, lastname);
             person.setRole(Role.USER);
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+
 
             final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
             Mockito.when(personRepository.save(any(Person.class))).thenReturn(person);
             Mockito.when(springSecurityConfiguration.passwordEncoder()).thenReturn(passwordEncoder);
 
             //WHEN
-            //the function createPerson() is called
-            String result = personService.createPerson(personDTO);
+            //the function changePassword() is called
+            String result = personService.changePassword(personDTO,newPassword);
 
             //THEN
-            //a person with correct information is created.
-            assertThat(result).isEqualTo("The person firstName1 firstName1 have been created.\n");
+            //a success message is returned.
+            assertThat(result).isEqualTo("The firstName1 lastName1's password have been modified.\n");
             verify(personRepository).save(arg.capture());
-            assertEquals(person.getFirstName(), arg.getValue().getFirstName());
-            assertEquals(person.getLastName(), arg.getValue().getLastName());
-            assertEquals(person.getEmail(), arg.getValue().getEmail());
-            assertEquals(person.getPassword().substring(0, 7), arg.getValue().getPassword().substring(0, 7));
+            assertEquals(firstName, arg.getValue().getFirstName());
+            assertEquals(lastname, arg.getValue().getLastName());
+            assertEquals(email, arg.getValue().getEmail());
+            assertEquals(newEncodedPassword.substring(0, 7), arg.getValue().getPassword().substring(0, 7));
             assertEquals(person.getRole(), arg.getValue().getRole());
         }
+        @DisplayName("GIVEN an existing personDTO with only some information and a new password " +
+                "WHEN the function changePassword() is called " +
+                "THEN a success message is returned.")
+        @Test
+        public void changePasswordNotAllInformationTest() {
+            //GIVEN
+            //an existing personDTO and a new password
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String newPassword = "newPassword1";
+            SpringSecurityConfiguration springSecurityConfiguration = Mockito.mock(SpringSecurityConfiguration.class);
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String newEncodedPassword = passwordEncoder.encode(newPassword);
+            Person person = new Person(email, newEncodedPassword, "", "");
+            person.setRole(Role.USER);
+            PersonDTO personDTO = new PersonDTO(email, password, "", "");
+
+
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person);
+            Mockito.when(springSecurityConfiguration.passwordEncoder()).thenReturn(passwordEncoder);
+
+            //WHEN
+            //the function changePassword() is called
+            String result = personService.changePassword(personDTO,newPassword);
+
+            //THEN
+            //a success message is returned.
+            assertThat(result).isEqualTo("The firstName1 lastName1's password have been modified.\n");
+            verify(personRepository).save(arg.capture());
+            assertEquals(email, arg.getValue().getEmail());
+            assertEquals(newEncodedPassword.substring(0, 7), arg.getValue().getPassword().substring(0, 7));
+            assertEquals(person.getRole(), arg.getValue().getRole());
+        }
+
     }
 
 }
