@@ -27,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +38,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 
 @Tag("PersonTests")
 @Slf4j
+@DirtiesContext(classMode = AFTER_CLASS)
 @SpringBootTest
 public class PersonServiceTest {
 
