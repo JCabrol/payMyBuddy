@@ -60,7 +60,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
+            <!--            <scope>runtime</scope>-->
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -197,21 +197,21 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+<!--            <plugin>-->
 
-                <groupId>org.sonarsource.scanner.maven</groupId>
+<!--                <groupId>org.sonarsource.scanner.maven</groupId>-->
 
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.3.0.603</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sonar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--                <artifactId>sonar-maven-plugin</artifactId>-->
+<!--                <version>3.3.0.603</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>verify</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>sonar</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 

@@ -42,7 +42,6 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 
 @Tag("PersonTests")
 @Slf4j
-@DirtiesContext(classMode = AFTER_CLASS)
 @SpringBootTest
 public class PersonServiceTest {
 
