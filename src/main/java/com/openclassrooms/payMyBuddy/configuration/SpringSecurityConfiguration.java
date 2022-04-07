@@ -12,9 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.servlet.SessionTrackingMode;
-import java.util.EnumSet;
-
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -22,18 +19,30 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    private static final String[] AUTH_SWAGGER_UI = {
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+    };
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
                 .authorizeRequests()
+                .antMatchers(AUTH_SWAGGER_UI).permitAll()
                 .antMatchers("/css/*.css", "/images/*.png", "/images/*.svg").permitAll()
-                .antMatchers("/", "/home", "/inscription").permitAll()
-                .antMatchers("/admin").hasRole("ADMIN")
+                .antMatchers("/", "/home", "/inscription", "/home/contact").permitAll()
+                .antMatchers("/home/*").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers("/admin", "/admin/*").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login").defaultSuccessUrl("/home").permitAll()
+                .loginPage("/login")
+                .defaultSuccessUrl("/home")
+//                .failureUrl("/home.html?error=true")
+                .permitAll()
                 .and()
                 .logout().logoutUrl("/home/logoff").logoutSuccessUrl("/home")
                 .invalidateHttpSession(true)
@@ -42,7 +51,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .rememberMe().userDetailsService(this.userDetailsService())
                 .rememberMeCookieName("remember-me")
                 .tokenValiditySeconds(48 * 60 * 60)
-;
+        ;
     }
 
     @Bean

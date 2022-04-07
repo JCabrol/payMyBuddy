@@ -4,10 +4,7 @@ import com.openclassrooms.payMyBuddy.exceptions.NotFoundObjectException;
 import com.openclassrooms.payMyBuddy.exceptions.NotValidException;
 import com.openclassrooms.payMyBuddy.exceptions.ObjectAlreadyExistingException;
 import com.openclassrooms.payMyBuddy.exceptions.ObjectNotExistingAnymoreException;
-import com.openclassrooms.payMyBuddy.model.DTO.BankAccountDTO;
-import com.openclassrooms.payMyBuddy.model.DTO.ListTransactionPagesDTO;
-import com.openclassrooms.payMyBuddy.model.DTO.PersonDTO;
-import com.openclassrooms.payMyBuddy.model.DTO.TransactionDTO;
+import com.openclassrooms.payMyBuddy.model.DTO.*;
 import com.openclassrooms.payMyBuddy.model.Person;
 
 import java.util.List;
@@ -32,9 +29,9 @@ public interface PersonService {
 
     String deletePerson(PersonDTO personDTO);
 
-    String addPersonInGroup(PersonDTO groupOwnerDTO,PersonDTO newPersonInGroupDTO) throws ObjectAlreadyExistingException,ObjectNotExistingAnymoreException;
+    String addPersonInGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO newPersonInGroupDTO) throws ObjectAlreadyExistingException,ObjectNotExistingAnymoreException;
 
-    String removePersonFromGroup(PersonDTO groupOwnerDTO, PersonDTO personRemovedFromGroup) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException;
+    String removePersonFromGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO personRemovedFromGroup) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException;
 
     String addBankAccount(PersonDTO personDTO, BankAccountDTO bankAccountDTO);
 
@@ -47,4 +44,6 @@ public interface PersonService {
     List<TransactionDTO> getPersonTransactionsReceived (PersonDTO personDTO);
 
     ListTransactionPagesDTO displayTransactionsByPage(PersonDTO personDTO, int pageNumber, int numberOfTransactionByPage, String transactionType);
+
+    boolean emailAlreadyExists(String email);
 }

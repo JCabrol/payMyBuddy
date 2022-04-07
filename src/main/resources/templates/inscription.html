@@ -49,7 +49,6 @@
                 </div>
 
 
-
             </div>
             <div class="row">
                 <div class="col-md-6">
@@ -60,16 +59,43 @@
             </div>
             <div class="row mt-3 mb-6">
                 <div class="col-md-6">
-                    <label for="inputPassword4" class="form-label">Password</label>
-                    <input th:field="*{password}" type="password" class="form-control" id="inputPassword4"
-                           placeholder="Choose a password">
+                    <label for="inputPasswordInscription" class="form-label">Password
+                        <a href="#" class="d-inline-block text-primary" data-bs-toggle="popover" data-offset="35,0"
+                           title="To be valid, your password should:" data-trigger="hover"
+                           data-html="true" data-content="<ul>
+                    <li>Contain at least 8 characters</li>
+                    <li>Contain at least an uppercase letter and a lowercase letter</li>
+                    <li>Contain at least a number and a special character</li>
+                    <li>Not contain any white space</li>
+                </ul>">
+                            <i class="bi bi-info-circle-fill"></i>
+                        </a>
+                    </label>
+                    <div class="input-group mb-2 border border-secondary rounded-3">
+                        <input type="password" th:field="*{password}" class="form-control border-0" id="inputPasswordInscription"
+                               placeholder="Choose a password">
+                        <div class="input-group-prepend m-0 p-0 ">
+                            <div class="input-group-text bg-white border-0 mr-1 pr-1">
+                                <i class="far fa-eye" id="togglePasswordInscription"></i>
+                            </div>
+                        </div>
+                    </div>
                     <span class="text-danger" th:errors="*{password}"> </span>
                 </div>
                 <div class="col-md-6">
-                    <label for="inputConfirmPassword4" class="form-label">Password confirmation</label>
-                    <input th:value="${confirmPassword}" name="confirmPassword" type="password" class="form-control"
-                           id="inputConfirmPassword4" placeholder="Confirm your password">
+                    <label for="inputConfirmationPasswordInscription" class="form-label">Password confirmation</label>
+                    <div class="input-group mb-2 border border-secondary rounded-3">
+                        <input type="password" th:field="*{confirmationPassword}" class="form-control border-0"
+                               id="inputConfirmationPasswordInscription" placeholder="Confirm your password">
+                        <div class="input-group-prepend m-0 p-0 ">
+                            <div class="input-group-text bg-white border-0 mr-1 pr-1">
+                                <i class="far fa-eye" id="toggleConfirmationPasswordInscription"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="text-danger" th:errors="*{confirmationPassword}"> </span>
                 </div>
+                <span class="text-danger" th:errors="*{global}"> </span>
             </div>
             <div class="row">
                 <button class="btn btn-primary d-block text-light border border-light col-md-2"
@@ -88,6 +114,37 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <script src="https://kit.fontawesome.com/f923d597fd.js" crossorigin="anonymous"></script>
 
+<!---------------------------------------------Script for popover------------------------------------------------------>
+<script>
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+  return new bootstrap.Popover(popoverTriggerEl)})
 
+
+</script>
+<!------------------------------Scripts for showing/hiding password and confirmation----------------------------------->
+<script>
+const togglePasswordInscription = document.querySelector('#togglePasswordInscription');
+const passwordInscription = document.querySelector('#inputPasswordInscription');
+togglePasswordInscription.addEventListener('click', function (e) {
+// toggle the type attribute
+const type = passwordInscription.getAttribute('type') === 'password' ? 'text' : 'password';
+passwordInscription.setAttribute('type', type);
+// toggle the eye slash icon
+this.classList.toggle('fa-eye-slash');});
+
+</script>
+
+<script>
+const toggleConfirmationPasswordInscription = document.querySelector('#toggleConfirmationPasswordInscription');
+const confirmationPasswordInscription = document.querySelector('#inputConfirmationPasswordInscription');
+toggleConfirmationPasswordInscription.addEventListener('click', function (e) {
+// toggle the type attribute
+const type = confirmationPasswordInscription.getAttribute('type') === 'password' ? 'text' : 'password';
+confirmationPasswordInscription.setAttribute('type', type);
+// toggle the eye slash icon
+this.classList.toggle('fa-eye-slash');});
+
+</script>
 </body>
 </html>

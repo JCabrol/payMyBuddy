@@ -19,4 +19,6 @@ public interface BankAccountService {
     BankAccountDTO transformBankAccountToBankAccountDTO(BankAccount bankAccount);
 
     String updateBankAccountUsualName(BankAccountDTO bankAccountDTO);
+
+    boolean ibanAlreadyExists(String iban);
 }

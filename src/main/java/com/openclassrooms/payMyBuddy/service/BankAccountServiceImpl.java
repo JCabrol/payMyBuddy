@@ -101,4 +101,9 @@ public class BankAccountServiceImpl implements BankAccountService {
         log.debug("The function updateBankAccountUsualName in BankAccountService is ending without exception.");
        return message;
     }
+
+    @Override
+    public boolean ibanAlreadyExists(String iban){
+      return bankAccountRepository.existsById(iban);
+    }
 }

@@ -85,3 +85,13 @@ $form-check-input-bg:none;
 $form-check-input-checked-bg-image: url("/images/check.png");
 
 $modal-md:                          400px;
+
+/*--------------------------------------------------popover settings-------------------------------------------------*/
+
+$popover-bg:                        $light;
+$popover-max-width:                 600px;
+$popover-border-color:              $secondary;
+
+$popover-header-bg:                 $primary;
+$popover-header-color:              $light;
+

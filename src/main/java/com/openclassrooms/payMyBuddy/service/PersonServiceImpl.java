@@ -3,10 +3,7 @@ package com.openclassrooms.payMyBuddy.service;
 import com.openclassrooms.payMyBuddy.configuration.SpringSecurityConfiguration;
 import com.openclassrooms.payMyBuddy.exceptions.*;
 import com.openclassrooms.payMyBuddy.model.BankAccount;
-import com.openclassrooms.payMyBuddy.model.DTO.BankAccountDTO;
-import com.openclassrooms.payMyBuddy.model.DTO.ListTransactionPagesDTO;
-import com.openclassrooms.payMyBuddy.model.DTO.PersonDTO;
-import com.openclassrooms.payMyBuddy.model.DTO.TransactionDTO;
+import com.openclassrooms.payMyBuddy.model.DTO.*;
 import com.openclassrooms.payMyBuddy.model.Person;
 import com.openclassrooms.payMyBuddy.model.Role;
 import com.openclassrooms.payMyBuddy.model.Transaction;
@@ -149,8 +146,8 @@ public class PersonServiceImpl implements PersonService {
         log.debug("The function changePassword in PersonService is beginning.");
         personDTO.setPassword(springSecurityConfiguration.passwordEncoder().encode(password));
         updatePerson(personDTO);
-        String message = "The " + personDTO.getFirstName() + " " + personDTO.getLastName() + "'s password have been modified.\n";
-        log.info(message);
+        String message = "Your password have been successfully modified.\n";
+        log.info("The " + personDTO.getFirstName() + " " + personDTO.getLastName() + "'s password have been modified.\n");
         log.debug("The function changePassword in PersonService is ending without exception.");
         return message;
     }
@@ -161,40 +158,29 @@ public class PersonServiceImpl implements PersonService {
         Person person;
         try {
             person = getPerson(personDTO.getEmail());
-        } catch (NotFoundObjectException exception) {
+        } catch (NotFoundObjectException | ObjectNotExistingAnymoreException exception) {
             throw new NothingToDoException("The person " + personDTO.getFirstName() + " " + personDTO.getLastName() + " was not found, so it couldn't have been deleted");
         }
-        if (person.isActive()) {
-            person.getRelations().clear();
-            person.getBankAccountList().clear();
-            person.setActive(false);
-            String message = "Your account on PayMyBuddy application have been deleted.\n";
-            log.info("The person " + personDTO.getEmail() + " have been deleted.");
-            log.debug("The function deletePerson in PersonService is ending without exception.");
-            return message;
-        } else {
-            throw new NothingToDoException("The person " + personDTO.getFirstName() + " " + personDTO.getLastName() + " doesn't exist anymore in the application, so it couldn't have been deleted");
-        }
+        person.getRelations().clear();
+        person.getBankAccountList().clear();
+        person.setActive(false);
+        personRepository.save(person);
+        String message = "Your account on PayMyBuddy application have been deleted.\n";
+        log.info("The person " + personDTO.getEmail() + " have been deleted.");
+        log.debug("The function deletePerson in PersonService is ending without exception.");
+        return message;
     }
 
     @Override
-    public String addPersonInGroup(PersonDTO groupOwnerDTO, PersonDTO newPersonInGroupDTO) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException {
+    public String addPersonInGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO newPersonInGroupDTO) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException {
         log.debug("The function addPersonInGroup in PersonService is beginning.");
         Person groupOwner = getPerson(groupOwnerDTO.getEmail());
         Person newPersonInGroup = getPerson(newPersonInGroupDTO.getEmail());
-        if (groupOwner.isActive()) {
-            if (newPersonInGroup.isActive()) {
-                if (groupOwner.getRelations().contains(newPersonInGroup)) {
-                    throw new ObjectAlreadyExistingException("The person " + newPersonInGroup.getFirstName() + " " + newPersonInGroup.getLastName() + " is already present in your relations.\n");
-                } else {
-                    groupOwner.addPersonInGroup(newPersonInGroup);
-                    personRepository.save(groupOwner);
-                }
-            } else {
-                throw new ObjectNotExistingAnymoreException("The person " + newPersonInGroup.getFirstName() + " " + newPersonInGroup.getLastName() + " doesn't exist anymore in the application.\n");
-            }
+        if (groupOwner.getRelations().contains(newPersonInGroup)) {
+            throw new ObjectAlreadyExistingException("The person " + newPersonInGroup.getFirstName() + " " + newPersonInGroup.getLastName() + " is already present in your relations.\n");
         } else {
-            throw new ObjectNotExistingAnymoreException("The person " + groupOwner.getFirstName() + " " + groupOwner.getLastName() + " doesn't exist anymore in the application.\n");
+            groupOwner.addPersonInGroup(newPersonInGroup);
+            personRepository.save(groupOwner);
         }
         String result = "The person " + newPersonInGroup.getFirstName() + " " + newPersonInGroup.getLastName() + " has been added in your relations.\n";
         log.info("The person " + newPersonInGroup.getEmail() + " has been added in " + groupOwner.getEmail() + "'s relations.");
@@ -203,23 +189,15 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public String removePersonFromGroup(PersonDTO groupOwnerDTO, PersonDTO personRemovedFromGroup) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException {
+    public String removePersonFromGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO personRemovedFromGroup) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException {
         log.debug("The function addPersonInGroup in PersonService is beginning.");
         Person groupOwner = getPerson(groupOwnerDTO.getEmail());
         Person personRemoved = getPerson(personRemovedFromGroup.getEmail());
-        if (groupOwner.isActive()) {
-            if (personRemoved.isActive()) {
-                if (!groupOwner.getRelations().contains(personRemoved)) {
-                    throw new NothingToDoException("The person " + personRemoved.getFirstName() + " " + personRemoved.getLastName() + " wasn't present in your relations.\n");
-                } else {
-                    groupOwner.removePersonInGroup(personRemoved);
-                    personRepository.save(groupOwner);
-                }
-            } else {
-                throw new ObjectNotExistingAnymoreException("The person " + personRemoved.getFirstName() + " " + personRemoved.getLastName() + " doesn't exist anymore in the application.\n");
-            }
+        if (!groupOwner.getRelations().contains(personRemoved)) {
+            throw new NothingToDoException("The person " + personRemoved.getFirstName() + " " + personRemoved.getLastName() + " wasn't present in your relations.\n");
         } else {
-            throw new ObjectNotExistingAnymoreException("The person " + groupOwner.getFirstName() + " " + groupOwner.getLastName() + " doesn't exist anymore in the application.\n");
+            groupOwner.removePersonInGroup(personRemoved);
+            personRepository.save(groupOwner);
         }
         String result = "The person " + personRemoved.getFirstName() + " " + personRemoved.getLastName() + " has been removed from your relations.\n";
         log.info("The person " + personRemoved.getEmail() + " has been removed from " + groupOwner.getEmail() + "'s relations.");
@@ -313,7 +291,7 @@ public class PersonServiceImpl implements PersonService {
         if (person.getBankAccountList().equals(Collections.emptyList())) {
             personDTO.setBankAccountDTOList(new ArrayList<>());
         } else {
-            personDTO.setBankAccountDTOList(getPersonActiveBankAccounts(personDTO)
+            personDTO.setBankAccountDTOList(getPersonBankAccounts(personDTO)
                     .stream()
                     .map(bankAccount -> bankAccountService.transformBankAccountToBankAccountDTO(bankAccount))
                     .collect(Collectors.toList()));
@@ -323,11 +301,11 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
-    public List<BankAccount> getPersonActiveBankAccounts(PersonDTO personDTO) {
-        log.debug("The function getPersonActiveBankAccounts in PersonService is beginning.");
+    public List<BankAccount> getPersonBankAccounts(PersonDTO personDTO) {
+        log.debug("The function getPersonBankAccounts in PersonService is beginning.");
         Person person = getPerson(personDTO.getEmail());
         List<BankAccount> bankAccountList = person.getBankAccountList().stream().filter(BankAccount::isActiveBankAccount).collect(Collectors.toList());
-        log.debug("The function getPersonActiveBankAccounts in PersonService is ending without any exception.");
+        log.debug("The function getPersonBankAccounts in PersonService is ending without any exception.");
         return bankAccountList;
     }
 
@@ -350,6 +328,11 @@ public class PersonServiceImpl implements PersonService {
         List<TransactionDTO> transactionsReceived = person.getTransactionReceivedList().stream().map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction)).collect(Collectors.toList());
         log.debug("The function getTransactionsReceived in PersonService is ending without any exception.");
         return transactionsReceived;
+    }
+
+    @Override
+    public boolean emailAlreadyExists(String email){
+        return personRepository.existsById(email);
     }
 
     @Override

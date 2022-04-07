@@ -26,20 +26,27 @@
     <h4>Welcome to your profile section <span th:if="${personDTO != null}" th:text="${personDTO.firstName}"></span>&#33;
     </h4>
 
-<!-------------------------------------------  Change information form  ----------------------------------------------->
+    <!-------------------------------------------  Change information form  ----------------------------------------------->
 
     <div class="row justify-content-center rounded-3 bg-light py-3 m-0">
         <h5 class="text-success text-start">Change your personal settings</h5>
         <form class="row" method="post" th:action="@{/home/profile}" th:object="${personDTO}">
+            <span class="text-danger" th:errors="*{global}"> </span>
+            <div class="alert text-success my-2 p-0" role="alert" th:if="${messageProfile != null}">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${messageProfile}"></span>
+            </div>
             <div class="col-md-6">
                 <label for="inputFirstName" class="form-label fst-italic">First name :</label>
                 <input type="text" th:field="*{firstName}" class="form-control" id="inputFirstName"
                        placeholder="First name" value="${personDTO.firstName}">
+                <span class="text-danger" th:errors="*{firstName}"> </span>
             </div>
             <div class="col-md-6 mt-3 mt-md-0">
                 <label for="inputLastName" class="form-label fst-italic">Last name :</label>
                 <input type="text" th:field="*{lastName}" class="form-control" id="inputLastName"
                        placeholder="Last name" value="${personDTO.lastName}">
+                <span class="text-danger" th:errors="*{lastName}"> </span>
             </div>
             <div class="mt-11 col-md-6 col-xl-3">
                 <button type="submit" class="btn btn-primary d-block col-12">Modify my information</button>
@@ -47,20 +54,55 @@
         </form>
     </div>
 
-<!---------------------------------------------  Change password form  ------------------------------------------------>
+    <!---------------------------------------------  Change password form  ------------------------------------------------>
 
     <div class="row justify-content-center rounded-3 bg-light py-3 mx-0 my-3">
-        <h5 class="text-success text-start">Change your password</h5>
-        <form class="row" method="post" th:action="@{/home/profile/password}" th:object="${changePassword}">
+
+        <h5 class="text-success text-start">Change your password
+            <a href="#" class="d-inline-block text-primary" data-bs-toggle="popover" data-offset="35,0"
+               title="To be valid, your new password should:" data-trigger="hover"
+               data-html="true" data-content="<ul>
+                    <li>Contain at least 8 characters</li>
+                    <li>Contain at least an uppercase letter and a lowercase letter</li>
+                    <li>Contain at least a number and a special character</li>
+                    <li>Not contain any white space</li>
+                </ul>">
+                <i class="bi bi-info-circle-fill"></i>
+            </a>
+        </h5>
+
+
+        <form class="row" method="post" th:action="@{/home/profile/password}" th:object="${changePasswordDTO}">
+            <div class="alert text-success my-2 p-0" role="alert" th:if="${messagePassword != null}">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${messagePassword}"></span>
+            </div>
+            <span class="text-danger" th:errors="*{global}"> </span>
             <div class="col-md-6">
-                <label for="inputFirstName" class="form-label fst-italic">Choose a new password :</label>
-                <input type="password" th:field="*{password}" class="form-control" id="inputPassword"
-                       placeholder="New password">
+                <label for="inputPassword" class="form-label fst-italic">Choose a new password :</label>
+                <div class="input-group mb-2 border border-secondary rounded-3">
+                    <input type="password" th:field="*{password}" class="form-control border-0" id="inputPassword"
+                           placeholder="New password">
+                    <div class="input-group-prepend m-0 p-0 ">
+                        <div class="input-group-text bg-white border-0 mr-1 pr-1">
+                            <i class="far fa-eye" id="togglePassword"></i>
+                        </div>
+                    </div>
+                </div>
+                <span class="text-danger" th:errors="*{password}"> </span>
             </div>
             <div class="col-md-6 mt-3 mt-md-0">
-                <label for="inputLastName" class="form-label fst-italic">Confirm your password :</label>
-                <input type="password" th:field="*{confirmationPassword}" class="form-control"
-                       id="inputConfirmationPassword" placeholder="Confirmation">
+                <label for="inputConfirmationPassword" class="form-label fst-italic">Confirm your password :</label>
+                <div class="input-group mb-2 border border-secondary rounded-3">
+                    <input type="password" th:field="*{confirmationPassword}" class="form-control border-0"
+                           id="inputConfirmationPassword" placeholder="Confirmation">
+                    <div class="input-group-prepend m-0 p-0 ">
+                        <div class="input-group-text bg-white border-0 mr-1 pr-1">
+                            <i class="far fa-eye" id="toggleConfirmationPassword"></i>
+                        </div>
+                    </div>
+                </div>
+                <span class="text-danger" th:errors="*{confirmationPassword}"> </span>
             </div>
             <div class="mt-11 col-md-6 col-xl-3">
                 <button type="submit" class="btn btn-primary d-block col-12">Change my password</button>
@@ -68,14 +110,14 @@
         </form>
     </div>
 
-<!-------------------------------------------  Manage money form  ----------------------------------------------->
+    <!-------------------------------------------  Manage money form  ----------------------------------------------->
 
     <div class="row justify-content-center rounded-3 bg-light py-3 mx-0 my-3">
         <h5 class="text-success text-start">Manage your money</h5>
         <div class="row justify-content-between my-3">
             <div class="col-md-6">
                 <div class="btn btn-success text-light d-block bg-success  col-12"> Your available balance:
-                <span th:text="${personDTO.availableBalance + '&#x20AC;'}">0 &#x20AC;</span>
+                    <span th:text="${personDTO.availableBalance + '&#x20AC;'}">0 &#x20AC;</span>
                 </div>
             </div>
             <div class="col-md-3 mt-3 mt-md-0">
@@ -86,6 +128,14 @@
         <form class="row justify-content-start" method="post" th:action="@{/home/profile/transferBank}"
               th:object="${transactionDTO}">
             <span class="text-danger" th:errors="*{global}"> </span>
+            <div class="alert text-success my-2 p-0" role="alert" th:if="${messageAccount != null}">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${messageAccount}"></span>
+            </div>
+            <div class="alert text-success my-2 p-0" role="alert" th:if="${messageTransaction != null}">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${messageTransaction}"></span>
+            </div>
             <div class="col-md-6">
                 <label for="selectBankAccount" class="form-label fst-italic">Select a bank account:</label>
                 <select th:field="*{receiver}" class="form-select border-dark" id="selectBankAccount">
@@ -115,7 +165,7 @@
         </form>
     </div>
 
-<!--------------------------------------------------------------------------------------------------------------------->
+    <!--------------------------------------------------------------------------------------------------------------------->
 
 </div>
 
@@ -123,6 +173,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <script src="https://kit.fontawesome.com/f923d597fd.js" crossorigin="anonymous"></script>
+
+<!---------------------------------------------Script for popover------------------------------------------------------>
+<script>
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+  return new bootstrap.Popover(popoverTriggerEl)})
+
+</script>
+<!------------------------------Scripts for showing/hiding password and confirmation----------------------------------->
+<script>
+const togglePassword = document.querySelector('#togglePassword');
+const password = document.querySelector('#inputPassword');
+togglePassword.addEventListener('click', function (e) {
+// toggle the type attribute
+const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+password.setAttribute('type', type);
+// toggle the eye slash icon
+this.classList.toggle('fa-eye-slash');});
+</script>
+
+<script>
+const toggleConfirmationPassword = document.querySelector('#toggleConfirmationPassword');
+const confirmationPassword = document.querySelector('#inputConfirmationPassword');
+toggleConfirmationPassword.addEventListener('click', function (e) {
+// toggle the type attribute
+const type = confirmationPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+confirmationPassword.setAttribute('type', type);
+// toggle the eye slash icon
+this.classList.toggle('fa-eye-slash');});
+</script>
+
 
 </body>
 </html>

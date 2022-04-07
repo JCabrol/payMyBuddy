@@ -45,7 +45,13 @@
         </div>
         <form method="post" th:action="@{/home/transfer}" th:object="${transactionDTO}">
             <div class="row">
-                <span class="text-danger" th:errors="*{global}"> </span>
+                <div class="offset-md-1 col-md-10">
+                    <span class="text-danger" th:errors="*{global}"> </span>
+                    <div class="alert text-success my-2 p-0" role="alert" th:if="${message != null}">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span th:text="${message}"></span>
+                    </div>
+                </div>
                 <div class="col-md-4 order-1 offset-md-1">
                     <select th:field="*{receiver}" class="form-select border-dark rounded-0"
                             aria-label="Select connection">
@@ -53,14 +59,13 @@
                         <option th:each="personDTO2 : ${personDTO.group}" th:value="${personDTO2.email}"
                                 th:text="${personDTO2.firstName + ' ' + personDTO2.lastName}"></option>
                     </select>
+
                     <span class="text-danger" th:errors="*{receiver}"> </span>
                 </div>
                 <div class="col-md-3 order-2 mt-3 mt-md-0">
                     <div class="input-group mb-3 p-0 m-0">
                         <input type="number" th:placeholder="0 + ' &#x20AC;'" step="0.01" th:field="*{amount}"
                                class="form-control inputAmount border-dark rounded-0 text-end" min=0>
-
-
                         <span class="input-group-text rounded-0 my-0 p-0 bg-white border border-dark">
                             <div class="btn-group-vertical " role="group">
                                 <button type="button"
@@ -78,6 +83,7 @@
                         <span class="text-danger" th:errors="*{amount}"> </span>
                     </div>
                 </div>
+
                 <div class="col-md-3 order-4 order-md-3 mt-3 mb-3 mb-md-0 mt-md-0">
                     <button type="submit" class="btn btn-success text-light d-block col-12">Pay</button>
                 </div>
@@ -89,6 +95,7 @@
             </div>
         </form>
     </div>
+
 
     <!------------------------------------------  Transactions made section  ---------------------------------------------->
 
@@ -209,9 +216,7 @@
         </div>
     </div>
 
-</div>
-
-<!--------------------------------------------------------------------------------------------------------------------->
+    <!--------------------------------------------------------------------------------------------------------------------->
 
 </div>
 

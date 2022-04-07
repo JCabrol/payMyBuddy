@@ -31,14 +31,25 @@
         <h5 class="text-success text-start">Add a new bank account</h5>
         <form class="row" method="post" th:action="@{/home/profile/submitNewBankAccount}"
               th:object="${bankAccountSelected}">
+            <span class="text-danger" th:errors="*{global}"> </span>
             <div class="col-md-6">
-                <label for="inputIban" class="form-label fst-italic">Enter the IBAN code:</label>
+                <label for="inputIban" class="form-label fst-italic">Enter the IBAN code:
+                    <a href="#" class="d-inline-block" data-bs-toggle="popover"
+                       title="IBAN code:" data-trigger="hover"
+                       data-html="true" data-content="<div><img src='/images/iban_2.jpg' class='img-fluid' alt='iban code'></div>">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </a> </label>
                 <input th:field="*{iban}" placeholder="IBAN" type="text" class="form-control" id="inputIban" >
                 <span class="text-danger" th:errors="*{iban}"> </span>
             </div>
 
             <div class="col-md-6 mt-3 mt-md-0">
-                <label for="inputBic" class="form-label fst-italic">Enter the BIC code:</label>
+                <label for="inputBic" class="form-label fst-italic">Enter the BIC code:
+                <a href="#" class="d-inline-block text-primary" data-bs-toggle="popover"
+                   title="BIC code:" data-trigger="hover"
+                   data-html="true" data-content="<div><img src='/images/bic_2.jpg' class='img-fluid' alt='bic code'></div>">
+                    <i class="bi bi-info-circle-fill"></i>
+                </a> </label>
                 <input th:field="*{bic}" type="text" placeholder="BIC" class="form-control" id="inputBic">
                 <span class="text-danger" th:errors="*{bic}"> </span>
             </div>
@@ -59,14 +70,15 @@
     <div class="row justify-content-center rounded-3 bg-light py-3 mx-0 my-3">
         <h5 class="text-success text-start">Remove a bank account</h5>
         <form class="row" method="post" th:action="@{/home/profile/removeBankAccount}"
-              th:object="${bankAccountSelected}">
+              th:object="${bankAccountToRemove}">
             <div class="col-md-6">
                 <label class="form-label fst-italic">Select the bank account you want to remove:</label>
                 <select th:field="*{iban}" class="form-select" aria-label="Default select example">
                     <option selected value="">Remove a bank account</option>
-                    <option th:each="bankAccountDTO : ${person.bankAccountDTOList}" th:value="${bankAccountDTO.iban}"
+                    <option th:each="bankAccountDTO : ${personDTO.bankAccountDTOList}" th:value="${bankAccountDTO.iban}"
                             th:text="${bankAccountDTO.usualName + ' -N°' + bankAccountDTO.iban}"></option>
                 </select>
+                <span class="text-danger" th:errors="*{iban}"> </span>
             </div>
             <div class="mt-11 col-md-6 col-xl-3">
                 <button type="submit" class="btn btn-primary d-block col-12">Remove a bank account</button>
@@ -82,6 +94,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <script src="https://kit.fontawesome.com/f923d597fd.js" crossorigin="anonymous"></script>
+
+<!---------------------------------------------Script for popover------------------------------------------------------>
+<script>
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+  return new bootstrap.Popover(popoverTriggerEl)})
+
+</script>
 
 </body>
 </html>

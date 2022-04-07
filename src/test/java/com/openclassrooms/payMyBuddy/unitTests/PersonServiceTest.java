@@ -1,11 +1,10 @@
 package com.openclassrooms.payMyBuddy.unitTests;
 
 import com.openclassrooms.payMyBuddy.configuration.SpringSecurityConfiguration;
-import com.openclassrooms.payMyBuddy.exceptions.EmptyObjectException;
-import com.openclassrooms.payMyBuddy.exceptions.NotFoundObjectException;
-import com.openclassrooms.payMyBuddy.exceptions.ObjectNotExistingAnymoreException;
+import com.openclassrooms.payMyBuddy.exceptions.*;
 import com.openclassrooms.payMyBuddy.model.BankAccount;
 import com.openclassrooms.payMyBuddy.model.DTO.BankAccountDTO;
+import com.openclassrooms.payMyBuddy.model.DTO.PersonConnectionDTO;
 import com.openclassrooms.payMyBuddy.model.DTO.PersonDTO;
 import com.openclassrooms.payMyBuddy.model.Person;
 import com.openclassrooms.payMyBuddy.model.Role;
@@ -18,8 +17,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,13 +31,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.openclassrooms.payMyBuddy.model.Role.USER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 
@@ -124,6 +125,7 @@ public class PersonServiceTest {
     @Tag("PersonServiceTests")
     @DisplayName("Get all active personsDTO tests:")
     class GetAllActivePersonsDTOTest {
+
         @DisplayName("GIVEN active persons returned by personRepository " +
                 "WHEN the function getAllActivePersonsDTO() is called " +
                 "THEN it returns the correct list of PersonDTO.")
@@ -186,6 +188,7 @@ public class PersonServiceTest {
     @Tag("PersonServiceTests")
     @DisplayName("Get person tests:")
     class GetPersonTest {
+
         @DisplayName("GIVEN an existing person " +
                 "WHEN the function getPerson() is called " +
                 "THEN it returns the correct person.")
@@ -248,6 +251,7 @@ public class PersonServiceTest {
     @Tag("PersonServiceTests")
     @DisplayName("Get personDTO tests:")
     class GetPersonDTOTest {
+
         @DisplayName("GIVEN an existing person " +
                 "WHEN the function getPersonDTO() is called " +
                 "THEN it returns a personDTO with all correct information.")
@@ -339,7 +343,6 @@ public class PersonServiceTest {
                 "THEN it returns the correct email.")
         @Test
         public void getCurrentUserMailConnected() {
-
             //GIVEN
             //a connected user
             Authentication authentication = Mockito.mock(Authentication.class);
@@ -362,7 +365,6 @@ public class PersonServiceTest {
                 "THEN a NotFoundObjectException should be thrown with the expected error message.")
         @Test
         public void getCurrentUserMailNotConnected() {
-
             //GIVEN
             //a not connected user
             Authentication authentication = Mockito.mock(Authentication.class);
@@ -389,7 +391,6 @@ public class PersonServiceTest {
                 "THEN a person with correct information is created.")
         @Test
         public void createPersonTest() {
-
             //GIVEN
             //a personDTO with all information
             String email = "person1@mail.fr";
@@ -423,85 +424,615 @@ public class PersonServiceTest {
         }
     }
 
-//    @Nested
-//    @Tag("PersonServiceTests")
-//    @DisplayName("Change password tests:")
-//    class ChangePasswordTests {
-//
-//        @DisplayName("GIVEN an existing personDTO and a new password " +
-//                "WHEN the function changePassword() is called " +
-//                "THEN a success message is returned.")
-//        @Test
-//        public void changePasswordTest() {
-//            //GIVEN
-//            //an existing personDTO and a new password
-//            String email = "person1@mail.fr";
-//            String password = "password1";
-//            String firstName = "firstName1";
-//            String lastname = "lastName1";
-//            String newPassword = "newPassword1";
-//            SpringSecurityConfiguration springSecurityConfiguration = Mockito.mock(SpringSecurityConfiguration.class);
-//            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//            String newEncodedPassword = passwordEncoder.encode(newPassword);
-//            Person person = new Person(email, newEncodedPassword, firstName, lastname);
-//            person.setRole(Role.USER);
-//            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
-//
-//
-//            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
-//            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person);
-//            Mockito.when(springSecurityConfiguration.passwordEncoder()).thenReturn(passwordEncoder);
-//
-//            //WHEN
-//            //the function changePassword() is called
-//            String result = personService.changePassword(personDTO,newPassword);
-//
-//            //THEN
-//            //a success message is returned.
-//            assertThat(result).isEqualTo("The firstName1 lastName1's password have been modified.\n");
-//            verify(personRepository).save(arg.capture());
-//            assertEquals(firstName, arg.getValue().getFirstName());
-//            assertEquals(lastname, arg.getValue().getLastName());
-//            assertEquals(email, arg.getValue().getEmail());
-//            assertEquals(newEncodedPassword.substring(0, 7), arg.getValue().getPassword().substring(0, 7));
-//            assertEquals(person.getRole(), arg.getValue().getRole());
-//        }
-//        @DisplayName("GIVEN an existing personDTO with only some information and a new password " +
-//                "WHEN the function changePassword() is called " +
-//                "THEN a success message is returned.")
-//        @Test
-//        public void changePasswordNotAllInformationTest() {
-//            //GIVEN
-//            //an existing personDTO and a new password
-//            String email = "person1@mail.fr";
-//            String password = "password1";
-//            String newPassword = "newPassword1";
-//            SpringSecurityConfiguration springSecurityConfiguration = Mockito.mock(SpringSecurityConfiguration.class);
-//            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//            String newEncodedPassword = passwordEncoder.encode(newPassword);
-//            Person person = new Person(email, newEncodedPassword, "", "");
-//            person.setRole(Role.USER);
-//            PersonDTO personDTO = new PersonDTO(email, password, "", "");
-//
-//
-//            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
-//            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person);
-//            Mockito.when(springSecurityConfiguration.passwordEncoder()).thenReturn(passwordEncoder);
-//
-//            //WHEN
-//            //the function changePassword() is called
-//            String result = personService.changePassword(personDTO,newPassword);
-//
-//            //THEN
-//            //a success message is returned.
-//            assertThat(result).isEqualTo("The firstName1 lastName1's password have been modified.\n");
-//            verify(personRepository).save(arg.capture());
-//            assertEquals(email, arg.getValue().getEmail());
-//            assertEquals(newEncodedPassword.substring(0, 7), arg.getValue().getPassword().substring(0, 7));
-//            assertEquals(person.getRole(), arg.getValue().getRole());
-//        }
-//
-//    }
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("Change password tests:")
+    class ChangePasswordTests {
+
+        @DisplayName("GIVEN an existing personDTO and a new password " +
+                "WHEN the function changePassword() is called " +
+                "THEN a success message is returned.")
+        @Test
+        public void changePasswordTest() {
+            //GIVEN
+            //an existing personDTO and a new password
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String newPassword = "newPassword1";
+            SpringSecurityConfiguration springSecurityConfiguration = Mockito.mock(SpringSecurityConfiguration.class);
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String newEncodedPassword = passwordEncoder.encode(newPassword);
+            Person person = new Person(email, newEncodedPassword, firstName, lastname);
+            person.setRole(Role.USER);
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(springSecurityConfiguration.passwordEncoder()).thenReturn(passwordEncoder);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person);
+            //WHEN
+            //the function changePassword() is called
+            String result = personService.changePassword(personDTO, newPassword);
+            //THEN
+            //a success message is returned.
+            assertThat(result).isEqualTo("Your password have been successfully modified.\n");
+            verify(personRepository).save(arg.capture());
+            assertEquals(firstName, arg.getValue().getFirstName());
+            assertEquals(lastname, arg.getValue().getLastName());
+            assertEquals(email, arg.getValue().getEmail());
+            assertEquals(newEncodedPassword.substring(0, 7), arg.getValue().getPassword().substring(0, 7));
+            assertEquals(person.getRole(), arg.getValue().getRole());
+            verify(personRepository, Mockito.times(1)).findById(email);
+        }
+
+        @DisplayName("GIVEN a non-existing personDTO and a new password " +
+                "WHEN the function changePassword() is called " +
+                "THEN a NotFoundObjectException should be thrown with the expected error message.")
+        @Test
+        public void changePasswordNotExistingPersonDTOTest() {
+            //GIVEN
+            //a non-existing personDTO and a new password
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String newPassword = "newPassword1";
+            SpringSecurityConfiguration springSecurityConfiguration = Mockito.mock(SpringSecurityConfiguration.class);
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            Mockito.when(springSecurityConfiguration.passwordEncoder()).thenReturn(passwordEncoder);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.empty());
+
+            //WHEN
+            //the function changePassword() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.changePassword(personDTO, newPassword));
+            assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
+        }
+    }
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("Delete person tests:")
+    class DeletePersonTests {
+
+        @DisplayName("GIVEN an existing personDTO " +
+                "WHEN the function deletePerson() is called " +
+                "THEN a success message is returned and the expected methods have been called with expected arguments.")
+        @Test
+        public void deletePersonTest() {
+            //GIVEN
+            //an existing personDTO
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person("person2@mail.fr", "password2", "firstName2", "lastName2");
+            BankAccount bankAccount = new BankAccount("iban1", "bic1");
+            List<Person> relations = new ArrayList<>();
+            List<BankAccount> bankAccountList = new ArrayList<>();
+            relations.add(person2);
+            bankAccountList.add(bankAccount);
+            person1.setRelations(relations);
+            person1.setBankAccountList(bankAccountList);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            //WHEN
+            //the function deletePerson() is called
+            String result = personService.deletePerson(personDTO);
+            //THEN
+            //a success message is returned
+            assertThat(result).isEqualTo("Your account on PayMyBuddy application have been deleted.\n");
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).save(any(Person.class));
+            verify(personRepository).save(arg.capture());
+            assertEquals(firstName, arg.getValue().getFirstName());
+            assertEquals(lastname, arg.getValue().getLastName());
+            assertEquals(email, arg.getValue().getEmail());
+            assertEquals(Collections.emptyList(), arg.getValue().getRelations());
+            assertEquals(Collections.emptyList(), arg.getValue().getBankAccountList());
+            assertFalse(arg.getValue().isActive());
+        }
+
+        @DisplayName("GIVEN a non-existing personDTO " +
+                "WHEN the function deletePerson() is called " +
+                "THEN a NothingToDoException should be thrown with the expected error message.")
+        @Test
+        public void deletePersonNotExistingTest() {
+            //GIVEN
+            //a non-existing personDTO
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.empty());
+
+            //WHEN
+            //the function deletePerson() is called
+            //THEN
+            //a NothingToDoException is thrown with the expected error message
+            Exception exception = assertThrows(NothingToDoException.class, () -> personService.deletePerson(personDTO));
+            assertEquals("The person firstName1 lastName1 was not found, so it couldn't have been deleted", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a not active personDTO " +
+                "WHEN the function deletePerson() is called " +
+                "THEN a NothingToDoException should be thrown with the expected error message.")
+        @Test
+        public void deletePersonNotActiveTest() {
+            //GIVEN
+            //a non-existing personDTO
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            Person person1 = new Person(email, password, firstName, lastname);
+            person1.setActive(false);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            //WHEN
+            //the function deletePerson() is called
+            //THEN
+            //a NothingToDoException is thrown with the expected error message
+            Exception exception = assertThrows(NothingToDoException.class, () -> personService.deletePerson(personDTO));
+            assertEquals("The person " + firstName + " " + lastname + " was not found, so it couldn't have been deleted", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+    }
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("Add person in group tests:")
+    class AddPersonInGroupTests {
+
+        @DisplayName("GIVEN an existing group owner and an existing person not in group" +
+                "WHEN the function addPersonInGroup() is called " +
+                "THEN a success message is returned and the expected methods have been called with expected arguments.")
+        @Test
+        public void addPersonInGroupTest() {
+            //GIVEN
+            //an existing group owner and an existing person not in group
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonConnectionDTO personDTO2 = new PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            List<Person> relations = new ArrayList<>();
+            relations.add(person2);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.findById(email2)).thenReturn(Optional.of(person2));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            //WHEN
+            //the function addPersonInGroup() is called
+            String result = personService.addPersonInGroup(personDTO1, personDTO2);
+            //THEN
+            //a success message is returned
+            assertThat(result).isEqualTo("The person " + firstName2 + " " + lastname2 + " has been added in your relations.\n");
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findById(email2);
+            verify(personRepository, Mockito.times(1)).save(any(Person.class));
+            verify(personRepository).save(arg.capture());
+            assertEquals(firstName, arg.getValue().getFirstName());
+            assertEquals(lastname, arg.getValue().getLastName());
+            assertEquals(email, arg.getValue().getEmail());
+            assertEquals(relations, arg.getValue().getRelations());
+        }
+
+        @DisplayName("GIVEN an existing group owner and an existing person not in group but having group owner in his relations" +
+                "WHEN the function addPersonInGroup() is called " +
+                "THEN a success message is returned and the expected methods have been called with expected arguments.")
+        @Test
+        public void addPersonWhichHasGroupOwnerInHisRelationsInGroupTest() {
+            //GIVEN
+            //an existing group owner and an existing person not in group but having group owner in his group
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonConnectionDTO personDTO2 = new PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            List<Person> relations = new ArrayList<>();
+            List<Person> relations2 = new ArrayList<>();
+            relations.add(person2);
+            relations2.add(person1);
+            person2.setRelations(relations2);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.findById(email2)).thenReturn(Optional.of(person2));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            //WHEN
+            //the function addPersonInGroup() is called
+            String result = personService.addPersonInGroup(personDTO1, personDTO2);
+            //THEN
+            //a success message is returned
+            assertThat(result).isEqualTo("The person " + firstName2 + " " + lastname2 + " has been added in your relations.\n");
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findById(email2);
+            verify(personRepository, Mockito.times(1)).save(any(Person.class));
+            verify(personRepository).save(arg.capture());
+            assertEquals(firstName, arg.getValue().getFirstName());
+            assertEquals(lastname, arg.getValue().getLastName());
+            assertEquals(email, arg.getValue().getEmail());
+            assertEquals(relations, arg.getValue().getRelations());
+        }
+
+
+        @DisplayName("GIVEN an existing group owner and an existing person already in group" +
+                "WHEN the function addPersonInGroup() is called " +
+                "THEN a ObjectAlreadyExistingException is thrown with the expected error message.")
+        @Test
+        public void addPersonAlreadyInGroupTest() {
+            //GIVEN
+            //an existing group owner and an existing person already in group
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonConnectionDTO personDTO2 = new  PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            List<Person> relations = new ArrayList<>();
+            relations.add(person2);
+            person1.setRelations(relations);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.findById(email2)).thenReturn(Optional.of(person2));
+            //WHEN
+            //the function addPersonInGroup() is called
+            //THEN
+            //a ObjectAlreadyExistingException is thrown with the expected error message
+            Exception exception = assertThrows(ObjectAlreadyExistingException.class, () -> personService.addPersonInGroup(personDTO1, personDTO2));
+            assertEquals("The person " + firstName2 + " " + lastname2 + " is already present in your relations.\n", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findById(email2);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a non-existing group owner and an existing person not in group" +
+                "WHEN the function addPersonInGroup() is called " +
+                "THEN a NotFoundObjectException is thrown with the expected error message.")
+        @Test
+        public void addPersonInGroupNonExistingTest() {
+            //GIVEN
+            //a non-existing group owner and an existing person not in group
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            PersonConnectionDTO personDTO2 = new  PersonConnectionDTO(email2);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.empty());
+            //WHEN
+            //the function addPersonInGroup() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.addPersonInGroup(personDTO1, personDTO2));
+            assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(0)).findById(email2);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN an existing group owner and a non-existing person to add" +
+                "WHEN the function addPersonInGroup() is called " +
+                "THEN a NotFoundObjectException is thrown with the expected error message.")
+        @Test
+        public void addPersonNotExistingInGroupTest() {
+            //GIVEN
+            //an existing group owner and a non-existing person to add
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            PersonConnectionDTO personDTO2 = new  PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.findById(email2)).thenReturn(Optional.empty());
+            //WHEN
+            //the function addPersonInGroup() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.addPersonInGroup(personDTO1, personDTO2));
+            assertEquals("The person whose mail is " + email2 + " was not found.\n", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findById(email2);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a not active group owner and an existing person not in group" +
+                "WHEN the function addPersonInGroup() is called " +
+                "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
+        @Test
+        public void addPersonInGroupNotActiveTest() {
+            //GIVEN
+            // a not active group owner and an existing person not in group
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            PersonConnectionDTO personDTO2 = new  PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            person1.setActive(false);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            //WHEN
+            //the function addPersonInGroup() is called
+            //THEN
+            //a ObjectNotExistingAnymoreException is thrown with the expected error message
+            Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.addPersonInGroup(personDTO1, personDTO2));
+            assertEquals("The person whose mail is " + email + " doesn't exist anymore in the application.\n", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(0)).findById(email2);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+
+        @DisplayName("GIVEN an existing group owner and a not active person to add" +
+                "WHEN the function addPersonInGroup() is called " +
+                "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
+        @Test
+        public void addPersonNotActiveInGroupTest() {
+            //GIVEN
+            // an existing group owner and a not active person to add
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonConnectionDTO personDTO2 = new  PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            person2.setActive(false);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.findById(email2)).thenReturn(Optional.of(person2));
+            //WHEN
+            //the function addPersonInGroup() is called
+            //THEN
+            //a ObjectNotExistingAnymoreException is thrown with the expected error message
+            Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.addPersonInGroup(personDTO1, personDTO2));
+            assertEquals("The person whose mail is " + email2 + " doesn't exist anymore in the application.\n", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findById(email2);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+    }
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("Remove person from group tests:")
+    class RemovePersonFromGroupTests {
+
+        @DisplayName("GIVEN an existing group owner and an existing person in group" +
+                "WHEN the function removePersonFromGroup() is called " +
+                "THEN a success message is returned and the expected methods have been called with expected arguments.")
+        @Test
+        public void removePersonFromGroupTest() {
+            //GIVEN
+            //an existing group owner and an existing person in group
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonConnectionDTO personDTO2 = new PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            List<Person> relations = new ArrayList<>();
+            relations.add(person2);
+            person1.setRelations(relations);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.findById(email2)).thenReturn(Optional.of(person2));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            //WHEN
+            //the function removePersonFromGroup() is called
+            String result = personService.removePersonFromGroup(personDTO1, personDTO2);
+            //THEN
+            //a success message is returned
+            assertThat(result).isEqualTo("The person " + firstName2 + " " + lastname2 + " has been removed from your relations.\n");
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findById(email2);
+            verify(personRepository, Mockito.times(1)).save(any(Person.class));
+            verify(personRepository).save(arg.capture());
+            assertEquals(firstName, arg.getValue().getFirstName());
+            assertEquals(lastname, arg.getValue().getLastName());
+            assertEquals(email, arg.getValue().getEmail());
+            assertEquals(Collections.emptyList(), arg.getValue().getRelations());
+        }
+
+        @DisplayName("GIVEN an existing group owner and an existing person not in group" +
+                "WHEN the function removePersonFromGroup() is called " +
+                "THEN a NothingToDoException is thrown with the expected error message.")
+        @Test
+        public void removePersonFromGroupNotInGroupTest() {
+            //GIVEN
+            //an existing group owner and an existing person not in group
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonConnectionDTO personDTO2 = new PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.findById(email2)).thenReturn(Optional.of(person2));
+            //WHEN
+            //the function removePersonFromGroup() is called
+            //THEN
+            //a NothingToDoException is thrown with the expected error message
+            Exception exception = assertThrows(NothingToDoException.class, () -> personService.removePersonFromGroup(personDTO1, personDTO2));
+            assertEquals("The person " + firstName2 + " " + lastname2 + " wasn't present in your relations.\n", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findById(email2);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a non-existing group owner and an existing person in group" +
+                "WHEN the function removePersonFromGroup() is called " +
+                "THEN a NotFoundObjectException is thrown with the expected error message.")
+        @Test
+        public void removePersonFromGroupNonExistingTest() {
+            //GIVEN
+            //a non-existing group owner and an existing person in group
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            PersonConnectionDTO personDTO2 = new PersonConnectionDTO(email2);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.empty());
+            //WHEN
+            //the function removePersonFromGroup() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.removePersonFromGroup(personDTO1, personDTO2));
+            assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(0)).findById(email2);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN an existing group owner and a non-existing person to remove" +
+                "WHEN the function removePersonFromGroup() is called " +
+                "THEN a NotFoundObjectException is thrown with the expected error message.")
+        @Test
+        public void removePersonNotExistingFromGroupTest() {
+            //GIVEN
+            //an existing group owner and a non-existing person to remove
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            PersonConnectionDTO personDTO2 = new PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.findById(email2)).thenReturn(Optional.empty());
+            //WHEN
+            //the function removePersonFromGroup() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.removePersonFromGroup(personDTO1, personDTO2));
+            assertEquals("The person whose mail is " + email2 + " was not found.\n", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findById(email2);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a not active group owner and an existing person in group" +
+                "WHEN the function removePersonFromGroup() is called " +
+                "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
+        @Test
+        public void removePersonFromGroupNotActiveTest() {
+            //GIVEN
+            // a not active group owner and an existing person in group
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            PersonConnectionDTO personDTO2 = new PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            person1.setActive(false);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            //WHEN
+            //the function removePersonFromGroup() is called
+            //THEN
+            //a ObjectNotExistingAnymoreException is thrown with the expected error message
+            Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.removePersonFromGroup(personDTO1, personDTO2));
+            assertEquals("The person whose mail is " + email + " doesn't exist anymore in the application.\n", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(0)).findById(email2);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+
+        @DisplayName("GIVEN an existing group owner and a not active person to remove" +
+                "WHEN the function removePersonFromGroup() is called " +
+                "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
+        @Test
+        public void removePersonNotActiveFromGroupTest() {
+            //GIVEN
+            // an existing group owner and a not active person to remove
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO1 = new PersonDTO(email, password, firstName, lastname);
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonConnectionDTO personDTO2 = new PersonConnectionDTO(email2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            person2.setActive(false);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.findById(email2)).thenReturn(Optional.of(person2));
+            //WHEN
+            //the function removePersonFromGroup() is called
+            //THEN
+            //a ObjectNotExistingAnymoreException is thrown with the expected error message
+            Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.removePersonFromGroup(personDTO1, personDTO2));
+            assertEquals("The person whose mail is " + email2 + " doesn't exist anymore in the application.\n", exception.getMessage());
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findById(email2);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+    }
 
 }
 

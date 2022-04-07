@@ -25,7 +25,7 @@
 <div class="container justify-content-center pt-9">
     <h4>Manage your connections</h4>
 
-<!-----------------------------------------------  Add a connection  -------------------------------------------------->
+    <!-----------------------------------------------  Add a connection  -------------------------------------------------->
 
     <div class="row mt-0 pt-3 pt-md-6 pb-3 pb-md-6 bg-light rounded-3">
         <div class="col-md-8 offset-md-2 pt-4">
@@ -36,12 +36,14 @@
               th:object="${personSelected}">
             <div class="row">
                 <div class="col-md-4 offset-md-2">
-                    <select th:field="*{email}" class="form-select border-dark" aria-label="Add connection">
+                    <select th:field="*{email}" class="form-select border-dark">
                         <option selected value="">Add a connection</option>
                         <option th:each="personDTO : ${allNotFriends}" th:value="${personDTO.email}"
                                 th:text="${personDTO.firstName + ' ' + personDTO.lastName}"></option>
                     </select>
+                    <span class="text-danger" th:errors="*{email}"> </span>
                 </div>
+
                 <div class="col-md-3 mt-3 mt-md-0 offset-md-1">
                     <button type="submit" class="btn btn-primary d-block text-light border border-light col-12">Add a
                         person
@@ -50,21 +52,22 @@
             </div>
         </form>
 
-<!---------------------------------------------  Remove a connection  ------------------------------------------------->
+        <!---------------------------------------------  Remove a connection  ------------------------------------------------->
 
         <div class="col-md-8 offset-md-2 mt-4 mt-md-9">
             <h5 class="text-success">You want to remove a person from your connections?</h5>
             <p>Click below to select the person to remove.</p>
         </div>
         <form method="post" th:action="@{/home/transfer/removeConnection}"
-              th:object="${personSelected}">
+              th:object="${personToRemove}">
             <div class="row">
                 <div class="col-md-4 offset-md-2">
-                    <select th:field="*{email}" class="form-select border-dark" aria-label="Remove connection">
+                    <select th:field="*{email}" class="form-select border-dark">
                         <option selected value="">Remove a connection</option>
                         <option th:each="personDTO2 : ${personDTO.group}" th:value="${personDTO2.email}"
                                 th:text="${personDTO2.firstName + ' ' + personDTO2.lastName}"></option>
                     </select>
+                    <span class="text-danger" th:errors="*{email}"> </span>
                 </div>
                 <div class="col-md-3 mt-3 mt-md-0 offset-md-1">
                     <button type="submit" class="btn btn-primary d-block text-light border border-light col-12">Remove a
@@ -75,7 +78,7 @@
         </form>
     </div>
 
-<!--------------------------------------------------------------------------------------------------------------------->
+    <!--------------------------------------------------------------------------------------------------------------------->
 
 </div>
 

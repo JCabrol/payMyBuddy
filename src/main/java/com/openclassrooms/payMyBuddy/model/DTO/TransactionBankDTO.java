@@ -16,15 +16,15 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @ValidAmount
-public class TransactionDTO {
+public class TransactionBankDTO {
 
     private String sender;
     @NotNull(message = "Enter an amount to make a transaction")
     private Float amount;
-    @NotBlank(message = "Select a person to make a transaction")
+    @NotBlank(message = "Select a bank account to make a transaction")
     private String receiver;
-    private String date;
-    private String time;
-    @Size(max = 80,message="The description should be 80 characters maximum")
-    private String description;
+//    private String date;
+//    private String time;
+//    @Size(max = 80,message="The description should be 80 characters maximum")
+//    private String description;
 }

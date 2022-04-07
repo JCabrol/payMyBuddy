@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Getter
@@ -13,16 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 public class PersonDTO {
 
-    @NotBlank(message = "You have to enter an email")
-    @Email(message = "Your email is not valid")
     private String email;
-    @NotBlank(message = "You have to enter a password")
     private String password;
-    @NotBlank(message = "You have to enter your first name")
     private String firstName;
-    @NotBlank(message = "You have to enter your last name")
     private String lastName;
-
     private String availableBalance;
     private List<PersonDTO> group;
     private List<TransactionDTO> transactionMadeList;
@@ -34,7 +26,6 @@ public class PersonDTO {
         this.firstName = firstName;
         this.lastName = lastName;
     }
-
 
     public PersonDTO(String email, String password, String firstName, String lastName) {
         this.email = email;
