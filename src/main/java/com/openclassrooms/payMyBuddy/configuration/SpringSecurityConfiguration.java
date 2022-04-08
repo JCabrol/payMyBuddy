@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -34,6 +35,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(AUTH_SWAGGER_UI).permitAll()
                 .antMatchers("/css/*.css", "/images/*.png", "/images/*.svg").permitAll()
                 .antMatchers("/", "/home", "/inscription", "/home/contact").permitAll()
+                .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/home/*").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/admin", "/admin/*").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
@@ -41,7 +43,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login")
                 .defaultSuccessUrl("/home")
-//                .failureUrl("/home.html?error=true")
+                .failureUrl("/home?error=login")
                 .permitAll()
                 .and()
                 .logout().logoutUrl("/home/logoff").logoutSuccessUrl("/home")

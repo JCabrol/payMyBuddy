@@ -28,6 +28,7 @@
     <div class="row justify-content-center bg-light rounded-3 pt-3 mt-0">
         <div class="col-10">
             <img class="img-fluid" th:src="@{/images/PayMyBuddy.png}"/>
+
         </div>
 
 <!------------------------------  Inscription and login links for not logged user  --------------------------------->
@@ -90,6 +91,7 @@
                         <div class="row justify-content-center">
 
                             <form th:action="@{/login}" method="post">
+                                <span class="text-danger text-center" th:if="${errorMessage!=null}" th:text="${errorMessage}"> </span>
                                 <div class="col-12 mt-3 mb-4">
                                     <label class="sr-only " for="inlineFormInputGroup">Email</label>
                                     <div class="input-group mb-2 border border-secondary rounded-3">
@@ -148,6 +150,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <script src="https://kit.fontawesome.com/f923d597fd.js" crossorigin="anonymous"></script>
+
+<script th:if="${errorMessage!=null}">
+		$("#staticBackdrop").modal('show');
+</script>
 
 </body>
 </html>

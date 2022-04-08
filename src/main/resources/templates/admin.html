@@ -49,8 +49,9 @@
             </div>
         </div>
     </div>
-    <a class="btn btn-primary" target="_blank" href="http://localhost:8080/swagger-ui/index.html#/" role="button">Swagger</a>
-    <a class="btn btn-primary" th:href="@{index.html}" role="button">Site</a>
+    <a class="btn btn-primary" onclick="window.open(this.href);return false" href=" http://localhost:9090/actuator" role="button">Actuators</a>
+    <a class="btn btn-primary" onclick="window.open(this.href);return false" href="http://localhost:8080/swagger-ui/index.html#/" role="button">Swagger</a>
+    <a class="btn btn-primary" onclick="window.open(this.href);return false" href=" https://sonarcloud.io/summary/new_code?id=JCabrol_payMyBuddy" role="button">Sonar cloud</a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

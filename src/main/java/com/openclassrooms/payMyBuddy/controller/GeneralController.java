@@ -6,7 +6,10 @@ import com.openclassrooms.payMyBuddy.model.DTO.PersonInscriptionDTO;
 import com.openclassrooms.payMyBuddy.service.PersonService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,18 +47,23 @@ public class GeneralController {
         return new ModelAndView(redirect);
     }
 
-    @GetMapping("/login")
-    public ModelAndView login() {
-        RedirectView redirect = new RedirectView();
-        redirect.setUrl("/home");
-        return new ModelAndView(redirect);
-    }
+//    @GetMapping("/login")
+//    public ModelAndView login(String error) {
+//        String viewName = "login";
+//        Map<String, Object> model = new HashMap<>();
+//        if(error.equals("true")){model.put("errorMessage","Your email or your password hasn't been found, please try to login again");}
+//        model.put("activePage", "Home");
+//        return new ModelAndView(viewName, model);
+//    }
 
     @Transactional
     @GetMapping("/home")
-    public ModelAndView getHomePage() {
+    public ModelAndView getHomePage(String error) {
         String viewName = "home";
         Map<String, Object> model = new HashMap<>();
+        if((error != null)&&error.equals("login")){
+            model.put("errorMessage","Your email or your password hasn't been found, please try to login again");
+        }
         try {
             String mail = personService.getCurrentUserMail();
             PersonDTO personDTO = personService.getPersonDTO(mail);
