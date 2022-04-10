@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -86,7 +86,7 @@
         <h5 class="text-success text-start">Deactivate or reactivate a user account</h5>
 
         <div class="alert text-success my-2 p-0" role="alert" th:if="${messageResult != null}">
-        <i class="bi bi-check-circle-fill"></i>
+        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
         <span th:text="${messageResult}"></span>
     </div>
 

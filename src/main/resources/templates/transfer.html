@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -48,7 +48,7 @@
                 <div class="offset-md-1 col-md-10">
                     <span class="text-danger" th:errors="*{global}"> </span>
                     <div class="alert text-success my-2 p-0" role="alert" th:if="${message != null}">
-                        <i class="bi bi-check-circle-fill"></i>
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
                         <span th:text="${message}"></span>
                     </div>
                 </div>
@@ -70,12 +70,12 @@
                                 <button type="button"
                                         onclick="this.parentNode.parentNode.parentNode.querySelector('[type=number]').stepUp();"
                                         class="btn btn-outline-dark border-0 border-bottom border-dark fs-6 my-0 pt-1 pb-0 rounded-0">
-                                    <i class="fa fa-caret-up fa-lg"></i>
+                                    <i class="fa fa-caret-up fa-lg" aria-hidden="true"></i>
                                 </button>
                                 <button type="button"
                                         onclick="this.parentNode.parentNode.parentNode.querySelector('[type=number]').stepDown();"
                                         class="btn btn-outline-dark border-0 fs-6 mw-100 my-0 pt-0 pb-1 rounded-0">
-                                    <i class="fa fa-caret-down fa-lg"></i>
+                                    <i class="fa fa-caret-down fa-lg" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </span>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -33,7 +33,7 @@
         <form class="row" method="post" th:action="@{/home/profile}" th:object="${personDTO}">
             <span class="text-danger" th:errors="*{global}"> </span>
             <div class="alert text-success my-2 p-0" role="alert" th:if="${messageProfile != null}">
-                <i class="bi bi-check-circle-fill"></i>
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
                 <span th:text="${messageProfile}"></span>
             </div>
             <div class="col-md-6">
@@ -67,14 +67,14 @@
                     <li>Contain at least a number and a special character</li>
                     <li>Not contain any white space</li>
                 </ul>">
-                <i class="bi bi-info-circle-fill"></i>
+                <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
             </a>
         </h5>
 
 
         <form class="row" method="post" th:action="@{/home/profile/password}" th:object="${changePasswordDTO}">
             <div class="alert text-success my-2 p-0" role="alert" th:if="${messagePassword != null}">
-                <i class="bi bi-check-circle-fill"></i>
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
                 <span th:text="${messagePassword}"></span>
             </div>
             <span class="text-danger" th:errors="*{global}"> </span>
@@ -85,7 +85,7 @@
                            placeholder="New password">
                     <div class="input-group-prepend m-0 p-0 ">
                         <div class="input-group-text bg-white border-0 mr-1 pr-1">
-                            <i class="far fa-eye" id="togglePassword"></i>
+                            <i class="far fa-eye" id="togglePassword" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                            id="inputConfirmationPassword" placeholder="Confirmation">
                     <div class="input-group-prepend m-0 p-0 ">
                         <div class="input-group-text bg-white border-0 mr-1 pr-1">
-                            <i class="far fa-eye" id="toggleConfirmationPassword"></i>
+                            <i class="far fa-eye" id="toggleConfirmationPassword" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -129,7 +129,7 @@
               th:object="${transactionDTO}">
             <span class="text-danger" th:errors="*{global}"> </span>
             <div class="alert text-success my-2 p-0" role="alert" th:if="${messageAccount != null}">
-                <i class="bi bi-check-circle-fill"></i>
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
                 <span th:text="${messageAccount}"></span>
             </div>
             <div class="alert text-success my-2 p-0" role="alert" th:if="${messageTransaction != null}">

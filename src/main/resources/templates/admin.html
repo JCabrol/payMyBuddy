@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -27,7 +27,7 @@
             <span th:if="${personDTO != null}" th:text="${personDTO.firstName}"></span>&#33;</h4>
     <div class="row justify-content-center bg-light rounded-3 pt-3 mt-0">
         <div class="col-6">
-        <img class="img-fluid" th:src="@{/images/admin.png}"/>
+        <img class="img-fluid" th:src="@{/images/admin.png}" alt="image about application administration"/>
         </div>
 
         <!------------------------------  Links for other admin pages  --------------------------------->

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -37,7 +37,7 @@
                     <a href="#" class="d-inline-block" data-bs-toggle="popover"
                        title="IBAN code:" data-trigger="hover"
                        data-html="true" data-content="<div><img src='/images/iban_2.jpg' class='img-fluid' alt='iban code'></div>">
-                        <i class="bi bi-info-circle-fill"></i>
+                        <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
                     </a> </label>
                 <input th:field="*{iban}" placeholder="IBAN" type="text" class="form-control" id="inputIban" >
                 <span class="text-danger" th:errors="*{iban}"> </span>
@@ -48,7 +48,7 @@
                 <a href="#" class="d-inline-block text-primary" data-bs-toggle="popover"
                    title="BIC code:" data-trigger="hover"
                    data-html="true" data-content="<div><img src='/images/bic_2.jpg' class='img-fluid' alt='bic code'></div>">
-                    <i class="bi bi-info-circle-fill"></i>
+                    <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
                 </a> </label>
                 <input th:field="*{bic}" type="text" placeholder="BIC" class="form-control" id="inputBic">
                 <span class="text-danger" th:errors="*{bic}"> </span>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -33,7 +33,7 @@
         <form class="row" method="post" th:action="@{/home/contact}" th:object="${messageDTO}">
             <span class="text-danger" th:errors="*{global}"> </span>
             <div class="alert text-success my-2 p-0" role="alert" th:if="${message != null}">
-                <i class="bi bi-check-circle-fill"></i>
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
                 <span th:text="${message}"></span>
             </div>
             <div class="row my-3">
