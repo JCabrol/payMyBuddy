@@ -1,11 +1,13 @@
 package com.openclassrooms.payMyBuddy.controller;
 
-import com.openclassrooms.payMyBuddy.model.DTO.*;
+import com.openclassrooms.payMyBuddy.model.DTO.ListMessagesDTO;
+import com.openclassrooms.payMyBuddy.model.DTO.MessageDTO;
+import com.openclassrooms.payMyBuddy.model.DTO.PersonConnectionDTO;
+import com.openclassrooms.payMyBuddy.model.DTO.PersonDTO;
 import com.openclassrooms.payMyBuddy.model.MessageToAdmin;
 import com.openclassrooms.payMyBuddy.model.Person;
 import com.openclassrooms.payMyBuddy.service.MessageToAdminService;
 import com.openclassrooms.payMyBuddy.service.PersonService;
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -63,11 +65,11 @@ public class AdminController {
         if (currentPage == null) {
             currentPage = 1;
         }
-        MessageDTO readingMessage=null;
-        if(messageNumber!=null){
+        MessageDTO readingMessage = null;
+        if (messageNumber != null) {
             MessageToAdmin messageToAdmin = messageToAdminService.getMessage(messageNumber);
             messageToAdminService.readMessage(messageToAdmin);
-           readingMessage = messageToAdminService.transformToDTO(messageToAdmin);
+            readingMessage = messageToAdminService.transformToDTO(messageToAdmin);
         }
         List<PersonDTO> allActiveAccounts = personService.getAllActivePersonsDTO();
         List<Person> allInactiveAccounts = personService.getAllInactivePersons();
@@ -79,7 +81,7 @@ public class AdminController {
 
         model.put("personDTO", personDTO);
         model.put("listMessage", listMessage);
-        model.put("messageResult",messageResult);
+        model.put("messageResult", messageResult);
         model.put("readingMessage", readingMessage);
         model.put("allActiveAccounts", allActiveAccounts);
         model.put("allInactiveAccounts", allInactiveAccounts);

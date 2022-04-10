@@ -13,12 +13,7 @@ public interface BankAccountService {
 
     BankAccount createBankAccount(BankAccountDTO bankAccountDTO);
 
-   void deleteBankAccount(BankAccountDTO bankAccountDTO);
-
-
     BankAccountDTO transformBankAccountToBankAccountDTO(BankAccount bankAccount);
-
-    String updateBankAccountUsualName(BankAccountDTO bankAccountDTO);
 
     boolean ibanAlreadyExists(String iban);
 }

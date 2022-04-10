@@ -1,7 +1,5 @@
 package com.openclassrooms.payMyBuddy.validation;
 
-import org.springframework.boot.ImageBanner;
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.ElementType;
@@ -11,12 +9,13 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy= IbanValidator.class)
+@Constraint(validatedBy = IbanValidator.class)
 
 
-
-public @interface ValidIban {String message() default "Your IBAN code is not valid, please read information above to learn more.";
+public @interface ValidIban {
+    String message() default "Your IBAN code is not valid, please read information above to learn more.";
 
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

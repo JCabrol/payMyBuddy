@@ -4,7 +4,6 @@ import com.openclassrooms.payMyBuddy.model.DTO.*;
 import com.openclassrooms.payMyBuddy.service.BankAccountService;
 import com.openclassrooms.payMyBuddy.service.PersonService;
 import com.openclassrooms.payMyBuddy.service.TransactionService;
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;

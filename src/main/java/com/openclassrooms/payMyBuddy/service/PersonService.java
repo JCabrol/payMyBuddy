@@ -1,7 +1,6 @@
 package com.openclassrooms.payMyBuddy.service;
 
 import com.openclassrooms.payMyBuddy.exceptions.NotFoundObjectException;
-import com.openclassrooms.payMyBuddy.exceptions.NotValidException;
 import com.openclassrooms.payMyBuddy.exceptions.ObjectAlreadyExistingException;
 import com.openclassrooms.payMyBuddy.exceptions.ObjectNotExistingAnymoreException;
 import com.openclassrooms.payMyBuddy.model.DTO.*;
@@ -31,7 +30,7 @@ public interface PersonService {
 
     String deletePerson(String email);
 
-    String addPersonInGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO newPersonInGroupDTO) throws ObjectAlreadyExistingException,ObjectNotExistingAnymoreException;
+    String addPersonInGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO newPersonInGroupDTO) throws ObjectAlreadyExistingException, ObjectNotExistingAnymoreException;
 
     String removePersonFromGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO personRemovedFromGroup) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException;
 
@@ -43,9 +42,9 @@ public interface PersonService {
 
     String updatePerson(PersonDTO personDTO);
 
-    List<TransactionDTO> getPersonTransactionsMade (PersonDTO personDTO);
+    List<TransactionDTO> getPersonTransactionsMade(PersonDTO personDTO);
 
-    List<TransactionDTO> getPersonTransactionsReceived (PersonDTO personDTO);
+    List<TransactionDTO> getPersonTransactionsReceived(PersonDTO personDTO);
 
     ListTransactionPagesDTO displayTransactionsByPage(PersonDTO personDTO, int pageNumber, int numberOfTransactionByPage, String transactionType);
 

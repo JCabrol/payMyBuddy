@@ -8,7 +8,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -79,24 +78,8 @@ public class PayMyBuddyExceptionHandler extends ResponseEntityExceptionHandler {
             payMyBuddyError.setMessage(message);
             payMyBuddyErrorList.add(payMyBuddyError);
         }
-//            return buildResponseEntity(payMyBuddyError);
         return new ResponseEntity<>(payMyBuddyErrorList, httpHeaders, httpStatus);
     }
-//
-//    @ExceptionHandler(NotEnoughMoneyException.class)
-//    protected ResponseEntity<Object> handleNotEnoughMoney(
-//            NotEnoughMoneyException ex,
-//            HttpHeaders httpHeaders,
-//            HttpStatus httpStatus,
-//            WebRequest webRequest) {
-//        List<PayMyBuddyError> payMyBuddyErrorList = new ArrayList<>();
-//        PayMyBuddyError payMyBuddyError = new PayMyBuddyError(BAD_REQUEST);
-//        payMyBuddyError.setMessage(ex.getMessage());
-//        log.error(ex.getMessage());
-//        payMyBuddyErrorList.add(payMyBuddyError);
-//        return new ResponseEntity<>(payMyBuddyErrorList, httpHeaders, httpStatus);
-////        return buildResponseEntity(payMyBuddyError);
-//    }
 
 
     @ExceptionHandler(SQLException.class)
@@ -119,38 +102,6 @@ public class PayMyBuddyExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorPage(payMyBuddyError);
     }
 
-
-//    @Override
-//    @ExceptionHandler(BindException.class)
-//    protected ResponseEntity<Object> handleBind(
-//            BindException ex) {
-//        System.out.println("in exception handler");
-//        PayMyBuddyError payMyBuddyError = new PayMyBuddyError(BAD_REQUEST);
-//       String message= ex.getMessage();
-//        log.error(message);
-//        return buildResponseEntity(payMyBuddyError);
-//    }
-
-//    @ExceptionHandler(BindException.class)
-//    protected ModelAndView handleBind(
-//            BindException ex) {
-//        System.out.println("in exception handler");
-//        BindingResult bindingResult=ex.getBindingResult();
-//        Map<String, Object> model = new HashMap<>();
-//        model.put("bindingResult", bindingResult);
-//        model.put("personDTO", new PersonDTO());
-//        return new ModelAndView("inscription",model);
-//    }
-
-
-//    @ExceptionHandler(NotFoundObjectException.class)
-//    protected ResponseEntity<Object> handleNotFoundObject(
-//            NotFoundObjectException ex) {
-//        PayMyBuddyError payMyBuddyError = new PayMyBuddyError(NOT_FOUND);
-//        payMyBuddyError.setMessage(ex.getMessage());
-//        log.error(ex.getMessage());
-//        return buildResponseEntity(payMyBuddyError);
-//    }
 
     @ExceptionHandler(NotFoundObjectException.class)
     protected ModelAndView handleNotFoundObject(
@@ -188,21 +139,6 @@ public class PayMyBuddyExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorPage(payMyBuddyError);
     }
 
-    //    @ExceptionHandler(NotEnoughMoneyException.class)
-//    protected ModelAndView handleNotEnoughMoney(
-//            NotEnoughMoneyException ex) {
-//        PayMyBuddyError payMyBuddyError = new PayMyBuddyError(BAD_REQUEST);
-//        payMyBuddyError.setMessage(ex.getMessage());
-//        log.error(ex.getMessage());
-//        PersonService personService = new PersonServiceImpl();
-//        String mail = personService.getCurrentUserMail();
-//        PersonDTO personDTO = personService.getPersonDTO(mail);
-//        Map<String, Object> model = new HashMap<String, Object>();
-//        model.put("person", personDTO);
-//        model.put("error", ex.getMessage());
-//        return new ModelAndView("transfer",model);
-//    }
-//
     @ExceptionHandler(NotEnoughMoneyException.class)
     protected ModelAndView handleNotEnoughMoney(
             NotEnoughMoneyException ex) {
@@ -211,18 +147,6 @@ public class PayMyBuddyExceptionHandler extends ResponseEntityExceptionHandler {
         log.error(ex.getMessage());
         return buildErrorPage(payMyBuddyError);
     }
-
-//    public ModelAndView handleNotEnoughMoney(HttpServletRequest req, NotEnoughMoneyException ex) {
-//        PayMyBuddyError payMyBuddyError = new PayMyBuddyError(BAD_REQUEST);
-//        payMyBuddyError.setMessage(ex.getMessage());
-//        log.error(ex.getMessage());
-//        ModelAndView mav = new ModelAndView();
-//        mav.addObject("exception", ex);
-//        mav.addObject("url", req.getRequestURL());
-//        mav.setViewName("transfer");
-//        return mav;
-//    }
-
 
     @ExceptionHandler(NotAuthorizedException.class)
     protected ModelAndView handleNotAuthorized(

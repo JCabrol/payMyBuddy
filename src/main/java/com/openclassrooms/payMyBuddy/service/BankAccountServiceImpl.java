@@ -49,7 +49,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     public BankAccount createBankAccount(BankAccountDTO bankAccountDTO) {
         log.debug("The function createBankAccount in BankAccountService is beginning.");
         String iban = bankAccountDTO.getIban();
-        BankAccount bankAccount =null;
+        BankAccount bankAccount = null;
         try {
             getBankAccount(iban);
         } catch (ObjectNotExistingAnymoreException exception) {
@@ -58,27 +58,14 @@ public class BankAccountServiceImpl implements BankAccountService {
                 bankAccount = bankAccountOptional.get();
                 bankAccount.setActiveBankAccount(true);
                 bankAccount.setUsualName(bankAccountDTO.getUsualName());
-               // bankAccountRepository.save(bankAccount);
             }
         } catch (NotFoundObjectException exception) {
-        bankAccount = new BankAccount(iban, bankAccountDTO.getBic(), bankAccountDTO.getUsualName());}
-     //   bankAccount = bankAccountRepository.save(bankAccount);}
+            bankAccount = new BankAccount(iban, bankAccountDTO.getBic(), bankAccountDTO.getUsualName());
+        }
         String message = "The bank account with IBAN number " + iban + "has been created.";
         log.info(message);
         log.debug("The function createBankAccount in BankAccountService is ending without exception.");
         return bankAccount;
-    }
-
-    @Override
-    public void deleteBankAccount(BankAccountDTO bankAccountDTO) {
-        log.debug("The function deleteBankAccount in BankAccountService is beginning.");
-        String iban = bankAccountDTO.getIban();
-        BankAccount bankAccount = getBankAccount(iban);
-        bankAccount.setActiveBankAccount(false);
-        bankAccountRepository.save(bankAccount);
-        log.info("The bank account with IBAN " + iban + "has been inactivated");
-        log.debug("The function deleteBankAccount in BankAccountService is beginning.");
-
     }
 
     @Override
@@ -90,20 +77,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public String updateBankAccountUsualName(BankAccountDTO bankAccountDTO){
-        log.debug("The function updateBankAccountUsualName in BankAccountService is beginning.");
-      String iban = bankAccountDTO.getIban();
-       BankAccount bankAccount =  getBankAccount(iban);
-       bankAccount.setUsualName(bankAccount.getUsualName());
-       bankAccountRepository.save(bankAccount);
-       String message = "The bank account with IBAN number " + iban + " has been updated.\n";
-       log.info(message);
-        log.debug("The function updateBankAccountUsualName in BankAccountService is ending without exception.");
-       return message;
-    }
-
-    @Override
-    public boolean ibanAlreadyExists(String iban){
-      return bankAccountRepository.existsById(iban);
+    public boolean ibanAlreadyExists(String iban) {
+        return bankAccountRepository.existsById(iban);
     }
 }

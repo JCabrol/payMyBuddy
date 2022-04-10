@@ -17,8 +17,4 @@ public class BankAccountTransactionDTO {
     private String bic;
     private String usualName;
 
-    public BankAccountTransactionDTO(String iban, String bic){
-        this.iban=iban;
-        this.bic=bic;
-    }
 }

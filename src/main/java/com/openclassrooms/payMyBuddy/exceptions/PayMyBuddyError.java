@@ -7,23 +7,6 @@ import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 
-//@Data
-//public class PayMyBuddyError {
-//
-//    private HttpStatus status;
-//
-//    private String message;
-//
-//    PayMyBuddyError(HttpStatus status) {
-//        this.status = status;
-//    }
-//
-//    PayMyBuddyError(HttpStatus status, String message) {
-//        this.status = status;
-//        this.message = message;
-//    }
-//}
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -36,9 +19,4 @@ public class PayMyBuddyError implements Serializable {
     PayMyBuddyError(HttpStatus status) {
         this.status = status;
     }
-//
-//    PayMyBuddyError(HttpStatus status, String message) {
-//        this.status = status;
-//        this.message = message;
-//    }
 }

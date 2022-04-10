@@ -18,11 +18,6 @@ public class TransactionWithBank extends Transaction{
     @JoinColumn(name="receiver_Id", referencedColumnName="iban")
     private BankAccount recipient;
 
-    public TransactionWithBank(Person sender,float amount,BankAccount recipient){
-        super(sender,amount);
-        this.recipient = recipient;
-    }
-
     public TransactionWithBank(Person sender,float amount,BankAccount recipient,String description){
         super(sender,amount,description);
         this.recipient = recipient;

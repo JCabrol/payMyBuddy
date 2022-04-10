@@ -37,10 +37,10 @@ public class Person {
     private float availableBalance;
 
     @Column(name = "active")
-    private boolean active=true;
+    private boolean active = true;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="role")
+    @Column(name = "role")
     private Role role;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -93,20 +93,6 @@ public class Person {
         }
     }
 
-    public void removeTransactionMade(Transaction transaction) {
-        transactionMadeList.remove(transaction);
-        transaction.setSender(null);
-    }
-
-    public void addTransactionReceived(TransactionBetweenPersons transaction) {
-        transactionReceivedList.add(transaction);
-        transaction.setRecipient(this);
-    }
-
-    public void removeTransactionReceived(TransactionBetweenPersons transaction) {
-        transactionReceivedList.remove(transaction);
-        transaction.setRecipient(null);
-    }
     //helper methods for Group
 
     public void addPersonInGroup(Person person) {
