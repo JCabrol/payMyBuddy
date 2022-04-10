@@ -43,13 +43,13 @@
                 </thead>
                 <tbody>
                 <tr scope="row" th:each="messageDTO : ${listMessage.messagesToDisplay}">
-                    <td th:if="${messageDTO.newMessage}" class="col-1 fw-bold"><i class="bi bi-envelope"></i></td>
+                    <td th:if="${messageDTO.newMessage}" class="col-1 fw-bold"><i class="bi bi-envelope" aria-hidden="true"></i></td>
                     <td th:if="${messageDTO.newMessage}" class="fw-bold"><a
                             th:href="@{/admin/manageUsers(messageNumber=${messageDTO.id},currentPage=${listMessage.currentPage})}"
                             th:text="${messageDTO.subject}"></a></td>
                     <td th:if="${messageDTO.newMessage}" class="fw-bold" th:text="${messageDTO.email}"></td>
                     <td th:if="${messageDTO.newMessage}" class="fw-bold" th:text="${messageDTO.date}"></td>
-                    <td th:if="${!messageDTO.newMessage}" class="col-1"><i class="bi bi-envelope-open"></i></td>
+                    <td th:if="${!messageDTO.newMessage}" class="col-1"><i class="bi bi-envelope-open" aria-hidden="true"></i></td>
                     <td th:if="${!messageDTO.newMessage}"><a
                             th:href="@{/admin/manageUsers(messageNumber=${messageDTO.id},currentPage=${listMessage.currentPage})}"
                             th:text="${messageDTO.subject}"></a></td>
