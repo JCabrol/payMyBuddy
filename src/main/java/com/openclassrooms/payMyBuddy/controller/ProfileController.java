@@ -27,7 +27,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
-@Api
 public class ProfileController {
     @Autowired
     PersonService personService;

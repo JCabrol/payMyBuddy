@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@Api
 public class TransferController {
     @Autowired
     PersonService personService;
@@ -102,7 +101,7 @@ public class TransferController {
         Map<String, Object> model = new HashMap<>();
         String mail = personService.getCurrentUserMail();
         PersonDTO personDTO = personService.getPersonDTO(mail);
-        List<PersonDTO> allNotFriends = personService.getAllActiveNotFriendPersonsDTO(personDTO);
+        List<PersonDTO> allNotFriends = personService.getAllNotFriendPersonsDTO(personDTO);
         PersonConnectionDTO personSelected = new PersonConnectionDTO();
         PersonConnectionDTO personToRemove = new PersonConnectionDTO();
         model.put("personDTO", personDTO);
@@ -121,7 +120,7 @@ public class TransferController {
             String viewName = "manageConnections";
             String mail = personService.getCurrentUserMail();
             PersonDTO personDTO = personService.getPersonDTO(mail);
-            List<PersonDTO> allNotFriends = personService.getAllActiveNotFriendPersonsDTO(personDTO);
+            List<PersonDTO> allNotFriends = personService.getAllNotFriendPersonsDTO(personDTO);
             PersonConnectionDTO personToRemove = new PersonConnectionDTO();
             model.put("personDTO", personDTO);
             model.put("personSelected", personSelected);
@@ -148,7 +147,7 @@ public class TransferController {
             String viewName = "manageConnections";
             String mail = personService.getCurrentUserMail();
             PersonDTO personDTO = personService.getPersonDTO(mail);
-            List<PersonDTO> allNotFriends = personService.getAllActiveNotFriendPersonsDTO(personDTO);
+            List<PersonDTO> allNotFriends = personService.getAllNotFriendPersonsDTO(personDTO);
             PersonConnectionDTO personSelected = new PersonConnectionDTO();
             model.put("personSelected", personSelected);
             model.put("personDTO", personDTO);

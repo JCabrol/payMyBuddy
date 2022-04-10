@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8">
@@ -44,14 +44,13 @@
                 <h5 class="text-success text-center"><i class="fa-solid fa-screwdriver-wrench"></i> Manage application settings</h5>
                 <p class="text-center">Check application's operations and settings.</p>
                 <div class="row justify-content-center">
-                    <a th:href="@{/admin/manageAppli}" class="btn btn-primary d-block col-6" type="button">Manage Application</a>
+                    <a th:href="@{/admin/manageApplication}" class="btn btn-primary d-block col-6" type="button">Manage Application</a>
                 </div>
             </div>
         </div>
     </div>
-    <a class="btn btn-primary" onclick="window.open(this.href);return false" href=" http://localhost:9090/actuator" role="button">Actuators</a>
-    <a class="btn btn-primary" onclick="window.open(this.href);return false" href="http://localhost:8080/swagger-ui/index.html#/" role="button">Swagger</a>
-    <a class="btn btn-primary" onclick="window.open(this.href);return false" href=" https://sonarcloud.io/summary/new_code?id=JCabrol_payMyBuddy" role="button">Sonar cloud</a>
+
+    <!-------------------------------------------------------------------------------------------------------------------------->
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

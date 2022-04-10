@@ -59,7 +59,6 @@
                         <option th:each="personDTO2 : ${personDTO.group}" th:value="${personDTO2.email}"
                                 th:text="${personDTO2.firstName + ' ' + personDTO2.lastName}"></option>
                     </select>
-
                     <span class="text-danger" th:errors="*{receiver}"> </span>
                 </div>
                 <div class="col-md-3 order-2 mt-3 mt-md-0">

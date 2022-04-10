@@ -15,7 +15,9 @@ public interface PersonService {
 
     List<PersonDTO> getAllActivePersonsDTO();
 
-    List<PersonDTO> getAllActiveNotFriendPersonsDTO(PersonDTO personDTO);
+    List<Person> getAllInactivePersons();
+
+    List<PersonDTO> getAllNotFriendPersonsDTO(PersonDTO personDTO);
 
     Person getPerson(String mail) throws NotFoundObjectException, ObjectNotExistingAnymoreException;
 
@@ -27,11 +29,13 @@ public interface PersonService {
 
     String changePassword(PersonDTO personDTO, String password);
 
-    String deletePerson(PersonDTO personDTO);
+    String deletePerson(String email);
 
     String addPersonInGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO newPersonInGroupDTO) throws ObjectAlreadyExistingException,ObjectNotExistingAnymoreException;
 
     String removePersonFromGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO personRemovedFromGroup) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException;
+
+    String reactivateAccount(String email);
 
     String addBankAccount(PersonDTO personDTO, BankAccountDTO bankAccountDTO);
 
@@ -46,4 +50,5 @@ public interface PersonService {
     ListTransactionPagesDTO displayTransactionsByPage(PersonDTO personDTO, int pageNumber, int numberOfTransactionByPage, String transactionType);
 
     boolean emailAlreadyExists(String email);
+
 }

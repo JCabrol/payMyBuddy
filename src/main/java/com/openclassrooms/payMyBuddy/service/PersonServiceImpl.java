@@ -2,11 +2,8 @@ package com.openclassrooms.payMyBuddy.service;
 
 import com.openclassrooms.payMyBuddy.configuration.SpringSecurityConfiguration;
 import com.openclassrooms.payMyBuddy.exceptions.*;
-import com.openclassrooms.payMyBuddy.model.BankAccount;
+import com.openclassrooms.payMyBuddy.model.*;
 import com.openclassrooms.payMyBuddy.model.DTO.*;
-import com.openclassrooms.payMyBuddy.model.Person;
-import com.openclassrooms.payMyBuddy.model.Role;
-import com.openclassrooms.payMyBuddy.model.Transaction;
 import com.openclassrooms.payMyBuddy.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,25 +62,19 @@ public class PersonServiceImpl implements PersonService {
     private List<Person> getAllActivePersons() {
         log.debug("The function getAllActivePersons in PersonService is beginning.");
         List<Person> allPersonList = personRepository.findByActive(true);
-        if (allPersonList.isEmpty()) {
-            throw new EmptyObjectException("There is not any active person registered.\n");
-        }
         log.debug("The function getAllActivePersons in PersonService is ending without exception.");
         return allPersonList;
     }
 
     @Override
-    public List<PersonDTO> getAllActiveNotFriendPersonsDTO(PersonDTO personDTO) {
-        log.debug("The function getAllActiveNotFriendPersonsDTO in PersonService is beginning.");
-        List<String> allFriendsMails = personDTO.getGroup().stream().map(PersonDTO::getEmail).collect(Collectors.toList());
-        List<PersonDTO> allActiveNotFriend = getAllActivePersonsDTO()
-                .stream()
-                .filter(person -> !person.getEmail().equals(personDTO.getEmail()))
-                .filter(person -> !allFriendsMails.contains(person.getEmail()))
-                .collect(Collectors.toList());
-        log.debug("The function getAllActiveNotFriendPersonsDTO in PersonService is ending without exception.");
-        return allActiveNotFriend;
+    public List<Person> getAllInactivePersons() {
+        log.debug("The function getAllInactivePersons in PersonService is beginning.");
+        List<Person> allPersonList = personRepository.findByActive(false);
+        log.debug("The function getAllInactivePersons in PersonService is ending without exception.");
+        return allPersonList;
     }
+
+
 
     @Override
     public Person getPerson(String mail) throws NotFoundObjectException, ObjectNotExistingAnymoreException {
@@ -153,20 +144,20 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public String deletePerson(PersonDTO personDTO) {
+    public String deletePerson(String email) {
         log.debug("The function deletePerson in PersonService is beginning.");
         Person person;
         try {
-            person = getPerson(personDTO.getEmail());
+            person = getPerson(email);
         } catch (NotFoundObjectException | ObjectNotExistingAnymoreException exception) {
-            throw new NothingToDoException("The person " + personDTO.getFirstName() + " " + personDTO.getLastName() + " was not found, so it couldn't have been deleted");
+            throw new NothingToDoException("The person " + email + " was not found, so it couldn't have been deleted");
         }
         person.getRelations().clear();
         person.getBankAccountList().clear();
         person.setActive(false);
         personRepository.save(person);
-        String message = "Your account on PayMyBuddy application have been deleted.\n";
-        log.info("The person " + personDTO.getEmail() + " have been deleted.");
+        String message = "The person " + email + " have been deleted.\n";
+        log.info(message);
         log.debug("The function deletePerson in PersonService is ending without exception.");
         return message;
     }
@@ -205,6 +196,33 @@ public class PersonServiceImpl implements PersonService {
         return result;
     }
 
+    @Override
+    public List<PersonDTO> getAllNotFriendPersonsDTO(PersonDTO personDTO) {
+        log.debug("The function getAllNotFriendPersonsDTO in PersonService is beginning.");
+        List<String> allFriendsMails = personDTO.getGroup().stream().map(PersonDTO::getEmail).collect(Collectors.toList());
+        List<PersonDTO> allActiveNotFriend = getAllActivePersonsDTO()
+                .stream()
+                .filter(person -> !person.getEmail().equals(personDTO.getEmail()))
+                .filter(person -> !allFriendsMails.contains(person.getEmail()))
+                .collect(Collectors.toList());
+        log.debug("The function getAllNotFriendPersonsDTO in PersonService is ending without exception.");
+        return allActiveNotFriend;
+    }
+
+    @Override
+    public String reactivateAccount (String email){
+        log.debug("The function reactivateAccount in PersonService is beginning.");
+        Optional<Person> personOptional = personRepository.findById(email);
+        if(personOptional.isPresent()){
+            Person person = personOptional.get();
+            person.setActive(true);
+            personRepository.save(person);
+            String message = "The person whose mail is " + email + " has been reactivated.\n";
+            log.debug("The function reactivateAccount in PersonService is beginning.");
+            return message;
+        }else{
+            throw new NotFoundObjectException("The person " + email + " was not found");}
+    }
 
     @Override
     public String addBankAccount(PersonDTO personDTO, BankAccountDTO bankAccountDTO) {
@@ -319,7 +337,6 @@ public class PersonServiceImpl implements PersonService {
         log.debug("The function getTransactionsMade in PersonService is ending without any exception.");
         return transactionsMade;
     }
-
 
     @Override
     public List<TransactionDTO> getPersonTransactionsReceived(PersonDTO personDTO) {

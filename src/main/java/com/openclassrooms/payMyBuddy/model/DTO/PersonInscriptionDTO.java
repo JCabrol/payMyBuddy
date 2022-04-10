@@ -3,6 +3,7 @@ package com.openclassrooms.payMyBuddy.model.DTO;
 
 import com.openclassrooms.payMyBuddy.validation.ValidPassword;
 import com.openclassrooms.payMyBuddy.validation.ValidPasswordConfirmation;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
 
 @Getter
 @Setter

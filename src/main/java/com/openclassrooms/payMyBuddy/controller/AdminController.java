@@ -1,8 +1,9 @@
 package com.openclassrooms.payMyBuddy.controller;
 
-import com.openclassrooms.payMyBuddy.exceptions.NotValidException;
-import com.openclassrooms.payMyBuddy.model.DTO.PersonDTO;
-import com.openclassrooms.payMyBuddy.model.DTO.PersonInscriptionDTO;
+import com.openclassrooms.payMyBuddy.model.DTO.*;
+import com.openclassrooms.payMyBuddy.model.MessageToAdmin;
+import com.openclassrooms.payMyBuddy.model.Person;
+import com.openclassrooms.payMyBuddy.service.MessageToAdminService;
 import com.openclassrooms.payMyBuddy.service.PersonService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,34 +15,140 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
-@Api
 public class AdminController {
     @Autowired
     PersonService personService;
+    @Autowired
+    MessageToAdminService messageToAdminService;
 
     @Transactional
     @GetMapping("/admin")
     public ModelAndView admin() {
         String viewName = "admin";
         Map<String, Object> model = new HashMap<>();
-        try {
-            String mail = personService.getCurrentUserMail();
-            PersonDTO personDTO = personService.getPersonDTO(mail);
-            model.put("personDTO", personDTO);
-        } catch (Exception ignored) {
-        }
+        String mail = personService.getCurrentUserMail();
+        PersonDTO personDTO = personService.getPersonDTO(mail);
+        model.put("personDTO", personDTO);
         model.put("activePage", "Admin");
         return new ModelAndView(viewName, model);
     }
+
+    @Transactional
+    @GetMapping("/admin/manageApplication")
+    public ModelAndView manageApplication() {
+        String viewName = "manageApplication";
+        Map<String, Object> model = new HashMap<>();
+        String mail = personService.getCurrentUserMail();
+        PersonDTO personDTO = personService.getPersonDTO(mail);
+        model.put("personDTO", personDTO);
+        model.put("activePage", "Admin");
+        model.put("activeSubpage", "ManageApplication");
+        return new ModelAndView(viewName, model);
+    }
+
+    @Transactional
+    @GetMapping("/admin/manageUsers")
+    public ModelAndView manageUsers(Integer currentPage, String messageResult, Integer messageNumber) {
+        String viewName = "manageUsers";
+        Map<String, Object> model = new HashMap<>();
+
+        if (currentPage == null) {
+            currentPage = 1;
+        }
+        MessageDTO readingMessage=null;
+        if(messageNumber!=null){
+            MessageToAdmin messageToAdmin = messageToAdminService.getMessage(messageNumber);
+            messageToAdminService.readMessage(messageToAdmin);
+           readingMessage = messageToAdminService.transformToDTO(messageToAdmin);
+        }
+        List<PersonDTO> allActiveAccounts = personService.getAllActivePersonsDTO();
+        List<Person> allInactiveAccounts = personService.getAllInactivePersons();
+        PersonConnectionDTO personToDeactivate = new PersonConnectionDTO();
+        PersonConnectionDTO personToReactivate = new PersonConnectionDTO();
+        ListMessagesDTO listMessage = messageToAdminService.displayMessagesByPage(currentPage, 5);
+        String mail = personService.getCurrentUserMail();
+        PersonDTO personDTO = personService.getPersonDTO(mail);
+
+        model.put("personDTO", personDTO);
+        model.put("listMessage", listMessage);
+        model.put("messageResult",messageResult);
+        model.put("readingMessage", readingMessage);
+        model.put("allActiveAccounts", allActiveAccounts);
+        model.put("allInactiveAccounts", allInactiveAccounts);
+        model.put("personToDeactivate", personToDeactivate);
+        model.put("personToReactivate", personToReactivate);
+        model.put("activePage", "Admin");
+        model.put("activeSubpage", "ManageUsers");
+        return new ModelAndView(viewName, model);
+    }
+
+
+    @Transactional
+    @PostMapping("/admin/manageUsers/deactivateAccount")
+    public ModelAndView deactivateAccount(@Valid @ModelAttribute("personToDeactivate") PersonConnectionDTO personToDeactivate, BindingResult bindingResult, ModelMap model) {
+        if (bindingResult.hasErrors()) {
+            String viewName = "manageUsers";
+            List<PersonDTO> allActiveAccounts = personService.getAllActivePersonsDTO();
+            List<Person> allInactiveAccounts = personService.getAllInactivePersons();
+            PersonConnectionDTO personToReactivate = new PersonConnectionDTO();
+            ListMessagesDTO listMessage = messageToAdminService.displayMessagesByPage(1, 5);
+            String mail = personService.getCurrentUserMail();
+            PersonDTO personDTO = personService.getPersonDTO(mail);
+            model.put("personDTO", personDTO);
+            model.put("listMessage", listMessage);
+            model.put("allActiveAccounts", allActiveAccounts);
+            model.put("allInactiveAccounts", allInactiveAccounts);
+            model.put("personToDeactivate", personToDeactivate);
+            model.put("personToReactivate", personToReactivate);
+            model.put("activePage", "Admin");
+            model.put("activeSubpage", "ManageUsers");
+            return new ModelAndView(viewName, model);
+        } else {
+
+            String message = personService.deletePerson(personToDeactivate.getEmail());
+            RedirectView redirect = new RedirectView();
+            redirect.setUrl("/admin/manageUsers");
+            model.put("messageResult", message);
+            return new ModelAndView(redirect, model);
+        }
+    }
+
+    @Transactional
+    @PostMapping("/admin/manageUsers/reactivateAccount")
+    public ModelAndView reactivateAccount(@Valid @ModelAttribute("personToReactivate") PersonConnectionDTO personToReactivate, BindingResult bindingResult, ModelMap model) {
+        if (bindingResult.hasErrors()) {
+            String viewName = "manageUsers";
+            List<PersonDTO> allActiveAccounts = personService.getAllActivePersonsDTO();
+            List<Person> allInactiveAccounts = personService.getAllInactivePersons();
+            PersonConnectionDTO personToDeactivate = new PersonConnectionDTO();
+            ListMessagesDTO listMessage = messageToAdminService.displayMessagesByPage(1, 5);
+            String mail = personService.getCurrentUserMail();
+            PersonDTO personDTO = personService.getPersonDTO(mail);
+            model.put("personDTO", personDTO);
+            model.put("listMessage", listMessage);
+            model.put("allActiveAccounts", allActiveAccounts);
+            model.put("allInactiveAccounts", allInactiveAccounts);
+            model.put("personToDeactivate", personToDeactivate);
+            model.put("personToReactivate", personToReactivate);
+            model.put("activePage", "Admin");
+            model.put("activeSubpage", "ManageUsers");
+            return new ModelAndView(viewName, model);
+        } else {
+
+            String message = personService.reactivateAccount(personToReactivate.getEmail());
+            RedirectView redirect = new RedirectView();
+            redirect.setUrl("/admin/manageUsers");
+            model.put("messageResult", message);
+            return new ModelAndView(redirect, model);
+        }
+    }
+
 }
