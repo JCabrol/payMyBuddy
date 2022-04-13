@@ -35,6 +35,10 @@ public class ProfileController {
     @Autowired
     BankAccountService bankAccountService;
 
+    String activePage = "activePage";
+    String activeSubpage = "activeSubpage";
+    String connectedPerson = "personDTO";
+
     @Transactional
     @GetMapping("/home/profile")
     public ModelAndView showProfile(String messageProfile, String messagePassword, String messageTransaction, String messageAccount) {
@@ -45,11 +49,11 @@ public class ProfileController {
         TransactionDTO transactionDTO = new TransactionDTO();
         UpdatePersonDTO updatePersonDTO = new UpdatePersonDTO();
         ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO();
-        model.put("personDTO", personDTO);
+        model.put(connectedPerson, personDTO);
         model.put("changePasswordDTO", changePasswordDTO);
         model.put("transactionDTO", transactionDTO);
         model.put("updatePersonDTO", updatePersonDTO);
-        model.put("activePage", "Profile");
+        model.put(activePage, "Profile");
         model.put("messageProfile", messageProfile);
         model.put("messagePassword", messagePassword);
         model.put("messageTransaction", messageTransaction);
@@ -66,11 +70,11 @@ public class ProfileController {
             PersonDTO personDTO = personService.getPersonDTO(mail);
             TransactionDTO transactionDTO = new TransactionDTO();
             ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO();
-            model.put("personDTO", personDTO);
+            model.put(connectedPerson, personDTO);
             model.put("changePasswordDTO", changePasswordDTO);
             model.put("transactionDTO", transactionDTO);
             model.put("updatePersonDTO", updatePersonDTO);
-            model.put("activePage", "Profile");
+            model.put(activePage, "Profile");
             return new ModelAndView(viewName, model);
         }
         String mail = personService.getCurrentUserMail();
@@ -91,11 +95,11 @@ public class ProfileController {
             PersonDTO personDTO = personService.getPersonDTO(mail);
             TransactionDTO transactionDTO = new TransactionDTO();
             UpdatePersonDTO updatePersonDTO = new UpdatePersonDTO();
-            model.put("personDTO", personDTO);
+            model.put(connectedPerson, personDTO);
             model.put("changePasswordDTO", changePasswordDTO);
             model.put("transactionDTO", transactionDTO);
             model.put("updatePersonDTO", updatePersonDTO);
-            model.put("activePage", "Profile");
+            model.put(activePage, "Profile");
             return new ModelAndView(viewName, model);
         } else {
             String mail = personService.getCurrentUserMail();
@@ -130,11 +134,11 @@ public class ProfileController {
                 PersonDTO personDTO = personService.getPersonDTO(mail);
                 UpdatePersonDTO updatePersonDTO = new UpdatePersonDTO();
                 ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO();
-                model.put("personDTO", personDTO);
+                model.put(connectedPerson, personDTO);
                 model.put("changePasswordDTO", changePasswordDTO);
                 model.put("transactionDTO", transactionDTO);
                 model.put("updatePersonDTO", updatePersonDTO);
-                model.put("activePage", "Profile");
+                model.put(activePage, "Profile");
                 return new ModelAndView(viewName, model);
             }
         }
@@ -155,7 +159,7 @@ public class ProfileController {
         //making transaction
         BankAccountDTO bankAccountDTO = bankAccountService.getBankAccountDTO(bankNumber);
         TransactionDTO result = transactionService.makeANewTransactionWithBank(personDTO, amount, bankAccountDTO, message);
-        String messageResult = "Your transaction of " + amount + " euros with your bank account n°" + transactionDTO.getReceiver() + " has been successful.";
+        String messageResult = "Your transaction of " + amount + " euros with your bank account n°" + result.getReceiver() + " has been successful.";
         //redirect to profile page
         model.put("messageTransaction", messageResult);
         RedirectView redirect = new RedirectView();
@@ -172,11 +176,11 @@ public class ProfileController {
         PersonDTO personDTO = personService.getPersonDTO(mail);
         BankAccountDTO bankAccountSelected = new BankAccountDTO();
         BankAccountTransactionDTO bankAccountToRemove = new BankAccountTransactionDTO();
-        model.put("personDTO", personDTO);
+        model.put(connectedPerson, personDTO);
         model.put("bankAccountSelected", bankAccountSelected);
         model.put("bankAccountToRemove", bankAccountToRemove);
-        model.put("activePage", "Profile");
-        model.put("activeSubpage", "ManageBankAccounts");
+        model.put(activePage, "Profile");
+        model.put(activeSubpage, "ManageBankAccounts");
         return new ModelAndView(viewName, model);
     }
 
@@ -188,11 +192,11 @@ public class ProfileController {
             String mail = personService.getCurrentUserMail();
             PersonDTO personDTO = personService.getPersonDTO(mail);
             BankAccountTransactionDTO bankAccountToRemove = new BankAccountTransactionDTO();
-            model.put("personDTO", personDTO);
+            model.put(connectedPerson, personDTO);
             model.put("bankAccountSelected", bankAccountSelected);
             model.put("bankAccountToRemove", bankAccountToRemove);
-            model.put("activePage", "Profile");
-            model.put("activeSubpage", "ManageBankAccounts");
+            model.put(activePage, "Profile");
+            model.put(activeSubpage, "ManageBankAccounts");
             return new ModelAndView(viewName, model);
         } else {
             if (bankAccountService.ibanAlreadyExists(bankAccountSelected.getIban())) {
@@ -201,11 +205,11 @@ public class ProfileController {
                 String mail = personService.getCurrentUserMail();
                 PersonDTO personDTO = personService.getPersonDTO(mail);
                 BankAccountTransactionDTO bankAccountToRemove = new BankAccountTransactionDTO();
-                model.put("personDTO", personDTO);
+                model.put(connectedPerson, personDTO);
                 model.put("bankAccountSelected", bankAccountSelected);
                 model.put("bankAccountToRemove", bankAccountToRemove);
-                model.put("activePage", "Profile");
-                model.put("activeSubpage", "ManageBankAccounts");
+                model.put(activePage, "Profile");
+                model.put(activeSubpage, "ManageBankAccounts");
                 return new ModelAndView(viewName, model);
             } else {
                 String mail = personService.getCurrentUserMail();
@@ -227,11 +231,11 @@ public class ProfileController {
             String mail = personService.getCurrentUserMail();
             PersonDTO personDTO = personService.getPersonDTO(mail);
             BankAccountDTO bankAccountSelected = new BankAccountDTO();
-            model.put("personDTO", personDTO);
+            model.put(connectedPerson, personDTO);
             model.put("bankAccountSelected", bankAccountSelected);
             model.put("bankAccountToRemove", bankAccountToRemove);
-            model.put("activePage", "Profile");
-            model.put("activeSubpage", "ManageBankAccounts");
+            model.put(activePage, "Profile");
+            model.put(activeSubpage, "ManageBankAccounts");
             return new ModelAndView(viewName, model);
         }
         String mail = personService.getCurrentUserMail();

@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 @Tag("PersonTests")
 @Slf4j
 @SpringBootTest
-public class PersonServiceTest {
+class PersonServiceTest {
 
     @Autowired
     private PersonService personService;
@@ -62,7 +62,7 @@ public class PersonServiceTest {
                 "WHEN the function getAllPersonsDTO() is called " +
                 "THEN it returns the correct list of PersonDTO.")
         @Test
-        public void getAllPersonsDTOWhenNotEmptyTest() {
+        void getAllPersonsDTOWhenNotEmptyTest() {
             //GIVEN
             //persons returned by personRepository
             List<Person> AllPersonsTest = new ArrayList<>();
@@ -103,7 +103,7 @@ public class PersonServiceTest {
                 "WHEN the function getAllPersonsDTO() is called " +
                 "THEN an EmptyObjectException is thrown with the expected error message.")
         @Test
-        public void getAllPersonsDTOWhenEmptyTest() {
+        void getAllPersonsDTOWhenEmptyTest() {
             //GIVEN
             //not any person returned by personRepository
             when(personRepository.findAll()).thenReturn(new ArrayList<>());
@@ -127,7 +127,7 @@ public class PersonServiceTest {
                 "WHEN the function getAllActivePersonsDTO() is called " +
                 "THEN it returns the correct list of PersonDTO.")
         @Test
-        public void getAllActivePersonsDTOWhenNotEmptyTest() {
+        void getAllActivePersonsDTOWhenNotEmptyTest() {
             //GIVEN
             //active persons returned by personRepository
             List<Person> AllActivePersonsTest = new ArrayList<>();
@@ -168,7 +168,7 @@ public class PersonServiceTest {
                 "WHEN the function getAllActivePersonsDTO() is called " +
                 "THEN it returns an empty list.")
         @Test
-        public void getAllActivePersonsDTOWhenEmptyTest() {
+        void getAllActivePersonsDTOWhenEmptyTest() {
             //GIVEN
             //not any person returned by personRepository
             when(personRepository.findByActive(true)).thenReturn(new ArrayList<>());
@@ -192,7 +192,7 @@ public class PersonServiceTest {
                 "WHEN the function getAllInactivePersons() is called " +
                 "THEN it returns the correct list of Person.")
         @Test
-        public void getAllInactivePersonsDTOWhenNotEmptyTest() {
+        void getAllInactivePersonsDTOWhenNotEmptyTest() {
             //GIVEN
             //inactive persons returned by personRepository
             List<Person> AllInactivePersonsTest = new ArrayList<>();
@@ -233,7 +233,7 @@ public class PersonServiceTest {
                 "WHEN the function getAllInactivePersons() is called " +
                 "THEN it returns an empty list.")
         @Test
-        public void getAllInactivePersonsWhenEmptyTest() {
+        void getAllInactivePersonsWhenEmptyTest() {
             //GIVEN
             //not any person returned by personRepository
             when(personRepository.findByActive(false)).thenReturn(new ArrayList<>());
@@ -258,7 +258,7 @@ public class PersonServiceTest {
                 "WHEN the function getPerson() is called " +
                 "THEN it returns the correct person.")
         @Test
-        public void getPersonExistingTest() {
+        void getPersonExistingTest() {
             //GIVEN
             //an existing person
             String email = "person1@mail.fr";
@@ -324,7 +324,7 @@ public class PersonServiceTest {
                 "WHEN the function getPersonDTO() is called " +
                 "THEN it returns a personDTO with all correct information.")
         @Test
-        public void getPersonDTOExistingTest() {
+        void getPersonDTOExistingTest() {
             //GIVEN
             //an existing person
             String email = "person1@mail.fr";
@@ -413,7 +413,7 @@ public class PersonServiceTest {
                 "WHEN the function getCurrentUserMail() is called " +
                 "THEN it returns the correct email.")
         @Test
-        public void getCurrentUserMailConnected() {
+        void getCurrentUserMailConnected() {
             //GIVEN
             //a connected user
             Authentication authentication = Mockito.mock(Authentication.class);
@@ -435,7 +435,7 @@ public class PersonServiceTest {
                 "WHEN the function getCurrentUserMail() is called " +
                 "THEN a NotFoundObjectException should be thrown with the expected error message.")
         @Test
-        public void getCurrentUserMailNotConnected() {
+        void getCurrentUserMailNotConnected() {
             //GIVEN
             //a not connected user
             Authentication authentication = Mockito.mock(Authentication.class);
@@ -461,7 +461,7 @@ public class PersonServiceTest {
                 "WHEN the function createPerson() is called " +
                 "THEN a person with correct information is created.")
         @Test
-        public void createPersonTest() {
+        void createPersonTest() {
             //GIVEN
             //a personDTO with all information
             String email = "person1@mail.fr";
@@ -499,7 +499,7 @@ public class PersonServiceTest {
                 "WHEN the function createPerson() is called " +
                 "THEN a MissingInformationException is thrown with the expected error message.")
         @Test
-        public void createPersonNoInformationTest() {
+        void createPersonNoInformationTest() {
             //GIVEN
             //a personDTO with all information
             PersonDTO personDTO = new PersonDTO();
@@ -518,7 +518,7 @@ public class PersonServiceTest {
                 "WHEN the function createPerson() is called " +
                 "THEN a MissingInformationException is thrown with the expected error message.")
         @Test
-        public void createPersonNotAllInformationTest() {
+        void createPersonNotAllInformationTest() {
             //GIVEN
             //a personDTO with all information
             String password = "password1";
@@ -547,7 +547,7 @@ public class PersonServiceTest {
                 "WHEN the function emailAlreadyExists() is called " +
                 "THEN it returns true.")
         @Test
-        public void emailAlreadyExistsExistingTest() {
+        void emailAlreadyExistsExistingTest() {
             //GIVEN
             //an email already registered
             String email = "person1@mail.fr";
@@ -566,7 +566,7 @@ public class PersonServiceTest {
                 "WHEN the function emailAlreadyExists() is called " +
                 "THEN it returns false.")
         @Test
-        public void emailAlreadyExistsNotExistingTest() {
+        void emailAlreadyExistsNotExistingTest() {
             //GIVEN
             //an email not registered
             String email = "person1@mail.fr";
@@ -591,7 +591,7 @@ public class PersonServiceTest {
                 "WHEN the function updatePerson() is called " +
                 "THEN all the new information is updated, the email is still the same.")
         @Test
-        public void updatePersonTest() {
+        void updatePersonTest() {
             //GIVEN
             //an existing person and a personDTO with all updatable information
             String email = "person1@mail.fr";
@@ -625,7 +625,7 @@ public class PersonServiceTest {
                 "WHEN the function updatePerson() is called " +
                 "THEN all the new information is updated, the other information are unchanged.")
         @Test
-        public void updatePersonSomeInformationTest() {
+        void updatePersonSomeInformationTest() {
             //GIVEN
             //an existing person and a personDTO with only some updatable information
             String email = "person1@mail.fr";
@@ -658,7 +658,7 @@ public class PersonServiceTest {
                 "WHEN the function updatePerson() is called " +
                 "THEN all the person information is still the same.")
         @Test
-        public void updatePersonNotNewInformationTest() {
+        void updatePersonNotNewInformationTest() {
             //GIVEN
             //an existing person and a personDTO with not new information
             String email = "person1@mail.fr";
@@ -690,7 +690,7 @@ public class PersonServiceTest {
                 "WHEN the function updatePerson() is called " +
                 "THEN a NotFoundObjectException is thrown with the expected error message.")
         @Test
-        public void updatePersonNoInformationTest() {
+        void updatePersonNoInformationTest() {
             //GIVEN
             // a personDTO with not any information
             PersonDTO personDTO = new PersonDTO();
@@ -709,7 +709,7 @@ public class PersonServiceTest {
                 "WHEN the function updatePerson() is called " +
                 "THEN a NotFoundObjectException is thrown with the expected error message.")
         @Test
-        public void updatePersonNoExistingTest() {
+        void updatePersonNoExistingTest() {
             //GIVEN
             // a non-existing person
             String email = "person1@mail.fr";
@@ -732,7 +732,7 @@ public class PersonServiceTest {
                 "WHEN the function updatePerson() is called " +
                 "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
         @Test
-        public void updatePersonNotActiveTest() {
+        void updatePersonNotActiveTest() {
             //GIVEN
             // a not active person
             String email = "person1@mail.fr";
@@ -764,7 +764,7 @@ public class PersonServiceTest {
                 "WHEN the function changePassword() is called " +
                 "THEN a success message is returned.")
         @Test
-        public void changePasswordTest() {
+        void changePasswordTest() {
             //GIVEN
             //an existing personDTO and a new password
             String email = "person1@mail.fr";
@@ -802,7 +802,7 @@ public class PersonServiceTest {
                 "WHEN the function changePassword() is called " +
                 "THEN a NotFoundObjectException should be thrown with the expected error message.")
         @Test
-        public void changePasswordNotExistingPersonDTOTest() {
+        void changePasswordNotExistingPersonDTOTest() {
             //GIVEN
             //a non-existing personDTO and a new password
             String email = "person1@mail.fr";
@@ -834,7 +834,7 @@ public class PersonServiceTest {
                 "WHEN the function deletePerson() is called " +
                 "THEN a success message is returned.")
         @Test
-        public void deletePersonTest() {
+        void deletePersonTest() {
             //GIVEN
             //an existing personDTO
             String email = "person1@mail.fr";
@@ -878,7 +878,7 @@ public class PersonServiceTest {
                 "WHEN the function deletePerson() is called " +
                 "THEN a success message is returned and is not in the person's list anymore.")
         @Test
-        public void deletePersonInPersonListTest() {
+        void deletePersonInPersonListTest() {
             //GIVEN
             //an existing personDTO in list of other person
             String email = "person1@mail.fr";
@@ -912,7 +912,7 @@ public class PersonServiceTest {
                 "WHEN the function deletePerson() is called " +
                 "THEN a NothingToDoException should be thrown with the expected error message.")
         @Test
-        public void deletePersonNotExistingTest() {
+        void deletePersonNotExistingTest() {
             //GIVEN
             //a non-existing personDTO
             String email = "person1@mail.fr";
@@ -933,7 +933,7 @@ public class PersonServiceTest {
                 "WHEN the function deletePerson() is called " +
                 "THEN a NothingToDoException should be thrown with the expected error message.")
         @Test
-        public void deletePersonNotActiveTest() {
+        void deletePersonNotActiveTest() {
             //GIVEN
             //a non-existing personDTO
             String email = "person1@mail.fr";
@@ -964,7 +964,7 @@ public class PersonServiceTest {
                 "WHEN the function reactivate() is called " +
                 "THEN a success message is returned and the account is active.")
         @Test
-        public void reactivateAccountTest() {
+        void reactivateAccountTest() {
             //GIVEN
             //an account deactivated
             String email = "person1@mail.fr";
@@ -992,7 +992,7 @@ public class PersonServiceTest {
                 "WHEN the function reactivate() is called " +
                 "THEN a success message is returned and the account is active.")
         @Test
-        public void reactivateAccountWhenAlreadyActiveTest() {
+        void reactivateAccountWhenAlreadyActiveTest() {
             //GIVEN
             //an active account
             String email = "person1@mail.fr";
@@ -1020,7 +1020,7 @@ public class PersonServiceTest {
                 "WHEN the function reactivate() is called " +
                 "THEN a NotFoundObjectException is thrown with the expected message.")
         @Test
-        public void reactivateAccountNotExistingTest() {
+        void reactivateAccountNotExistingTest() {
             //GIVEN
             //a non-existing person
             String email = "person1@mail.fr";
@@ -1047,7 +1047,7 @@ public class PersonServiceTest {
                 "WHEN the function addPersonInGroup() is called " +
                 "THEN a success message is returned and the expected methods have been called with expected arguments.")
         @Test
-        public void addPersonInGroupTest() {
+        void addPersonInGroupTest() {
             //GIVEN
             //an existing group owner and an existing person not in group
             String email = "person1@mail.fr";
@@ -1089,7 +1089,7 @@ public class PersonServiceTest {
                 "WHEN the function addPersonInGroup() is called " +
                 "THEN a success message is returned and the expected methods have been called with expected arguments.")
         @Test
-        public void addPersonWhichHasGroupOwnerInHisRelationsInGroupTest() {
+        void addPersonWhichHasGroupOwnerInHisRelationsInGroupTest() {
             //GIVEN
             //an existing group owner and an existing person not in group but having group owner in his group
             String email = "person1@mail.fr";
@@ -1135,7 +1135,7 @@ public class PersonServiceTest {
                 "WHEN the function addPersonInGroup() is called " +
                 "THEN a ObjectAlreadyExistingException is thrown with the expected error message.")
         @Test
-        public void addPersonAlreadyInGroupTest() {
+        void addPersonAlreadyInGroupTest() {
             //GIVEN
             //an existing group owner and an existing person already in group
             String email = "person1@mail.fr";
@@ -1171,7 +1171,7 @@ public class PersonServiceTest {
                 "WHEN the function addPersonInGroup() is called " +
                 "THEN a NotFoundObjectException is thrown with the expected error message.")
         @Test
-        public void addPersonInGroupNonExistingTest() {
+        void addPersonInGroupNonExistingTest() {
             //GIVEN
             //a non-existing group owner and an existing person not in group
             String email = "person1@mail.fr";
@@ -1198,7 +1198,7 @@ public class PersonServiceTest {
                 "WHEN the function addPersonInGroup() is called " +
                 "THEN a NotFoundObjectException is thrown with the expected error message.")
         @Test
-        public void addPersonNotExistingInGroupTest() {
+        void addPersonNotExistingInGroupTest() {
             //GIVEN
             //an existing group owner and a non-existing person to add
             String email = "person1@mail.fr";
@@ -1228,7 +1228,7 @@ public class PersonServiceTest {
                 "WHEN the function addPersonInGroup() is called " +
                 "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
         @Test
-        public void addPersonInGroupNotActiveTest() {
+        void addPersonInGroupNotActiveTest() {
             //GIVEN
             // a not active group owner and an existing person not in group
             String email = "person1@mail.fr";
@@ -1258,7 +1258,7 @@ public class PersonServiceTest {
                 "WHEN the function addPersonInGroup() is called " +
                 "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
         @Test
-        public void addPersonNotActiveInGroupTest() {
+        void addPersonNotActiveInGroupTest() {
             //GIVEN
             // an existing group owner and a not active person to add
             String email = "person1@mail.fr";
@@ -1298,7 +1298,7 @@ public class PersonServiceTest {
                 "WHEN the function removePersonFromGroup() is called " +
                 "THEN a success message is returned and the expected methods have been called with expected arguments.")
         @Test
-        public void removePersonFromGroupTest() {
+        void removePersonFromGroupTest() {
             //GIVEN
             //an existing group owner and an existing person in group
             String email = "person1@mail.fr";
@@ -1341,7 +1341,7 @@ public class PersonServiceTest {
                 "WHEN the function removePersonFromGroup() is called " +
                 "THEN a NothingToDoException is thrown with the expected error message.")
         @Test
-        public void removePersonFromGroupNotInGroupTest() {
+        void removePersonFromGroupNotInGroupTest() {
             //GIVEN
             //an existing group owner and an existing person not in group
             String email = "person1@mail.fr";
@@ -1374,7 +1374,7 @@ public class PersonServiceTest {
                 "WHEN the function removePersonFromGroup() is called " +
                 "THEN a NotFoundObjectException is thrown with the expected error message.")
         @Test
-        public void removePersonFromGroupNonExistingTest() {
+        void removePersonFromGroupNonExistingTest() {
             //GIVEN
             //a non-existing group owner and an existing person in group
             String email = "person1@mail.fr";
@@ -1401,7 +1401,7 @@ public class PersonServiceTest {
                 "WHEN the function removePersonFromGroup() is called " +
                 "THEN a NotFoundObjectException is thrown with the expected error message.")
         @Test
-        public void removePersonNotExistingFromGroupTest() {
+        void removePersonNotExistingFromGroupTest() {
             //GIVEN
             //an existing group owner and a non-existing person to remove
             String email = "person1@mail.fr";
@@ -1431,7 +1431,7 @@ public class PersonServiceTest {
                 "WHEN the function removePersonFromGroup() is called " +
                 "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
         @Test
-        public void removePersonFromGroupNotActiveTest() {
+        void removePersonFromGroupNotActiveTest() {
             //GIVEN
             // a not active group owner and an existing person in group
             String email = "person1@mail.fr";
@@ -1461,7 +1461,7 @@ public class PersonServiceTest {
                 "WHEN the function removePersonFromGroup() is called " +
                 "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
         @Test
-        public void removePersonNotActiveFromGroupTest() {
+        void removePersonNotActiveFromGroupTest() {
             //GIVEN
             // an existing group owner and a not active person to remove
             String email = "person1@mail.fr";
@@ -1501,7 +1501,7 @@ public class PersonServiceTest {
                 "WHEN the function getAllNotFriendPersonsDTO() is called " +
                 "THEN it returns a list of all the PersonDTO which are not in the person's group.")
         @Test
-        public void getAllNotFriendPersonsDTOTest() {
+        void getAllNotFriendPersonsDTOTest() {
             //GIVEN
             //a person with friends and not friends
             List<Person> AllPersonsTest = new ArrayList<>();
@@ -1543,7 +1543,7 @@ public class PersonServiceTest {
                 "WHEN the function getAllNotFriendPersonsDTO() is called " +
                 "THEN it returns an empty list.")
         @Test
-        public void getAllNotFriendEmptyPersonsDTOTest() {
+        void getAllNotFriendEmptyPersonsDTOTest() {
             //GIVEN
             //a person with only friends
             List<Person> AllPersonsTest = new ArrayList<>();
@@ -1586,7 +1586,7 @@ public class PersonServiceTest {
                 "WHEN the function addBankAccount() is called " +
                 "THEN a bank account is created and added to his bankAccountList.")
         @Test
-        public void addBankAccountTest() {
+        void addBankAccountTest() {
             //GIVEN
             //a person without bank account
             String email = "person1@mail.fr";
@@ -1621,7 +1621,7 @@ public class PersonServiceTest {
                 "WHEN the function addBankAccount() is called " +
                 "THEN a bank account is created and added to his bankAccountList.")
         @Test
-        public void addBankAccountWithOthersTest() {
+        void addBankAccountWithOthersTest() {
             //GIVEN
             //a person without bank account
             String email = "person1@mail.fr";
@@ -1665,7 +1665,7 @@ public class PersonServiceTest {
                 "WHEN the function addBankAccount() is called " +
                 "THEN a NotFoundObjectException is thrown with the expected error message.")
         @Test
-        public void addBankAccountNonExistingPersonTest() {
+        void addBankAccountNonExistingPersonTest() {
             //GIVEN
             //a person without bank account
             String email = "person1@mail.fr";
@@ -1693,7 +1693,7 @@ public class PersonServiceTest {
                 "WHEN the function addBankAccount() is called " +
                 "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
         @Test
-        public void addBankAccountNotActivePersonTest() {
+        void addBankAccountNotActivePersonTest() {
             //GIVEN
             //a person without bank account
             String email = "person1@mail.fr";
@@ -1731,7 +1731,7 @@ public class PersonServiceTest {
                 "WHEN the function removeBankAccount() is called " +
                 "THEN the bankAccount is inactive and removed from his bankAccountList.")
         @Test
-        public void removeBankAccountTest() {
+        void removeBankAccountTest() {
             //GIVEN
             //a bankAccount in a person's bankAccountList
             String email = "person1@mail.fr";
@@ -1770,7 +1770,7 @@ public class PersonServiceTest {
                 "WHEN the function removeBankAccount() is called " +
                 "THEN the bankAccount is inactive and removed from his bankAccountList, the other bankAccount is still active in the list.")
         @Test
-        public void removeBankAccountWithOtherTest() {
+        void removeBankAccountWithOtherTest() {
             //GIVEN
             //a bankAccount in a person's bankAccountList with another bankAccount
             String email = "person1@mail.fr";
@@ -1816,7 +1816,7 @@ public class PersonServiceTest {
                 "WHEN the function removeBankAccount() is called " +
                 "THEN a NotFoundObjectException is thrown with the expected error message.")
         @Test
-        public void removeBankAccountNotExistingTest() {
+        void removeBankAccountNotExistingTest() {
             //GIVEN
             //a NotFoundObjectException thrown by the bankAccountService
             String email = "person1@mail.fr";
@@ -1849,7 +1849,7 @@ public class PersonServiceTest {
                 "WHEN the function removeBankAccount() is called " +
                 "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
         @Test
-        public void removeBankAccountNotActiveTest() {
+        void removeBankAccountNotActiveTest() {
             //GIVEN
             //a ObjectNotExistingAnymoreException thrown by the bankAccountService
             String email = "person1@mail.fr";
@@ -1882,7 +1882,7 @@ public class PersonServiceTest {
                 "WHEN the function removeBankAccount() is called " +
                 "THEN a NotFoundObjectException is thrown with the expected error message.")
         @Test
-        public void removeBankAccountPersonNonExistingTest() {
+        void removeBankAccountPersonNonExistingTest() {
             //GIVEN
             //a non-existing person
             String email = "person1@mail.fr";
@@ -1910,7 +1910,7 @@ public class PersonServiceTest {
                 "WHEN the function removeBankAccount() is called " +
                 "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
         @Test
-        public void removeBankAccountPersonNotActiveTest() {
+        void removeBankAccountPersonNotActiveTest() {
             //GIVEN
             //a non-existing person
             String email = "person1@mail.fr";
@@ -1949,7 +1949,7 @@ public class PersonServiceTest {
                 "WHEN the function getPersonTransactionsMade() is called " +
                 "THEN a correct list of transactionDTO is returned.")
         @Test
-        public void getPersonTransactionsMadeTest() {
+        void getPersonTransactionsMadeTest() {
             //GIVEN
             //an existing person with a transaction list not empty
             String email = "person1@mail.fr";

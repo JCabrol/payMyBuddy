@@ -6,11 +6,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
-public class PayMyBuddyApplication {
+public class PaymybuddyApplication {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(PayMyBuddyApplication.class, args);
+        SpringApplication.run(PaymybuddyApplication.class, args);
     }
 }
 
