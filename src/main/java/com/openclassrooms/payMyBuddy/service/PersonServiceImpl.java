@@ -2,8 +2,11 @@ package com.openclassrooms.payMyBuddy.service;
 
 import com.openclassrooms.payMyBuddy.configuration.SpringSecurityConfiguration;
 import com.openclassrooms.payMyBuddy.exceptions.*;
-import com.openclassrooms.payMyBuddy.model.*;
+import com.openclassrooms.payMyBuddy.model.BankAccount;
 import com.openclassrooms.payMyBuddy.model.DTO.*;
+import com.openclassrooms.payMyBuddy.model.Person;
+import com.openclassrooms.payMyBuddy.model.Role;
+import com.openclassrooms.payMyBuddy.model.Transaction;
 import com.openclassrooms.payMyBuddy.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +36,12 @@ public class PersonServiceImpl implements PersonService {
     @Autowired
     private SpringSecurityConfiguration springSecurityConfiguration;
 
-    @Override
-    public List<PersonDTO> getAllPersonsDTO() {
-        log.debug("The function getAllPersonsDTO in PersonService is beginning.");
-        List<PersonDTO> allPersonDTOList = getAllPersons().stream().map(this::transformPersonToPersonDTO).collect(Collectors.toList());
-        log.debug("The function getAllPersonsDTO in PersonService is ending without exception.");
-        return allPersonDTOList;
-    }
-
+    /**
+     * Get all person registered
+     *
+     * @return a list of all the Person objects which are registered
+     * @throws EmptyObjectException when there is no person registered
+     */
     private List<Person> getAllPersons() throws EmptyObjectException {
         log.debug("The function getAllPersons in PersonService is beginning.");
         List<Person> allPersonList = (List<Person>) personRepository.findAll();
@@ -51,6 +52,37 @@ public class PersonServiceImpl implements PersonService {
         return allPersonList;
     }
 
+    /**
+     * Get all person registered, transformed in PersonDTO object
+     *
+     * @return a list of all the person registered transformed in PersonDTO object
+     * @throws EmptyObjectException when there is no person registered
+     */
+    @Override
+    public List<PersonDTO> getAllPersonsDTO() throws EmptyObjectException{
+        log.debug("The function getAllPersonsDTO in PersonService is beginning.");
+        List<PersonDTO> allPersonDTOList = getAllPersons().stream().map(this::transformPersonToPersonDTO).collect(Collectors.toList());
+        log.debug("The function getAllPersonsDTO in PersonService is ending without exception.");
+        return allPersonDTOList;
+    }
+
+    /**
+     * Get all active persons
+     *
+     * @return a list of all the Person objects which are active, an empty list if there is not any active person
+     */
+    private List<Person> getAllActivePersons() {
+        log.debug("The function getAllActivePersons in PersonService is beginning.");
+        List<Person> allPersonList = personRepository.findByActive(true);
+        log.debug("The function getAllActivePersons in PersonService is ending without exception.");
+        return allPersonList;
+    }
+
+    /**
+     * Get all active persons, transformed in PersonDTO object
+     *
+     * @return a list of all the Person objects which are active transformed in PersonDTO object, an empty list if there is not any active person
+     */
     @Override
     public List<PersonDTO> getAllActivePersonsDTO() {
         log.debug("The function getAllActivePersonsDTO in PersonService is beginning.");
@@ -59,13 +91,11 @@ public class PersonServiceImpl implements PersonService {
         return allPersonDTOList;
     }
 
-    private List<Person> getAllActivePersons() {
-        log.debug("The function getAllActivePersons in PersonService is beginning.");
-        List<Person> allPersonList = personRepository.findByActive(true);
-        log.debug("The function getAllActivePersons in PersonService is ending without exception.");
-        return allPersonList;
-    }
-
+    /**
+     * Get all inactive persons
+     *
+     * @return a list of all the Person objects which are inactive, an empty list if there is not any inactive person
+     */
     @Override
     public List<Person> getAllInactivePersons() {
         log.debug("The function getAllInactivePersons in PersonService is beginning.");
@@ -74,8 +104,14 @@ public class PersonServiceImpl implements PersonService {
         return allPersonList;
     }
 
-
-
+    /**
+     * Get one person from his id
+     *
+     * @param mail a String which is the id of the researched person
+     * @return the Person object having the researched mail as id
+     * @throws NotFoundObjectException when the researched mail is not registered
+     * @throws ObjectNotExistingAnymoreException when the researched mail correspond to an inactive person
+     */
     @Override
     public Person getPerson(String mail) throws NotFoundObjectException, ObjectNotExistingAnymoreException {
         log.debug("The function getPerson in PersonService is beginning.");
@@ -93,6 +129,12 @@ public class PersonServiceImpl implements PersonService {
         }
     }
 
+    /**
+     * Get one person transformed in PersonDTO object from his id
+     *
+     * @param mail a String which is the id of the researched person
+     * @return the Person object having the researched mail as id transformed in PersonDTO object
+     */
     @Override
     public PersonDTO getPersonDTO(String mail) {
         log.debug("The function getPersonDTO in PersonService is beginning.");
@@ -102,11 +144,16 @@ public class PersonServiceImpl implements PersonService {
         return personDTO;
     }
 
+    /**
+     * Get the mail (which is the id) of the connected user
+     *
+     * @return a String which is the connected user's mail
+     * @throws NotFoundObjectException when there is no connected user
+     */
     @Override
     public String getCurrentUserMail() throws NotFoundObjectException {
         log.debug("The function getCurrentUserMail in PersonService is beginning.");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
             if (!authentication.isAuthenticated()) {
                 throw new NotFoundObjectException("The current user's mail couldn't have been found.\n");
             } else {
@@ -114,14 +161,20 @@ public class PersonServiceImpl implements PersonService {
                 log.debug("The function getCurrentUserMail in PersonService is ending without exception.");
                 return currentUserMail;
             }
-        } else {
-            throw new NotFoundObjectException("The current user's mail couldn't have been found.\n");
-        }
     }
 
+    /**
+     * Create a new Person object using user's given information
+     *
+     * @param personDTO a PersonDTO object containing all information given by the user to create a new person
+     * @return a String which is a success message indicating the person has been created
+     * @throws MissingInformationException when there is not all required information
+     */
     @Override
-    public String createPerson(PersonDTO personDTO) {
+    public String createPerson(PersonDTO personDTO) throws MissingInformationException{
         log.debug("The function createPerson in PersonService is beginning.");
+        if(personDTO.getEmail()!=null && personDTO.getPassword()!=null && personDTO.getFirstName()!=null && personDTO.getLastName()!=null)
+        {
         Person person = new Person(personDTO.getEmail(), "", personDTO.getFirstName(), personDTO.getLastName());
         person.setPassword(springSecurityConfiguration.passwordEncoder().encode(personDTO.getPassword()));
         person.setRole(Role.USER);
@@ -130,8 +183,58 @@ public class PersonServiceImpl implements PersonService {
         log.info(message);
         log.debug("The function createPerson in PersonService is ending without exception.");
         return message;
+        }
+       else{
+          throw new MissingInformationException("There is not all required information to create a person,\n" +
+                  "email, password, first name and last name are mandatory.\n");
+        }
     }
 
+    /**
+     * Check if an email is already registered
+     *
+     * @param email a String which is the researched email
+     * @return true if the email already exists, false otherwise
+     */
+    @Override
+    public boolean emailAlreadyExists(String email) {
+        return personRepository.existsById(email);
+    }
+
+    /**
+     * Update a Person object using user's given information
+     *
+     * @param personDTO a PersonDTO object containing information given by the user to update the person
+     * @return a String which is a success message indicating the person has been updated
+     */
+    @Override
+    public String updatePerson(PersonDTO personDTO) {
+        log.debug("The function updatePerson in PersonService is beginning.");
+        Person person = getPerson(personDTO.getEmail());
+
+        if (personDTO.getFirstName() != null) {
+            person.setFirstName(personDTO.getFirstName());
+        }
+        if (personDTO.getLastName() != null) {
+            person.setLastName(personDTO.getLastName());
+        }
+        if (personDTO.getPassword() != null) {
+            person.setPassword(personDTO.getPassword());
+        }
+        personRepository.save(person);
+        String message = "Your user information has been updated.\n";
+        log.info("User information about " + personDTO.getEmail() + " have been updated.");
+        log.debug("The function updatePerson in PersonService is ending without exception.");
+        return message;
+    }
+
+    /**
+     * Encode and update a person's password
+     *
+     * @param personDTO a PersonDTO object whose password has to be modified
+     * @param password a String which is the new password
+     * @return a String which is a success message indicating the password has been changed
+     */
     @Override
     public String changePassword(PersonDTO personDTO, String password) {
         log.debug("The function changePassword in PersonService is beginning.");
@@ -143,8 +246,15 @@ public class PersonServiceImpl implements PersonService {
         return message;
     }
 
+    /**
+     * Delete a person from application (the person is not really suppressed but its status is set to inactive)
+     *
+     * @param email a String which is the id of the person to delete
+     * @return a String which is a success message indicating the person has been deleted
+     * @throws NothingToDoException when the person to delete doesn't exist or is already deleted
+     */
     @Override
-    public String deletePerson(String email) {
+    public String deletePerson(String email) throws NothingToDoException{
         log.debug("The function deletePerson in PersonService is beginning.");
         Person person;
         try {
@@ -154,6 +264,12 @@ public class PersonServiceImpl implements PersonService {
         }
         person.getRelations().clear();
         person.getBankAccountList().clear();
+        getAllPersons().forEach(person1 -> {
+                    if (person1.getRelations().contains(person)) {
+                        person1.removePersonInGroup(person);
+                        personRepository.save(person1);
+                    }
+                });
         person.setActive(false);
         personRepository.save(person);
         String message = "The person " + email + " have been deleted.\n";
@@ -162,6 +278,38 @@ public class PersonServiceImpl implements PersonService {
         return message;
     }
 
+    /**
+     * Reactivate an account which has been suppressed
+     *
+     * @param email a String which is the id of the person to reactivate
+     * @return a String which is a success message indicating the person has been reactivated
+     * @throws NotFoundObjectException when the person to reactivate doesn't exist
+     */
+    @Override
+    public String reactivateAccount(String email) throws NotFoundObjectException{
+        log.debug("The function reactivateAccount in PersonService is beginning.");
+        Optional<Person> personOptional = personRepository.findById(email);
+        if (personOptional.isPresent()) {
+            Person person = personOptional.get();
+            person.setActive(true);
+            personRepository.save(person);
+            String message = "The person whose mail is " + email + " has been reactivated.\n";
+            log.debug("The function reactivateAccount in PersonService is beginning.");
+            return message;
+        } else {
+            throw new NotFoundObjectException("The person " + email + " was not found");
+        }
+    }
+
+    /**
+     * Add a person in another person's group to permit transactions
+     *
+     * @param groupOwnerDTO - a String which is the id of the person to reactivate
+     * @param newPersonInGroupDTO -
+     * @return a String which is a success message indicating the person has been reactivated
+     * @throws ObjectNotExistingAnymoreException when the person to reactivate doesn't exist
+     * @throws ObjectAlreadyExistingException when
+     */
     @Override
     public String addPersonInGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO newPersonInGroupDTO) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException {
         log.debug("The function addPersonInGroup in PersonService is beginning.");
@@ -209,20 +357,7 @@ public class PersonServiceImpl implements PersonService {
         return allActiveNotFriend;
     }
 
-    @Override
-    public String reactivateAccount (String email){
-        log.debug("The function reactivateAccount in PersonService is beginning.");
-        Optional<Person> personOptional = personRepository.findById(email);
-        if(personOptional.isPresent()){
-            Person person = personOptional.get();
-            person.setActive(true);
-            personRepository.save(person);
-            String message = "The person whose mail is " + email + " has been reactivated.\n";
-            log.debug("The function reactivateAccount in PersonService is beginning.");
-            return message;
-        }else{
-            throw new NotFoundObjectException("The person " + email + " was not found");}
-    }
+
 
     @Override
     public String addBankAccount(PersonDTO personDTO, BankAccountDTO bankAccountDTO) {
@@ -254,27 +389,7 @@ public class PersonServiceImpl implements PersonService {
         return message;
     }
 
-    @Override
-    public String updatePerson(PersonDTO personDTO) {
-        log.debug("The function updatePerson in PersonService is beginning.");
-        Person person = getPerson(personDTO.getEmail());
 
-        if (personDTO.getFirstName() != null) {
-            person.setFirstName(personDTO.getFirstName());
-        }
-        if (personDTO.getLastName() != null) {
-            person.setLastName(personDTO.getLastName());
-        }
-        if (personDTO.getPassword() != null) {
-            person.setPassword(personDTO.getPassword());
-        }
-
-        personRepository.save(person);
-        String message = "Your user information has been updated.\n";
-        log.info("User information about " + personDTO.getEmail() + " have been updated.");
-        log.debug("The function updatePerson in PersonService is ending without exception.");
-        return message;
-    }
 
     @Transactional
     private PersonDTO transformPersonToPersonDTO(Person person) {
@@ -347,10 +462,7 @@ public class PersonServiceImpl implements PersonService {
         return transactionsReceived;
     }
 
-    @Override
-    public boolean emailAlreadyExists(String email){
-        return personRepository.existsById(email);
-    }
+
 
     @Override
     public ListTransactionPagesDTO displayTransactionsByPage(PersonDTO personDTO, int pageNumber, int numberOfTransactionByPage, String transactionType) {

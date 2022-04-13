@@ -2,12 +2,11 @@ package com.openclassrooms.payMyBuddy.unitTests;
 
 import com.openclassrooms.payMyBuddy.configuration.SpringSecurityConfiguration;
 import com.openclassrooms.payMyBuddy.exceptions.*;
-import com.openclassrooms.payMyBuddy.model.BankAccount;
+import com.openclassrooms.payMyBuddy.model.*;
 import com.openclassrooms.payMyBuddy.model.DTO.BankAccountDTO;
 import com.openclassrooms.payMyBuddy.model.DTO.PersonConnectionDTO;
 import com.openclassrooms.payMyBuddy.model.DTO.PersonDTO;
-import com.openclassrooms.payMyBuddy.model.Person;
-import com.openclassrooms.payMyBuddy.model.Role;
+import com.openclassrooms.payMyBuddy.model.DTO.TransactionDTO;
 import com.openclassrooms.payMyBuddy.repository.PersonRepository;
 import com.openclassrooms.payMyBuddy.service.BankAccountService;
 import com.openclassrooms.payMyBuddy.service.PersonService;
@@ -96,6 +95,7 @@ public class PersonServiceTest {
             assertThat(result.get(0).getLastName()).isEqualTo("lastName1");
             assertThat(result.get(1).getLastName()).isEqualTo("lastName2");
             assertThat(result.get(2).getLastName()).isEqualTo("lastName3");
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findAll();
         }
 
@@ -113,6 +113,7 @@ public class PersonServiceTest {
             //an EmptyObjectException is thrown with the expected error message
             Exception exception = assertThrows(EmptyObjectException.class, () -> personService.getAllPersonsDTO());
             assertEquals("There is not any person registered.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findAll();
         }
     }
@@ -159,6 +160,7 @@ public class PersonServiceTest {
             assertThat(result.get(0).getLastName()).isEqualTo("lastName1");
             assertThat(result.get(1).getLastName()).isEqualTo("lastName2");
             assertThat(result.get(2).getLastName()).isEqualTo("lastName3");
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findByActive(true);
         }
 
@@ -176,6 +178,7 @@ public class PersonServiceTest {
             //THEN
             //it returns an empty list
             assertThat(result.size()).isEqualTo(0);
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findByActive(true);
         }
     }
@@ -222,6 +225,7 @@ public class PersonServiceTest {
             assertThat(result.get(0).getLastName()).isEqualTo("lastName1");
             assertThat(result.get(1).getLastName()).isEqualTo("lastName2");
             assertThat(result.get(2).getLastName()).isEqualTo("lastName3");
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findByActive(false);
         }
 
@@ -239,10 +243,10 @@ public class PersonServiceTest {
             //THEN
             //it returns an empty list
             assertThat(result.size()).isEqualTo(0);
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findByActive(false);
         }
     }
-
 
 
     @Nested
@@ -266,6 +270,7 @@ public class PersonServiceTest {
             //THEN
             //it returns the correct person
             assertThat(returnedPerson).isEqualTo(person);
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
         }
 
@@ -284,6 +289,7 @@ public class PersonServiceTest {
             //an NotFoundObjectException is thrown with the expected error message
             Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.getPerson(email));
             assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
         }
 
@@ -304,6 +310,7 @@ public class PersonServiceTest {
             //an ObjectNotExistingAnymoreException is thrown with the expected error message
             Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.getPerson(email));
             assertEquals("The person whose mail is " + email + " doesn't exist anymore in the application.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
         }
     }
@@ -351,6 +358,7 @@ public class PersonServiceTest {
             assertThat(returnedPerson.getBankAccountDTOList().size()).isEqualTo(1);
             assertThat(returnedPerson.getBankAccountDTOList().get(0).getIban()).isEqualTo(person1.getBankAccountList().get(0).getIban());
             assertThat(returnedPerson.getBankAccountDTOList().get(0).getBic()).isEqualTo(person1.getBankAccountList().get(0).getBic());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(2)).findById(email);
             verify(bankAccountService, Mockito.times(1)).transformBankAccountToBankAccountDTO(bankAccount);
         }
@@ -370,6 +378,7 @@ public class PersonServiceTest {
             //an NotFoundObjectException is thrown with the expected error message
             Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.getPersonDTO(email));
             assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
         }
 
@@ -390,6 +399,7 @@ public class PersonServiceTest {
             //an ObjectNotExistingAnymoreException is thrown with the expected error message
             Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.getPersonDTO(email));
             assertEquals("The person whose mail is " + email + " doesn't exist anymore in the application.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
         }
     }
@@ -476,12 +486,272 @@ public class PersonServiceTest {
             //THEN
             //a person with correct information is created.
             assertThat(result).isEqualTo("The person firstName1 lastName1 have been created.\n");
+            //and the expected methods have been called with expected arguments
             verify(personRepository).save(arg.capture());
             assertEquals(person.getFirstName(), arg.getValue().getFirstName());
             assertEquals(person.getLastName(), arg.getValue().getLastName());
             assertEquals(person.getEmail(), arg.getValue().getEmail());
             assertEquals(person.getPassword().substring(0, 7), arg.getValue().getPassword().substring(0, 7));
             assertEquals(person.getRole(), arg.getValue().getRole());
+        }
+
+        @DisplayName("GIVEN a personDTO with not any information" +
+                "WHEN the function createPerson() is called " +
+                "THEN a MissingInformationException is thrown with the expected error message.")
+        @Test
+        public void createPersonNoInformationTest() {
+            //GIVEN
+            //a personDTO with all information
+            PersonDTO personDTO = new PersonDTO();
+            //WHEN
+            //the function createPerson() is called
+            //THEN
+            //a MissingInformationException is thrown with the expected error message
+            Exception exception = assertThrows(MissingInformationException.class, () -> personService.createPerson(personDTO));
+            assertEquals("There is not all required information to create a person,\n" +
+                    "email, password, first name and last name are mandatory.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a personDTO with not any information" +
+                "WHEN the function createPerson() is called " +
+                "THEN a MissingInformationException is thrown with the expected error message.")
+        @Test
+        public void createPersonNotAllInformationTest() {
+            //GIVEN
+            //a personDTO with all information
+            String password = "password1";
+            String lastname = "lastName1";
+            PersonDTO personDTO = new PersonDTO();
+            personDTO.setPassword(password);
+            personDTO.setLastName(lastname);
+            //WHEN
+            //the function createPerson() is called
+            //THEN
+            //a MissingInformationException is thrown with the expected error message
+            Exception exception = assertThrows(MissingInformationException.class, () -> personService.createPerson(personDTO));
+            assertEquals("There is not all required information to create a person,\n" +
+                    "email, password, first name and last name are mandatory.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+    }
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("emailAlreadyExists tests:")
+    class EmailAlreadyExistsTests {
+
+        @DisplayName("GIVEN an email already registered" +
+                "WHEN the function emailAlreadyExists() is called " +
+                "THEN it returns true.")
+        @Test
+        public void emailAlreadyExistsExistingTest() {
+            //GIVEN
+            //an email already registered
+            String email = "person1@mail.fr";
+            Mockito.when(personRepository.existsById(email)).thenReturn(true);
+            //WHEN
+            //the function emailAlreadyExists() is called
+            boolean result = personService.emailAlreadyExists(email);
+            //THEN
+            //it returns true.
+            assertTrue(result);
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).existsById(email);
+        }
+
+        @DisplayName("GIVEN an email not registered" +
+                "WHEN the function emailAlreadyExists() is called " +
+                "THEN it returns false.")
+        @Test
+        public void emailAlreadyExistsNotExistingTest() {
+            //GIVEN
+            //an email not registered
+            String email = "person1@mail.fr";
+            Mockito.when(personRepository.existsById(email)).thenReturn(false);
+            //WHEN
+            //the function emailAlreadyExists() is called
+            boolean result = personService.emailAlreadyExists(email);
+            //THEN
+            //it returns false.
+            assertFalse(result);
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).existsById(email);
+        }
+    }
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("updatePerson tests:")
+    class UpdatePersonTests {
+
+        @DisplayName("GIVEN an existing person and a personDTO with all updatable information" +
+                "WHEN the function updatePerson() is called " +
+                "THEN all the new information is updated, the email is still the same.")
+        @Test
+        public void updatePersonTest() {
+            //GIVEN
+            //an existing person and a personDTO with all updatable information
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonDTO personDTO = new PersonDTO(email, password2, firstName2, lastname2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            //WHEN
+            //the function updatePerson() is called
+            String result = personService.updatePerson(personDTO);
+            //THEN
+            //all the new information is updated, the email is still the same.
+            assertThat(result).isEqualTo("Your user information has been updated.\n");
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository).save(arg.capture());
+            assertEquals(firstName2, arg.getValue().getFirstName());
+            assertEquals(lastname2, arg.getValue().getLastName());
+            assertEquals(password2, arg.getValue().getPassword());
+            assertEquals(email, arg.getValue().getEmail());
+        }
+
+        @DisplayName("GIVEN an existing person and a personDTO with only some updatable information" +
+                "WHEN the function updatePerson() is called " +
+                "THEN all the new information is updated, the other information are unchanged.")
+        @Test
+        public void updatePersonSomeInformationTest() {
+            //GIVEN
+            //an existing person and a personDTO with only some updatable information
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonDTO personDTO = new PersonDTO(email, firstName2, lastname2);
+            Person person1 = new Person(email, password, firstName, lastname);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            //WHEN
+            //the function updatePerson() is called
+            String result = personService.updatePerson(personDTO);
+            //THEN
+            //all the new information is updated, the other information are unchanged.
+            assertThat(result).isEqualTo("Your user information has been updated.\n");
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository).save(arg.capture());
+            assertEquals(firstName2, arg.getValue().getFirstName());
+            assertEquals(lastname2, arg.getValue().getLastName());
+            assertEquals(password, arg.getValue().getPassword());
+            assertEquals(email, arg.getValue().getEmail());
+        }
+
+        @DisplayName("GIVEN an existing person and a personDTO with not new information" +
+                "WHEN the function updatePerson() is called " +
+                "THEN all the person information is still the same.")
+        @Test
+        public void updatePersonNotNewInformationTest() {
+            //GIVEN
+            //an existing person and a personDTO with not new information
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO = new PersonDTO();
+            personDTO.setEmail(email);
+            Person person1 = new Person(email, password, firstName, lastname);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            //WHEN
+            //the function updatePerson() is called
+            String result = personService.updatePerson(personDTO);
+            //THEN
+            //all the person information is still the same.
+            assertThat(result).isEqualTo("Your user information has been updated.\n");
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository).save(arg.capture());
+            assertEquals(firstName, arg.getValue().getFirstName());
+            assertEquals(lastname, arg.getValue().getLastName());
+            assertEquals(password, arg.getValue().getPassword());
+            assertEquals(email, arg.getValue().getEmail());
+        }
+
+        @DisplayName("GIVEN a personDTO with not any information" +
+                "WHEN the function updatePerson() is called " +
+                "THEN a NotFoundObjectException is thrown with the expected error message.")
+        @Test
+        public void updatePersonNoInformationTest() {
+            //GIVEN
+            // a personDTO with not any information
+            PersonDTO personDTO = new PersonDTO();
+            //WHEN
+            //the function updatePerson() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message.
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.updatePerson(personDTO));
+            assertEquals("The person whose mail is " + null + " was not found.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(any());
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a non-existing person" +
+                "WHEN the function updatePerson() is called " +
+                "THEN a NotFoundObjectException is thrown with the expected error message.")
+        @Test
+        public void updatePersonNoExistingTest() {
+            //GIVEN
+            // a non-existing person
+            String email = "person1@mail.fr";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.empty());
+            //WHEN
+            //the function updatePerson() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message.
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.updatePerson(personDTO));
+            assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(any());
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a not active person" +
+                "WHEN the function updatePerson() is called " +
+                "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
+        @Test
+        public void updatePersonNotActiveTest() {
+            //GIVEN
+            // a not active person
+            String email = "person1@mail.fr";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String password = "password1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person = new Person(email, password, firstName, lastname);
+            person.setActive(false);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person));
+            //WHEN
+            //the function updatePerson() is called
+            //THEN
+            //a ObjectNotExistingAnymoreException is thrown with the expected error message.
+            Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.updatePerson(personDTO));
+            assertEquals("The person whose mail is " + email + " doesn't exist anymore in the application.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(any());
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
         }
     }
 
@@ -518,6 +788,7 @@ public class PersonServiceTest {
             //THEN
             //a success message is returned.
             assertThat(result).isEqualTo("Your password have been successfully modified.\n");
+            //and the expected methods have been called with expected arguments
             verify(personRepository).save(arg.capture());
             assertEquals(firstName, arg.getValue().getFirstName());
             assertEquals(lastname, arg.getValue().getLastName());
@@ -561,7 +832,7 @@ public class PersonServiceTest {
 
         @DisplayName("GIVEN an existing personDTO " +
                 "WHEN the function deletePerson() is called " +
-                "THEN a success message is returned and the expected methods have been called with expected arguments.")
+                "THEN a success message is returned.")
         @Test
         public void deletePersonTest() {
             //GIVEN
@@ -573,6 +844,7 @@ public class PersonServiceTest {
             Person person1 = new Person(email, password, firstName, lastname);
             Person person2 = new Person("person2@mail.fr", "password2", "firstName2", "lastName2");
             BankAccount bankAccount = new BankAccount("iban1", "bic1");
+            List<Person> allPersons = List.of(person1, person2);
             List<Person> relations = new ArrayList<>();
             List<BankAccount> bankAccountList = new ArrayList<>();
             relations.add(person2);
@@ -582,6 +854,7 @@ public class PersonServiceTest {
             final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
             Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
             Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            Mockito.when(personRepository.findAll()).thenReturn(allPersons);
             //WHEN
             //the function deletePerson() is called
             String result = personService.deletePerson(email);
@@ -590,6 +863,7 @@ public class PersonServiceTest {
             assertThat(result).isEqualTo("The person " + email + " have been deleted.\n");
             //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findAll();
             verify(personRepository, Mockito.times(1)).save(any(Person.class));
             verify(personRepository).save(arg.capture());
             assertEquals(firstName, arg.getValue().getFirstName());
@@ -599,6 +873,40 @@ public class PersonServiceTest {
             assertEquals(Collections.emptyList(), arg.getValue().getBankAccountList());
             assertFalse(arg.getValue().isActive());
         }
+
+        @DisplayName("GIVEN an existing personDTO in list of other person " +
+                "WHEN the function deletePerson() is called " +
+                "THEN a success message is returned and is not in the person's list anymore.")
+        @Test
+        public void deletePersonInPersonListTest() {
+            //GIVEN
+            //an existing personDTO in list of other person
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person("person2@mail.fr", "password2", "firstName2", "lastName2");
+            List<Person> allPersons = List.of(person1, person2);
+            List<Person> relations = new ArrayList<>();
+            relations.add(person1);
+            person2.setRelations(relations);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person2).thenReturn(person1);
+            Mockito.when(personRepository.findAll()).thenReturn(allPersons);
+            //WHEN
+            //the function deletePerson() is called
+            String result = personService.deletePerson(email);
+            //THEN
+            //a success message is returned and is not in the person's list anymore
+            assertThat(result).isEqualTo("The person " + email + " have been deleted.\n");
+            assertTrue(person2.getRelations().isEmpty());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(1)).findAll();
+            verify(personRepository, Mockito.times(2)).save(any(Person.class));
+        }
+
 
         @DisplayName("GIVEN a non-existing personDTO " +
                 "WHEN the function deletePerson() is called " +
@@ -616,6 +924,7 @@ public class PersonServiceTest {
             //a NothingToDoException is thrown with the expected error message
             Exception exception = assertThrows(NothingToDoException.class, () -> personService.deletePerson(email));
             assertEquals("The person " + email + " was not found, so it couldn't have been deleted", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
         }
@@ -640,10 +949,94 @@ public class PersonServiceTest {
             //a NothingToDoException is thrown with the expected error message
             Exception exception = assertThrows(NothingToDoException.class, () -> personService.deletePerson(email));
             assertEquals("The person " + email + " was not found, so it couldn't have been deleted", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
         }
     }
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("reactivateAccount tests:")
+    class ReactivateAccountTests {
+
+        @DisplayName("GIVEN an account deactivated" +
+                "WHEN the function reactivate() is called " +
+                "THEN a success message is returned and the account is active.")
+        @Test
+        public void reactivateAccountTest() {
+            //GIVEN
+            //an account deactivated
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            Person person1 = new Person(email, password, firstName, lastname);
+            person1.setActive(false);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            //WHEN
+            //the function reactivate() is called
+            String result = personService.reactivateAccount(email);
+            //THEN
+            //a success message is returned and the account is active
+            assertThat(result).isEqualTo("The person whose mail is " + email + " has been reactivated.\n");
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository).save(arg.capture());
+            assertTrue(arg.getValue().isActive());
+        }
+
+        @DisplayName("GIVEN an active account" +
+                "WHEN the function reactivate() is called " +
+                "THEN a success message is returned and the account is active.")
+        @Test
+        public void reactivateAccountWhenAlreadyActiveTest() {
+            //GIVEN
+            //an active account
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            Person person1 = new Person(email, password, firstName, lastname);
+            person1.setActive(true);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            //WHEN
+            //the function reactivate() is called
+            String result = personService.reactivateAccount(email);
+            //THEN
+            //a success message is returned and the account is active
+            assertThat(result).isEqualTo("The person whose mail is " + email + " has been reactivated.\n");
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository).save(arg.capture());
+            assertTrue(arg.getValue().isActive());
+        }
+
+        @DisplayName("GIVEN a non-existing person" +
+                "WHEN the function reactivate() is called " +
+                "THEN a NotFoundObjectException is thrown with the expected message.")
+        @Test
+        public void reactivateAccountNotExistingTest() {
+            //GIVEN
+            //a non-existing person
+            String email = "person1@mail.fr";
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.empty());
+            //WHEN
+            //the function reactivate() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.reactivateAccount(email));
+            assertEquals("The person " + email + " was not found", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+    }
+
 
     @Nested
     @Tag("PersonServiceTests")
@@ -768,6 +1161,7 @@ public class PersonServiceTest {
             //a ObjectAlreadyExistingException is thrown with the expected error message
             Exception exception = assertThrows(ObjectAlreadyExistingException.class, () -> personService.addPersonInGroup(personDTO1, personDTO2));
             assertEquals("The person " + firstName2 + " " + lastname2 + " is already present in your relations.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(1)).findById(email2);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
@@ -794,6 +1188,7 @@ public class PersonServiceTest {
             //a NotFoundObjectException is thrown with the expected error message
             Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.addPersonInGroup(personDTO1, personDTO2));
             assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(0)).findById(email2);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
@@ -823,6 +1218,7 @@ public class PersonServiceTest {
             //a NotFoundObjectException is thrown with the expected error message
             Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.addPersonInGroup(personDTO1, personDTO2));
             assertEquals("The person whose mail is " + email2 + " was not found.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(1)).findById(email2);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
@@ -851,6 +1247,7 @@ public class PersonServiceTest {
             //a ObjectNotExistingAnymoreException is thrown with the expected error message
             Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.addPersonInGroup(personDTO1, personDTO2));
             assertEquals("The person whose mail is " + email + " doesn't exist anymore in the application.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(0)).findById(email2);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
@@ -885,6 +1282,7 @@ public class PersonServiceTest {
             //a ObjectNotExistingAnymoreException is thrown with the expected error message
             Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.addPersonInGroup(personDTO1, personDTO2));
             assertEquals("The person whose mail is " + email2 + " doesn't exist anymore in the application.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(1)).findById(email2);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
@@ -966,6 +1364,7 @@ public class PersonServiceTest {
             //a NothingToDoException is thrown with the expected error message
             Exception exception = assertThrows(NothingToDoException.class, () -> personService.removePersonFromGroup(personDTO1, personDTO2));
             assertEquals("The person " + firstName2 + " " + lastname2 + " wasn't present in your relations.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(1)).findById(email2);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
@@ -992,6 +1391,7 @@ public class PersonServiceTest {
             //a NotFoundObjectException is thrown with the expected error message
             Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.removePersonFromGroup(personDTO1, personDTO2));
             assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(0)).findById(email2);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
@@ -1021,6 +1421,7 @@ public class PersonServiceTest {
             //a NotFoundObjectException is thrown with the expected error message
             Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.removePersonFromGroup(personDTO1, personDTO2));
             assertEquals("The person whose mail is " + email2 + " was not found.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(1)).findById(email2);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
@@ -1049,6 +1450,7 @@ public class PersonServiceTest {
             //a ObjectNotExistingAnymoreException is thrown with the expected error message
             Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.removePersonFromGroup(personDTO1, personDTO2));
             assertEquals("The person whose mail is " + email + " doesn't exist anymore in the application.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(0)).findById(email2);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
@@ -1083,6 +1485,7 @@ public class PersonServiceTest {
             //a ObjectNotExistingAnymoreException is thrown with the expected error message
             Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.removePersonFromGroup(personDTO1, personDTO2));
             assertEquals("The person whose mail is " + email2 + " doesn't exist anymore in the application.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(personRepository, Mockito.times(1)).findById(email2);
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
@@ -1112,10 +1515,10 @@ public class PersonServiceTest {
             Person person1 = AllPersonsTest.get(0);
             Person person2 = AllPersonsTest.get(1);
             Person person3 = AllPersonsTest.get(2);
-            PersonDTO personDTO1 = new PersonDTO("person1@mail.fr","firstname1","lastName1");
-            PersonDTO personDTO2 = new PersonDTO("person2@mail.fr","firstname2","lastName2");
-            PersonDTO personDTO3 = new PersonDTO("person3@mail.fr","firstname3","lastName3");
-            List<PersonDTO> person1Group = List.of(personDTO2,personDTO3);
+            PersonDTO personDTO1 = new PersonDTO("person1@mail.fr", "firstname1", "lastName1");
+            PersonDTO personDTO2 = new PersonDTO("person2@mail.fr", "firstname2", "lastName2");
+            PersonDTO personDTO3 = new PersonDTO("person3@mail.fr", "firstname3", "lastName3");
+            List<PersonDTO> person1Group = List.of(personDTO2, personDTO3);
             person1.addPersonInGroup(person2);
             person1.addPersonInGroup(person3);
             personDTO1.setGroup(person1Group);
@@ -1129,6 +1532,9 @@ public class PersonServiceTest {
             assertThat(result.get(0).getEmail()).isEqualTo("person4@mail.fr");
             assertThat(result.get(1).getEmail()).isEqualTo("person5@mail.fr");
             assertThat(result.get(2).getEmail()).isEqualTo("person6@mail.fr");
+            assertFalse(result.contains(personDTO1));
+            assertFalse(result.contains(personDTO2));
+            assertFalse(result.contains(personDTO3));
             //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findByActive(true);
         }
@@ -1151,10 +1557,10 @@ public class PersonServiceTest {
             Person person1 = AllPersonsTest.get(0);
             Person person2 = AllPersonsTest.get(1);
             Person person3 = AllPersonsTest.get(2);
-            PersonDTO personDTO1 = new PersonDTO("person1@mail.fr","firstName1","lastName1");
-            PersonDTO personDTO2 = new PersonDTO("person2@mail.fr","firstName2","lastName2");
-            PersonDTO personDTO3 = new PersonDTO("person3@mail.fr","firstName3","lastName3");
-            List<PersonDTO> person1Group = List.of(personDTO2,personDTO3);
+            PersonDTO personDTO1 = new PersonDTO("person1@mail.fr", "firstName1", "lastName1");
+            PersonDTO personDTO2 = new PersonDTO("person2@mail.fr", "firstName2", "lastName2");
+            PersonDTO personDTO3 = new PersonDTO("person3@mail.fr", "firstName3", "lastName3");
+            List<PersonDTO> person1Group = List.of(personDTO2, personDTO3);
             person1.addPersonInGroup(person2);
             person1.addPersonInGroup(person3);
             personDTO1.setGroup(person1Group);
@@ -1170,117 +1576,428 @@ public class PersonServiceTest {
         }
     }
 
-    @Nested
-    @Tag("PersonServiceTests")
-    @DisplayName("reactivateAccount tests:")
-    class ReactivateAccountTests {
-
-        @DisplayName("GIVEN an account deactivated" +
-                "WHEN the function reactivate() is called " +
-                "THEN a success message is returned and the account is active.")
-        @Test
-        public void reactivateAccountTest() {
-            //GIVEN
-            //an account deactivated
-            String email = "person1@mail.fr";
-            String password = "password1";
-            String firstName = "firstName1";
-            String lastname = "lastName1";
-            Person person1 = new Person(email, password, firstName, lastname);
-            person1.setActive(false);
-            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
-            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
-            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
-            //WHEN
-            //the function reactivate() is called
-            String result = personService.reactivateAccount(email);
-            //THEN
-            //a success message is returned and the account is active
-            assertThat(result).isEqualTo("The person whose mail is " + email + " has been reactivated.\n");
-            verify(personRepository, Mockito.times(1)).findById(email);
-            verify(personRepository).save(arg.capture());
-            assertTrue(arg.getValue().isActive());
-        }
-
-        @DisplayName("GIVEN an active account" +
-                "WHEN the function reactivate() is called " +
-                "THEN a success message is returned and the account is active.")
-        @Test
-        public void reactivateAccountWhenAlreadyActiveTest() {
-            //GIVEN
-            //an active account
-            String email = "person1@mail.fr";
-            String password = "password1";
-            String firstName = "firstName1";
-            String lastname = "lastName1";
-            Person person1 = new Person(email, password, firstName, lastname);
-            person1.setActive(true);
-            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
-            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
-            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
-            //WHEN
-            //the function reactivate() is called
-            String result = personService.reactivateAccount(email);
-            //THEN
-            //a success message is returned and the account is active
-            assertThat(result).isEqualTo("The person whose mail is " + email + " has been reactivated.\n");
-            verify(personRepository, Mockito.times(1)).findById(email);
-            verify(personRepository).save(arg.capture());
-            assertTrue(arg.getValue().isActive());
-        }
-
-        @DisplayName("GIVEN a non-existing person" +
-                "WHEN the function reactivate() is called " +
-                "THEN a NotFoundObjectException is thrown with the expected message.")
-        @Test
-        public void reactivateAccountNotExistingTest() {
-            //GIVEN
-            //a non-existing person
-            String email = "person1@mail.fr";
-            Mockito.when(personRepository.findById(email)).thenReturn(Optional.empty());
-            //WHEN
-            //the function reactivate() is called
-            //THEN
-            //a NotFoundObjectException is thrown with the expected error message
-            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.reactivateAccount(email));
-            assertEquals("The person " + email + " was not found", exception.getMessage());
-            verify(personRepository, Mockito.times(1)).findById(email);
-            verify(personRepository, Mockito.times(0)).save(any(Person.class));
-        }
-    }
 
     @Nested
     @Tag("PersonServiceTests")
     @DisplayName("addBankAccount tests:")
     class AddBankAccountTests {
 
-        @DisplayName("GIVEN an account deactivated" +
-                "WHEN the function reactivate() is called " +
-                "THEN a success message is returned and the account is active.")
+        @DisplayName("GIVEN a person without bank account" +
+                "WHEN the function addBankAccount() is called " +
+                "THEN a bank account is created and added to his bankAccountList.")
         @Test
         public void addBankAccountTest() {
             //GIVEN
-            //an account deactivated
+            //a person without bank account
             String email = "person1@mail.fr";
             String password = "password1";
             String firstName = "firstName1";
             String lastname = "lastName1";
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
             Person person1 = new Person(email, password, firstName, lastname);
-            person1.setActive(false);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+            BankAccount bankAccount1 = new BankAccount(iban, bic, usualName);
             final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
             Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
             Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            Mockito.when(bankAccountService.createBankAccount(bankAccountDTO)).thenReturn(bankAccount1);
             //WHEN
-            //the function reactivate() is called
-            String result = personService.reactivateAccount(email);
+            //the function addBankAccount() is called
+            String result = personService.addBankAccount(personDTO, bankAccountDTO);
             //THEN
-            //a success message is returned and the account is active
-            assertThat(result).isEqualTo("The person whose mail is " + email + " has been reactivated.\n");
+            //a bank account is created and added to his bankAccountList
+            assertThat(result).isEqualTo("The bank account with IBAN number " + iban + " has been created and added to your bank account list.\n");
+            //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
+            verify(bankAccountService, Mockito.times(1)).createBankAccount(bankAccountDTO);
             verify(personRepository).save(arg.capture());
-            assertTrue(arg.getValue().isActive());
+            assertTrue(arg.getValue().getBankAccountList().contains(bankAccount1));
         }
 
+        @DisplayName("GIVEN a person with some bank account" +
+                "WHEN the function addBankAccount() is called " +
+                "THEN a bank account is created and added to his bankAccountList.")
+        @Test
+        public void addBankAccountWithOthersTest() {
+            //GIVEN
+            //a person without bank account
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            String iban2 = "bankAccountIban2";
+            String bic2 = "bankAccountBic2";
+            String usualName2 = "usualName2";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person1 = new Person(email, password, firstName, lastname);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+            BankAccount bankAccount1 = new BankAccount(iban, bic, usualName);
+            BankAccount bankAccount2 = new BankAccount(iban2, bic2, usualName2);
+            List<BankAccount> bankAccountList = new ArrayList<>();
+            bankAccountList.add(bankAccount2);
+            person1.setBankAccountList(bankAccountList);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            Mockito.when(bankAccountService.createBankAccount(bankAccountDTO)).thenReturn(bankAccount1);
+            //WHEN
+            //the function addBankAccount() is called
+            String result = personService.addBankAccount(personDTO, bankAccountDTO);
+            //THEN
+            //a bank account is created and added to his bankAccountList
+            assertThat(result).isEqualTo("The bank account with IBAN number " + iban + " has been created and added to your bank account list.\n");
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(bankAccountService, Mockito.times(1)).createBankAccount(bankAccountDTO);
+            verify(personRepository).save(arg.capture());
+            assertEquals(2, arg.getValue().getBankAccountList().size());
+            assertTrue(arg.getValue().getBankAccountList().contains(bankAccount1));
+            assertTrue(arg.getValue().getBankAccountList().contains(bankAccount2));
+        }
+
+        @DisplayName("GIVEN a non-existing person " +
+                "WHEN the function addBankAccount() is called " +
+                "THEN a NotFoundObjectException is thrown with the expected error message.")
+        @Test
+        public void addBankAccountNonExistingPersonTest() {
+            //GIVEN
+            //a person without bank account
+            String email = "person1@mail.fr";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.empty());
+            //WHEN
+            //the function addBankAccount() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.addBankAccount(personDTO, bankAccountDTO));
+            assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+            verify(bankAccountService, Mockito.times(0)).createBankAccount(bankAccountDTO);
+        }
+
+        @DisplayName("GIVEN a person not active " +
+                "WHEN the function addBankAccount() is called " +
+                "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
+        @Test
+        public void addBankAccountNotActivePersonTest() {
+            //GIVEN
+            //a person without bank account
+            String email = "person1@mail.fr";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String password = "password1";
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+            Person person1 = new Person(email, password, firstName, lastname);
+            person1.setActive(false);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            //WHEN
+            //the function addBankAccount() is called
+            //THEN
+            //a ObjectNotExistingAnymoreException is thrown with the expected error message
+            Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.addBankAccount(personDTO, bankAccountDTO));
+            assertEquals("The person whose mail is " + email + " doesn't exist anymore in the application.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+            verify(bankAccountService, Mockito.times(0)).createBankAccount(bankAccountDTO);
+        }
     }
+
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("removeBankAccount tests:")
+    class RemoveBankAccountTests {
+
+        @DisplayName("GIVEN a bankAccount in a person's bankAccountList" +
+                "WHEN the function removeBankAccount() is called " +
+                "THEN the bankAccount is inactive and removed from his bankAccountList.")
+        @Test
+        public void removeBankAccountTest() {
+            //GIVEN
+            //a bankAccount in a person's bankAccountList
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person1 = new Person(email, password, firstName, lastname);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+            BankAccount bankAccount1 = new BankAccount(iban, bic, usualName);
+            List<BankAccount> bankAccountList = new ArrayList<>();
+            bankAccountList.add(bankAccount1);
+            person1.setBankAccountList(bankAccountList);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            Mockito.when(bankAccountService.getBankAccount(iban)).thenReturn(bankAccount1);
+            //WHEN
+            //the function removeBankAccount() is called
+            String result = personService.removeBankAccount(personDTO, bankAccountDTO);
+            //THEN
+            //the bankAccount is inactive and removed from his bankAccountList.
+            assertThat(result).isEqualTo("The bank account with IBAN number " + iban + " has been removed from your bank account list.\n");
+            assertFalse(bankAccount1.isActiveBankAccount());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(bankAccountService, Mockito.times(1)).getBankAccount(iban);
+            verify(personRepository).save(arg.capture());
+            assertFalse(arg.getValue().getBankAccountList().contains(bankAccount1));
+        }
+
+        @DisplayName("GIVEN a bankAccount in a person's bankAccountList with another bankAccount" +
+                "WHEN the function removeBankAccount() is called " +
+                "THEN the bankAccount is inactive and removed from his bankAccountList, the other bankAccount is still active in the list.")
+        @Test
+        public void removeBankAccountWithOtherTest() {
+            //GIVEN
+            //a bankAccount in a person's bankAccountList with another bankAccount
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            String iban2 = "bankAccountIban2";
+            String bic2 = "bankAccountBic2";
+            String usualName2 = "usualName2";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person1 = new Person(email, password, firstName, lastname);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+            BankAccount bankAccount1 = new BankAccount(iban, bic, usualName);
+            BankAccount bankAccount2 = new BankAccount(iban2, bic2, usualName2);
+            List<BankAccount> bankAccountList = new ArrayList<>();
+            bankAccountList.add(bankAccount1);
+            bankAccountList.add(bankAccount2);
+            person1.setBankAccountList(bankAccountList);
+            final ArgumentCaptor<Person> arg = ArgumentCaptor.forClass(Person.class);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(personRepository.save(any(Person.class))).thenReturn(person1);
+            Mockito.when(bankAccountService.getBankAccount(iban)).thenReturn(bankAccount1);
+            //WHEN
+            //the function removeBankAccount() is called
+            String result = personService.removeBankAccount(personDTO, bankAccountDTO);
+            //THEN
+            //the bankAccount is inactive and removed from his bankAccountList.
+            assertThat(result).isEqualTo("The bank account with IBAN number " + iban + " has been removed from your bank account list.\n");
+            assertFalse(bankAccount1.isActiveBankAccount());
+            assertTrue(bankAccount2.isActiveBankAccount());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(bankAccountService, Mockito.times(1)).getBankAccount(iban);
+            verify(personRepository).save(arg.capture());
+            assertFalse(arg.getValue().getBankAccountList().contains(bankAccount1));
+            assertTrue(arg.getValue().getBankAccountList().contains(bankAccount2));
+        }
+
+        @DisplayName("GIVEN a NotFoundObjectException thrown by the bankAccountService" +
+                "WHEN the function removeBankAccount() is called " +
+                "THEN a NotFoundObjectException is thrown with the expected error message.")
+        @Test
+        public void removeBankAccountNotExistingTest() {
+            //GIVEN
+            //a NotFoundObjectException thrown by the bankAccountService
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person1 = new Person(email, password, firstName, lastname);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            String errorMessage = "The bank account with IBAN number " + iban + " was not found.\n";
+            NotFoundObjectException notFoundObjectException = new NotFoundObjectException(errorMessage);
+            Mockito.when(bankAccountService.getBankAccount(iban)).thenThrow(notFoundObjectException);
+            //WHEN
+            //the function removeBankAccount() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message.
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.removeBankAccount(personDTO, bankAccountDTO));
+            assertEquals(errorMessage, exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(bankAccountService, Mockito.times(1)).getBankAccount(iban);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a ObjectNotExistingAnymoreException thrown by the bankAccountService" +
+                "WHEN the function removeBankAccount() is called " +
+                "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
+        @Test
+        public void removeBankAccountNotActiveTest() {
+            //GIVEN
+            //a ObjectNotExistingAnymoreException thrown by the bankAccountService
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person1 = new Person(email, password, firstName, lastname);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            String errorMessage = "The bank account with IBAN number " + iban + " has been deleted from application.";
+            ObjectNotExistingAnymoreException objectNotExistingAnymoreException = new ObjectNotExistingAnymoreException(errorMessage);
+            Mockito.when(bankAccountService.getBankAccount(iban)).thenThrow(objectNotExistingAnymoreException);
+            //WHEN
+            //the function removeBankAccount() is called
+            //THEN
+            //a ObjectNotExistingAnymoreException is thrown with the expected error message
+            Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.removeBankAccount(personDTO, bankAccountDTO));
+            assertEquals(errorMessage, exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(bankAccountService, Mockito.times(1)).getBankAccount(iban);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a non-existing person" +
+                "WHEN the function removeBankAccount() is called " +
+                "THEN a NotFoundObjectException is thrown with the expected error message.")
+        @Test
+        public void removeBankAccountPersonNonExistingTest() {
+            //GIVEN
+            //a non-existing person
+            String email = "person1@mail.fr";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.empty());
+            //WHEN
+            //the function removeBankAccount() is called
+            //THEN
+            //a NotFoundObjectException is thrown with the expected error message
+            Exception exception = assertThrows(NotFoundObjectException.class, () -> personService.removeBankAccount(personDTO, bankAccountDTO));
+            assertEquals("The person whose mail is " + email + " was not found.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(bankAccountService, Mockito.times(0)).getBankAccount(iban);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a not active person" +
+                "WHEN the function removeBankAccount() is called " +
+                "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
+        @Test
+        public void removeBankAccountPersonNotActiveTest() {
+            //GIVEN
+            //a non-existing person
+            String email = "person1@mail.fr";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String password = "password1";
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person = new Person(email, password, firstName, lastname);
+            person.setActive(false);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person));
+            //WHEN
+            //the function removeBankAccount() is called
+            //THEN
+            //a ObjectNotExistingAnymoreException is thrown with the expected error message
+            Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.removeBankAccount(personDTO, bankAccountDTO));
+            assertEquals("The person whose mail is " + email + " doesn't exist anymore in the application.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(bankAccountService, Mockito.times(0)).getBankAccount(iban);
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+    }
+
+
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("getPersonTransactionsMade tests:")
+    class GetPersonTransactionsMadeTests {
+
+        @DisplayName("GIVEN an existing person with a transaction list not empty" +
+                "WHEN the function getPersonTransactionsMade() is called " +
+                "THEN a correct list of transactionDTO is returned.")
+        @Test
+        public void getPersonTransactionsMadeTest() {
+            //GIVEN
+            //an existing person with a transaction list not empty
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            BankAccount bankAccount = new BankAccount(iban, bic, usualName);
+            Transaction transaction1 = new TransactionWithBank(person1, 50, bankAccount, "");
+            TransactionDTO transactionDTO1 = new TransactionDTO(email, 50F, iban, "", "", "");
+            Transaction transaction2 = new TransactionWithBank(person1, -20, bankAccount, "");
+            TransactionDTO transactionDTO2 = new TransactionDTO(email, -20F, iban, "", "", "");
+            Transaction transaction3 = new TransactionBetweenPersons(person1, 10, person2, "");
+            TransactionDTO transactionDTO3 = new TransactionDTO(email, 10F, email2, "", "", "");
+            List<Transaction> transactionsList = new ArrayList<>();
+            transactionsList.add(transaction1);
+            transactionsList.add(transaction2);
+            transactionsList.add(transaction3);
+            person1.setTransactionMadeList(transactionsList);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction1)).thenReturn(transactionDTO1);
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction2)).thenReturn(transactionDTO2);
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction3)).thenReturn(transactionDTO3);
+            //WHEN
+            //the function getPersonTransactionsMade() is called
+            List<TransactionDTO> result = personService.getPersonTransactionsMade(personDTO);
+            //THEN
+            //a correct list of transactionDTO is returned
+            assertThat(result.size()).isEqualTo(3);
+            assertTrue(result.contains(transactionDTO1));
+            assertTrue(result.contains(transactionDTO2));
+            assertTrue(result.contains(transactionDTO3));
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction1);
+            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction2);
+            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction3);
+        }
+    }
+
 }
 

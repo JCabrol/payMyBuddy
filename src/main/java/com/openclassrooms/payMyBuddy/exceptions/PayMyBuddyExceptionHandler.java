@@ -35,10 +35,6 @@ public class PayMyBuddyExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     MessageSource messageSource;
 
-    private ResponseEntity<Object> buildResponseEntity(PayMyBuddyError payMyBuddyError) {
-        return new ResponseEntity<>(payMyBuddyError.getMessage(), payMyBuddyError.getStatus());
-    }
-
     private ModelAndView buildErrorPage(PayMyBuddyError payMyBuddyError) {
         String viewName = "error";
         Map<String, Object> model = new HashMap<>();
@@ -101,7 +97,6 @@ public class PayMyBuddyExceptionHandler extends ResponseEntityExceptionHandler {
         log.error(message);
         return buildErrorPage(payMyBuddyError);
     }
-
 
     @ExceptionHandler(NotFoundObjectException.class)
     protected ModelAndView handleNotFoundObject(
@@ -175,4 +170,12 @@ public class PayMyBuddyExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorPage(payMyBuddyError);
     }
 
+    @ExceptionHandler(MissingInformationException.class)
+    protected ModelAndView handleMissingInformation(
+            MissingInformationException ex) {
+        PayMyBuddyError payMyBuddyError = new PayMyBuddyError(BAD_REQUEST);
+        payMyBuddyError.setMessage(ex.getMessage());
+        log.error(ex.getMessage());
+        return buildErrorPage(payMyBuddyError);
+    }
 }
