@@ -177,7 +177,7 @@ class PersonServiceTest {
             List<PersonDTO> result = personService.getAllActivePersonsDTO();
             //THEN
             //it returns an empty list
-            assertThat(result.size()).isEqualTo(0);
+            assertThat(result.size()).isZero();
             //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findByActive(true);
         }
@@ -242,7 +242,7 @@ class PersonServiceTest {
             List<Person> result = personService.getAllInactivePersons();
             //THEN
             //it returns an empty list
-            assertThat(result.size()).isZero();
+            assertThat(result).isEmpty();
             //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findByActive(false);
         }
@@ -1570,7 +1570,7 @@ class PersonServiceTest {
             List<PersonDTO> result = personService.getAllNotFriendPersonsDTO(personDTO1);
             //THEN
             //it returns an empty list
-            assertThat(result).hasSize(0);
+            assertThat(result).isEmpty();
             //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findByActive(true);
         }

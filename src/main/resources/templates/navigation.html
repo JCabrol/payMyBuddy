@@ -53,7 +53,6 @@
                            th:if="${activePage}=='Profile'">Profile</a>
                     </li>
                     <li class="nav-item">
-<!--                        <a class="nav-link disabled" href="/home/contact" sec:authorize="isAnonymous()">Contact</a>-->
                         <a class="nav-link" sec:authorize="!hasAuthority('ADMIN')" th:if="${activePage}!='Contact'"
                            href="/home/contact">Contact</a>
                         <a class="nav-link active" href="/home/contact" sec:authorize="!hasAuthority('ADMIN')"
