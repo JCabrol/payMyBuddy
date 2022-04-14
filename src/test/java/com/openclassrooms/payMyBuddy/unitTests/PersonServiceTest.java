@@ -79,7 +79,7 @@ class PersonServiceTest {
             List<PersonDTO> result = personService.getAllPersonsDTO();
             //THEN
             //it returns the correct list of PersonDTO
-            assertThat(result.size()).isEqualTo(3);
+            assertThat(result).hasSize(3);
             assertThat(result.get(0).getAvailableBalance()).isEqualTo("0");
             assertThat(result.get(1).getAvailableBalance()).isEqualTo("0");
             assertThat(result.get(2).getAvailableBalance()).isEqualTo("0");
@@ -144,7 +144,7 @@ class PersonServiceTest {
             List<PersonDTO> result = personService.getAllActivePersonsDTO();
             //THEN
             //it returns the correct list of PersonDTO
-            assertThat(result.size()).isEqualTo(3);
+            assertThat(result).hasSize(3);
             assertThat(result.get(0).getAvailableBalance()).isEqualTo("0");
             assertThat(result.get(1).getAvailableBalance()).isEqualTo("0");
             assertThat(result.get(2).getAvailableBalance()).isEqualTo("0");
@@ -209,10 +209,10 @@ class PersonServiceTest {
             List<Person> result = personService.getAllInactivePersons();
             //THEN
             //it returns the correct list of Person
-            assertThat(result.size()).isEqualTo(3);
-            assertThat(result.get(0).getAvailableBalance()).isEqualTo(0);
-            assertThat(result.get(1).getAvailableBalance()).isEqualTo(0);
-            assertThat(result.get(2).getAvailableBalance()).isEqualTo(0);
+            assertThat(result).hasSize(3);
+            assertThat(result.get(0).getAvailableBalance()).isZero();
+            assertThat(result.get(1).getAvailableBalance()).isZero();
+            assertThat(result.get(2).getAvailableBalance()).isZero();
             assertThat(result.get(0).getEmail()).isEqualTo("person1@mail.fr");
             assertThat(result.get(1).getEmail()).isEqualTo("person2@mail.fr");
             assertThat(result.get(2).getEmail()).isEqualTo("person3@mail.fr");
@@ -242,7 +242,7 @@ class PersonServiceTest {
             List<Person> result = personService.getAllInactivePersons();
             //THEN
             //it returns an empty list
-            assertThat(result.size()).isEqualTo(0);
+            assertThat(result.size()).isZero();
             //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findByActive(false);
         }
@@ -351,11 +351,11 @@ class PersonServiceTest {
             assertThat(returnedPerson.getEmail()).isEqualTo(person1.getEmail());
             assertThat(returnedPerson.getPassword()).isNull();
             assertThat(returnedPerson.getAvailableBalance()).isEqualTo(String.valueOf(person1.getAvailableBalance()).replace(".", ","));
-            assertThat(returnedPerson.getGroup().size()).isEqualTo(1);
+            assertThat(returnedPerson.getGroup()).hasSize(1);
             assertThat(returnedPerson.getGroup().get(0).getEmail()).isEqualTo(person2.getEmail());
             assertThat(returnedPerson.getGroup().get(0).getFirstName()).isEqualTo(person2.getFirstName());
             assertThat(returnedPerson.getGroup().get(0).getLastName()).isEqualTo(person2.getLastName());
-            assertThat(returnedPerson.getBankAccountDTOList().size()).isEqualTo(1);
+            assertThat(returnedPerson.getBankAccountDTOList()).hasSize(1);
             assertThat(returnedPerson.getBankAccountDTOList().get(0).getIban()).isEqualTo(person1.getBankAccountList().get(0).getIban());
             assertThat(returnedPerson.getBankAccountDTOList().get(0).getBic()).isEqualTo(person1.getBankAccountList().get(0).getBic());
             //and the expected methods have been called with expected arguments
@@ -1528,7 +1528,7 @@ class PersonServiceTest {
             List<PersonDTO> result = personService.getAllNotFriendPersonsDTO(personDTO1);
             //THEN
             //it returns a list of all the PersonDTO which are not in the person's group
-            assertThat(result).size().isEqualTo(3);
+            assertThat(result).hasSize(3);
             assertThat(result.get(0).getEmail()).isEqualTo("person4@mail.fr");
             assertThat(result.get(1).getEmail()).isEqualTo("person5@mail.fr");
             assertThat(result.get(2).getEmail()).isEqualTo("person6@mail.fr");
@@ -1570,7 +1570,7 @@ class PersonServiceTest {
             List<PersonDTO> result = personService.getAllNotFriendPersonsDTO(personDTO1);
             //THEN
             //it returns an empty list
-            assertThat(result).size().isEqualTo(0);
+            assertThat(result).hasSize(0);
             //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findByActive(true);
         }
@@ -1656,7 +1656,7 @@ class PersonServiceTest {
             verify(personRepository, Mockito.times(1)).findById(email);
             verify(bankAccountService, Mockito.times(1)).createBankAccount(bankAccountDTO);
             verify(personRepository).save(arg.capture());
-            assertEquals(2, arg.getValue().getBankAccountList().size());
+            assertThat(arg.getValue().getBankAccountList()).hasSize(2);
             assertTrue(arg.getValue().getBankAccountList().contains(bankAccount1));
             assertTrue(arg.getValue().getBankAccountList().contains(bankAccount2));
         }
@@ -1987,7 +1987,7 @@ class PersonServiceTest {
             List<TransactionDTO> result = personService.getPersonTransactionsMade(personDTO);
             //THEN
             //a correct list of transactionDTO is returned
-            assertThat(result.size()).isEqualTo(3);
+            assertThat(result).hasSize(3);
             assertTrue(result.contains(transactionDTO1));
             assertTrue(result.contains(transactionDTO2));
             assertTrue(result.contains(transactionDTO3));
