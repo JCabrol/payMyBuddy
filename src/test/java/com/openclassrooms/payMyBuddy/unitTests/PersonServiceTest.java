@@ -3,10 +3,7 @@ package com.openclassrooms.payMyBuddy.unitTests;
 import com.openclassrooms.payMyBuddy.configuration.SpringSecurityConfiguration;
 import com.openclassrooms.payMyBuddy.exceptions.*;
 import com.openclassrooms.payMyBuddy.model.*;
-import com.openclassrooms.payMyBuddy.model.DTO.BankAccountDTO;
-import com.openclassrooms.payMyBuddy.model.DTO.PersonConnectionDTO;
-import com.openclassrooms.payMyBuddy.model.DTO.PersonDTO;
-import com.openclassrooms.payMyBuddy.model.DTO.TransactionDTO;
+import com.openclassrooms.payMyBuddy.model.DTO.*;
 import com.openclassrooms.payMyBuddy.repository.PersonRepository;
 import com.openclassrooms.payMyBuddy.service.BankAccountService;
 import com.openclassrooms.payMyBuddy.service.PersonService;
@@ -36,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@Tag("PersonTests")
+@Tag("ServiceTests")
 @Slf4j
 @SpringBootTest
 class PersonServiceTest {
@@ -363,6 +360,82 @@ class PersonServiceTest {
             verify(bankAccountService, Mockito.times(1)).transformBankAccountToBankAccountDTO(bankAccount);
         }
 
+        @DisplayName("GIVEN an existing person with all information" +
+                "WHEN the function getPersonDTO() is called " +
+                "THEN it returns a personDTO with all correct information.")
+        @Test
+        void getPersonDTOWithAllElementsTest() {
+            //GIVEN
+            //an existing person with all information
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            List<Person> relationsList = List.of(person2);
+            person1.setRelations(relationsList);
+            person1.setAvailableBalance(12.25F);
+            String iban = "123456789123";
+            String bic = "12345678";
+            BankAccount bankAccount = new BankAccount(iban, bic);
+            List<BankAccount> bankAccountList = List.of(bankAccount);
+            person1.setBankAccountList(bankAccountList);
+            BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic);
+            Transaction transaction1 = new TransactionWithBank(person1, 50, bankAccount, "");
+            TransactionDTO transactionDTO1 = new TransactionDTO(email, 50F, iban, "", "", "");
+            Transaction transaction2 = new TransactionWithBank(person1, -20, bankAccount, "");
+            TransactionDTO transactionDTO2 = new TransactionDTO(email, -20F, iban, "", "", "");
+            Transaction transaction3 = new TransactionBetweenPersons(person1, 10, person2, "");
+            TransactionDTO transactionDTO3 = new TransactionDTO(email, 10F, email2, "", "", "");
+            TransactionBetweenPersons transaction4 = new TransactionBetweenPersons(person2, 30, person1, "");
+            TransactionDTO transactionDTO4 = new TransactionDTO(email2, 30F, email, "", "", "");
+            List<Transaction> transactionsMadeList = new ArrayList<>();
+            List<TransactionBetweenPersons> transactionsReceivedList = new ArrayList<>();
+            transactionsMadeList.add(transaction1);
+            transactionsMadeList.add(transaction2);
+            transactionsMadeList.add(transaction3);
+            transactionsReceivedList.add(transaction4);
+            person1.setTransactionMadeList(transactionsMadeList);
+            person1.setTransactionReceivedList(transactionsReceivedList);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction1)).thenReturn(transactionDTO1);
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction2)).thenReturn(transactionDTO2);
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction3)).thenReturn(transactionDTO3);
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction4)).thenReturn(transactionDTO4);
+            doReturn(bankAccountDTO).when(bankAccountService).transformBankAccountToBankAccountDTO(bankAccount);
+            doReturn(Optional.of(person1)).when(personRepository).findById(email);
+            //WHEN
+            //the function getPersonDTO() is called
+            PersonDTO returnedPerson = personService.getPersonDTO(email);
+            //THEN
+            //it returns a personDTO with all correct information
+            assertThat(returnedPerson.getFirstName()).isEqualTo(person1.getFirstName());
+            assertThat(returnedPerson.getLastName()).isEqualTo(person1.getLastName());
+            assertThat(returnedPerson.getEmail()).isEqualTo(person1.getEmail());
+            assertThat(returnedPerson.getPassword()).isNull();
+            assertThat(returnedPerson.getAvailableBalance()).isEqualTo(String.valueOf(person1.getAvailableBalance()).replace(".", ","));
+            assertThat(returnedPerson.getGroup()).hasSize(1);
+            assertThat(returnedPerson.getGroup().get(0).getEmail()).isEqualTo(person2.getEmail());
+            assertThat(returnedPerson.getGroup().get(0).getFirstName()).isEqualTo(person2.getFirstName());
+            assertThat(returnedPerson.getGroup().get(0).getLastName()).isEqualTo(person2.getLastName());
+            assertThat(returnedPerson.getBankAccountDTOList()).hasSize(1);
+            assertThat(returnedPerson.getBankAccountDTOList().get(0).getIban()).isEqualTo(person1.getBankAccountList().get(0).getIban());
+            assertThat(returnedPerson.getBankAccountDTOList().get(0).getBic()).isEqualTo(person1.getBankAccountList().get(0).getBic());
+            assertThat(returnedPerson.getTransactionMadeList()).contains(transactionDTO1);
+            assertThat(returnedPerson.getTransactionMadeList()).contains(transactionDTO2);
+            assertThat(returnedPerson.getTransactionMadeList()).contains(transactionDTO3);
+            assertThat(returnedPerson.getTransactionReceivedList()).contains(transactionDTO4);
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(2)).findById(email);
+            verify(bankAccountService, Mockito.times(1)).transformBankAccountToBankAccountDTO(bankAccount);
+            verify(transactionService, Mockito.times(4)).transformTransactionToTransactionDTO(any(Transaction.class));
+        }
+
         @Test
         @DisplayName("GIVEN a non-existing person " +
                 "WHEN the function getPersonDTO() is called " +
@@ -501,7 +574,7 @@ class PersonServiceTest {
         @Test
         void createPersonNoInformationTest() {
             //GIVEN
-            //a personDTO with all information
+            //a personDTO with not any information
             PersonDTO personDTO = new PersonDTO();
             //WHEN
             //the function createPerson() is called
@@ -514,18 +587,41 @@ class PersonServiceTest {
             verify(personRepository, Mockito.times(0)).save(any(Person.class));
         }
 
-        @DisplayName("GIVEN a personDTO with not any information" +
+        @DisplayName("GIVEN a personDTO with not all required information" +
                 "WHEN the function createPerson() is called " +
                 "THEN a MissingInformationException is thrown with the expected error message.")
         @Test
         void createPersonNotAllInformationTest() {
             //GIVEN
-            //a personDTO with all information
+            //a personDTO with not all required information
             String password = "password1";
             String lastname = "lastName1";
             PersonDTO personDTO = new PersonDTO();
             personDTO.setPassword(password);
             personDTO.setLastName(lastname);
+            //WHEN
+            //the function createPerson() is called
+            //THEN
+            //a MissingInformationException is thrown with the expected error message
+            Exception exception = assertThrows(MissingInformationException.class, () -> personService.createPerson(personDTO));
+            assertEquals("There is not all required information to create a person,\n" +
+                    "email, password, first name and last name are mandatory.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(0)).save(any(Person.class));
+        }
+
+        @DisplayName("GIVEN a personDTO with not all required information" +
+                "WHEN the function createPerson() is called " +
+                "THEN a MissingInformationException is thrown with the expected error message.")
+        @Test
+        void createPersonNotAllRequiredInformationTest() {
+            //GIVEN
+            //a personDTO with not all required information
+            String email = "email1";
+            String firstName = "firstName1";
+            PersonDTO personDTO = new PersonDTO();
+            personDTO.setEmail(email);
+            personDTO.setFirstName(firstName);
             //WHEN
             //the function createPerson() is called
             //THEN
@@ -1576,6 +1672,113 @@ class PersonServiceTest {
         }
     }
 
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("getPersonTransactionsMade tests:")
+    class GetPersonTransactionsMadeTests {
+
+        @DisplayName("GIVEN an existing person with a transaction list not empty" +
+                "WHEN the function getPersonTransactionsMade() is called " +
+                "THEN a correct list of transactionDTO is returned.")
+        @Test
+        void getPersonTransactionsMadeTest() {
+            //GIVEN
+            //an existing person with a transaction list not empty
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            String iban = "bankAccountIban1";
+            String bic = "bankAccountBic1";
+            String usualName = "usualName1";
+            BankAccount bankAccount = new BankAccount(iban, bic, usualName);
+            Transaction transaction1 = new TransactionWithBank(person1, 50, bankAccount, "");
+            TransactionDTO transactionDTO1 = new TransactionDTO(email, 50F, iban, "", "", "");
+            Transaction transaction2 = new TransactionWithBank(person1, -20, bankAccount, "");
+            TransactionDTO transactionDTO2 = new TransactionDTO(email, -20F, iban, "", "", "");
+            Transaction transaction3 = new TransactionBetweenPersons(person1, 10, person2, "");
+            TransactionDTO transactionDTO3 = new TransactionDTO(email, 10F, email2, "", "", "");
+            List<Transaction> transactionsList = new ArrayList<>();
+            transactionsList.add(transaction1);
+            transactionsList.add(transaction2);
+            transactionsList.add(transaction3);
+            person1.setTransactionMadeList(transactionsList);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction1)).thenReturn(transactionDTO1);
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction2)).thenReturn(transactionDTO2);
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction3)).thenReturn(transactionDTO3);
+            //WHEN
+            //the function getPersonTransactionsMade() is called
+            List<TransactionDTO> result = personService.getPersonTransactionsMade(personDTO);
+            //THEN
+            //a correct list of transactionDTO is returned
+            assertThat(result).hasSize(3);
+            assertTrue(result.contains(transactionDTO1));
+            assertTrue(result.contains(transactionDTO2));
+            assertTrue(result.contains(transactionDTO3));
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction1);
+            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction2);
+            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction3);
+        }
+    }
+
+    @Nested
+    @Tag("PersonServiceTests")
+    @DisplayName("getPersonTransactionsReceived tests:")
+    class GetPersonTransactionsReceivedTests {
+
+        @DisplayName("GIVEN an existing person with a transaction list not empty" +
+                "WHEN the function getPersonTransactionsReceived() is called " +
+                "THEN a correct list of transactionDTO is returned.")
+        @Test
+        void getPersonTransactionsReceivedTest() {
+            //GIVEN
+            //an existing person with a transaction list not empty
+            String email = "person1@mail.fr";
+            String password = "password1";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            String email2 = "person2@mail.fr";
+            String password2 = "password2";
+            String firstName2 = "firstName2";
+            String lastname2 = "lastName2";
+            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
+            Person person1 = new Person(email, password, firstName, lastname);
+            Person person2 = new Person(email2, password2, firstName2, lastname2);
+            TransactionBetweenPersons transaction1 = new TransactionBetweenPersons(person2, 10, person1, "");
+            TransactionDTO transactionDTO1 = new TransactionDTO(email2, 10F,email, "", "", "");
+            TransactionBetweenPersons transaction2 = new TransactionBetweenPersons(person2, 50, person1, "");
+            TransactionDTO transactionDTO2 = new TransactionDTO(email2, 50F, email, "", "", "");
+            List<TransactionBetweenPersons> transactionsList = new ArrayList<>();
+            transactionsList.add(transaction1);
+            transactionsList.add(transaction2);
+            person1.setTransactionReceivedList(transactionsList);
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction1)).thenReturn(transactionDTO1);
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction2)).thenReturn(transactionDTO2);
+            //WHEN
+            //the function getPersonTransactionsMade() is called
+            List<TransactionDTO> result = personService.getPersonTransactionsReceived(personDTO);
+            //THEN
+            //a correct list of transactionDTO is returned
+            assertThat(result).hasSize(2);
+            assertTrue(result.contains(transactionDTO1));
+            assertTrue(result.contains(transactionDTO2));
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction1);
+            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction2);
+        }
+    }
 
     @Nested
     @Tag("PersonServiceTests")
@@ -1939,65 +2142,298 @@ class PersonServiceTest {
     }
 
 
+    @DisplayName("GIVEN a ObjectNotExistingAnymoreException thrown by the bankAccountService" +
+            "WHEN the function removeBankAccount() is called " +
+            "THEN a ObjectNotExistingAnymoreException is thrown with the expected error message.")
+    @Test
+    void removeBankAccountNotActiveTest() {
+        //GIVEN
+        //a ObjectNotExistingAnymoreException thrown by the bankAccountService
+        String email = "person1@mail.fr";
+        String password = "password1";
+        String firstName = "firstName1";
+        String lastname = "lastName1";
+        String iban = "bankAccountIban1";
+        String bic = "bankAccountBic1";
+        String usualName = "usualName1";
+        PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+        Person person1 = new Person(email, password, firstName, lastname);
+        BankAccountDTO bankAccountDTO = new BankAccountDTO(iban, bic, usualName);
+        Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+        String errorMessage = "The bank account with IBAN number " + iban + " has been deleted from application.";
+        ObjectNotExistingAnymoreException objectNotExistingAnymoreException = new ObjectNotExistingAnymoreException(errorMessage);
+        Mockito.when(bankAccountService.getBankAccount(iban)).thenThrow(objectNotExistingAnymoreException);
+        //WHEN
+        //the function removeBankAccount() is called
+        //THEN
+        //a ObjectNotExistingAnymoreException is thrown with the expected error message
+        Exception exception = assertThrows(ObjectNotExistingAnymoreException.class, () -> personService.removeBankAccount(personDTO, bankAccountDTO));
+        assertEquals(errorMessage, exception.getMessage());
+        //and the expected methods have been called with expected arguments
+        verify(personRepository, Mockito.times(1)).findById(email);
+        verify(bankAccountService, Mockito.times(1)).getBankAccount(iban);
+        verify(personRepository, Mockito.times(0)).save(any(Person.class));
+    }
 
     @Nested
     @Tag("PersonServiceTests")
-    @DisplayName("getPersonTransactionsMade tests:")
-    class GetPersonTransactionsMadeTests {
+    @DisplayName("displayTransactionsByPage tests:")
+    class DisplayTransactionsByPageTests {
 
-        @DisplayName("GIVEN an existing person with a transaction list not empty" +
-                "WHEN the function getPersonTransactionsMade() is called " +
-                "THEN a correct list of transactionDTO is returned.")
+        @DisplayName("GIVEN first page of transaction made to display" +
+                "WHEN the function displayTransactionsByPage() is called " +
+                "THEN all the information to display is correct.")
         @Test
-        void getPersonTransactionsMadeTest() {
+        void displayTransactionsByPageMadeTest() {
             //GIVEN
-            //an existing person with a transaction list not empty
+            //first page of transaction made to display
             String email = "person1@mail.fr";
-            String password = "password1";
             String firstName = "firstName1";
+            String password = "password";
             String lastname = "lastName1";
             String email2 = "person2@mail.fr";
-            String password2 = "password2";
             String firstName2 = "firstName2";
+            String password2 = "password2";
             String lastname2 = "lastName2";
-            PersonDTO personDTO = new PersonDTO(email, password, firstName, lastname);
-            Person person1 = new Person(email, password, firstName, lastname);
-            Person person2 = new Person(email2, password2, firstName2, lastname2);
-            String iban = "bankAccountIban1";
-            String bic = "bankAccountBic1";
-            String usualName = "usualName1";
-            BankAccount bankAccount = new BankAccount(iban, bic, usualName);
-            Transaction transaction1 = new TransactionWithBank(person1, 50, bankAccount, "");
-            TransactionDTO transactionDTO1 = new TransactionDTO(email, 50F, iban, "", "", "");
-            Transaction transaction2 = new TransactionWithBank(person1, -20, bankAccount, "");
-            TransactionDTO transactionDTO2 = new TransactionDTO(email, -20F, iban, "", "", "");
-            Transaction transaction3 = new TransactionBetweenPersons(person1, 10, person2, "");
-            TransactionDTO transactionDTO3 = new TransactionDTO(email, 10F, email2, "", "", "");
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person1 = new Person(email,password,firstName,lastname);
+            Person person2 = new Person(email2,password2,firstName2,lastname2);
             List<Transaction> transactionsList = new ArrayList<>();
-            transactionsList.add(transaction1);
-            transactionsList.add(transaction2);
-            transactionsList.add(transaction3);
+            for(int i =0; i<25; i++)
+            {
+                Transaction transaction = new TransactionBetweenPersons(person1,i,person2,"");
+                transactionsList.add(transaction);
+            }
+            List<TransactionDTO> transactionsDTOList = new ArrayList<>();
+            for(int i =0; i<25; i++)
+            {
+                TransactionDTO transactionDTO = new TransactionDTO(email, (float) i,email2,"","","");
+                transactionsDTOList.add(transactionDTO);
+            }
+            personDTO.setTransactionMadeList(transactionsDTOList);
             person1.setTransactionMadeList(transactionsList);
+            Integer[] pagesToDisplay = new Integer[5];
+            pagesToDisplay[0] = 1;
+            pagesToDisplay[1] = 2;
+            pagesToDisplay[2] = 3;
+            pagesToDisplay[3] = 4;
+            pagesToDisplay[4] = 5;
             Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
-            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction1)).thenReturn(transactionDTO1);
-            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction2)).thenReturn(transactionDTO2);
-            Mockito.when(transactionService.transformTransactionToTransactionDTO(transaction3)).thenReturn(transactionDTO3);
+            for(int i = 0;i<25;i++){
+            Mockito.when(transactionService.transformTransactionToTransactionDTO(transactionsList.get(i))).thenReturn(transactionsDTOList.get(i));}
             //WHEN
-            //the function getPersonTransactionsMade() is called
-            List<TransactionDTO> result = personService.getPersonTransactionsMade(personDTO);
+            //the function displayTransactionsByPage() is called
+            ListTransactionPagesDTO result = personService.displayTransactionsByPage(personDTO, 1, 3, "made");
             //THEN
-            //a correct list of transactionDTO is returned
-            assertThat(result).hasSize(3);
-            assertTrue(result.contains(transactionDTO1));
-            assertTrue(result.contains(transactionDTO2));
-            assertTrue(result.contains(transactionDTO3));
+            //all the information to display is correct.
+            assertThat(result.getCurrentPage()).isEqualTo(1);
+            assertThat(result.getPagesToDisplay()).isEqualTo(pagesToDisplay);
+            assertThat(result.getTransactionType()).isEqualTo("made");
+            assertThat(result.getTotalNumberOfPage()).isEqualTo(9);
+            assertThat(result.getTransactionsToDisplay()).hasSize(3);
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(24));
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(23));
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(22));
             //and the expected methods have been called with expected arguments
             verify(personRepository, Mockito.times(1)).findById(email);
-            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction1);
-            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction2);
-            verify(transactionService, Mockito.times(1)).transformTransactionToTransactionDTO(transaction3);
+            verify(transactionService, Mockito.times(25)).transformTransactionToTransactionDTO(any(Transaction.class));
+        }
+
+        @DisplayName("GIVEN lastPage of transactions made to display" +
+                "WHEN the function displayTransactionsByPage() is called" +
+                "THEN all the information to display is correct.")
+        @Test
+        void displayTransactionsByPageLastPageMadeTest() {
+            //GIVEN
+            //lastPage of transactions made to display
+            String email = "person1@mail.fr";
+            String firstName = "firstName1";
+            String password = "password";
+            String lastname = "lastName1";
+            String email2 = "person2@mail.fr";
+            String firstName2 = "firstName2";
+            String password2 = "password2";
+            String lastname2 = "lastName2";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person1 = new Person(email,password,firstName,lastname);
+            Person person2 = new Person(email2,password2,firstName2,lastname2);
+            List<Transaction> transactionsList = new ArrayList<>();
+            for(int i =0; i<23; i++)
+            {
+                Transaction transaction = new TransactionBetweenPersons(person1,i,person2,"");
+                transactionsList.add(transaction);
+            }
+            List<TransactionDTO> transactionsDTOList = new ArrayList<>();
+            for(int i =0; i<23; i++)
+            {
+                TransactionDTO transactionDTO = new TransactionDTO(email, (float) i,email2,"","","");
+                transactionsDTOList.add(transactionDTO);
+            }
+            personDTO.setTransactionMadeList(transactionsDTOList);
+            person1.setTransactionMadeList(transactionsList);
+            Integer[] pagesToDisplay = new Integer[5];
+            pagesToDisplay[0] = 4;
+            pagesToDisplay[1] = 5;
+            pagesToDisplay[2] = 6;
+            pagesToDisplay[3] = 7;
+            pagesToDisplay[4] = 8;
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            for(int i = 0;i<23;i++){
+                Mockito.when(transactionService.transformTransactionToTransactionDTO(transactionsList.get(i))).thenReturn(transactionsDTOList.get(i));}
+            //WHEN
+            //the function displayTransactionsByPage() is called
+            ListTransactionPagesDTO result = personService.displayTransactionsByPage(personDTO, 8, 3, "made");
+            //THEN
+            //all the information to display is correct.
+            assertThat(result.getCurrentPage()).isEqualTo(8);
+            assertThat(result.getPagesToDisplay()).isEqualTo(pagesToDisplay);
+            assertThat(result.getTransactionType()).isEqualTo("made");
+            assertThat(result.getTotalNumberOfPage()).isEqualTo(8);
+            assertThat(result.getTransactionsToDisplay()).hasSize(2);
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(1));
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(0));
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(transactionService, Mockito.times(23)).transformTransactionToTransactionDTO(any(Transaction.class));
+        }
+
+        @DisplayName("GIVEN middle page of transaction made" +
+                "WHEN the function displayTransactionsByPage() is called " +
+                "THEN all the information to display is correct.")
+        @Test
+        void displayTransactionsByPageMiddlePageMadeTest() {
+            //GIVEN
+            //middle page of transaction made
+            String email = "person1@mail.fr";
+            String firstName = "firstName1";
+            String password = "password";
+            String lastname = "lastName1";
+            String email2 = "person2@mail.fr";
+            String firstName2 = "firstName2";
+            String password2 = "password2";
+            String lastname2 = "lastName2";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person1 = new Person(email,password,firstName,lastname);
+            Person person2 = new Person(email2,password2,firstName2,lastname2);
+            List<Transaction> transactionsList = new ArrayList<>();
+            for(int i =0; i<24; i++)
+            {
+                Transaction transaction = new TransactionBetweenPersons(person1,i,person2,"");
+                transactionsList.add(transaction);
+            }
+            List<TransactionDTO> transactionsDTOList = new ArrayList<>();
+            for(int i =0; i<24; i++)
+            {
+                TransactionDTO transactionDTO = new TransactionDTO(email, (float) i,email2,"","","");
+                transactionsDTOList.add(transactionDTO);
+            }
+            personDTO.setTransactionMadeList(transactionsDTOList);
+            person1.setTransactionMadeList(transactionsList);
+            Integer[] pagesToDisplay = new Integer[5];
+            pagesToDisplay[0] = 2;
+            pagesToDisplay[1] = 3;
+            pagesToDisplay[2] = 4;
+            pagesToDisplay[3] = 5;
+            pagesToDisplay[4] = 6;
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            for(int i = 0;i<24;i++){
+                Mockito.when(transactionService.transformTransactionToTransactionDTO(transactionsList.get(i))).thenReturn(transactionsDTOList.get(i));}
+            //WHEN
+            //the function displayTransactionsByPage() is called
+            ListTransactionPagesDTO result = personService.displayTransactionsByPage(personDTO, 4, 3, "made");
+            //THEN
+            //all the information to display is correct.
+            assertThat(result.getCurrentPage()).isEqualTo(4);
+            assertThat(result.getPagesToDisplay()).isEqualTo(pagesToDisplay);
+            assertThat(result.getTransactionType()).isEqualTo("made");
+            assertThat(result.getTotalNumberOfPage()).isEqualTo(8);
+            assertThat(result.getTransactionsToDisplay()).hasSize(3);
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(12));
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(13));
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(14));
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(transactionService, Mockito.times(24)).transformTransactionToTransactionDTO(any(Transaction.class));
+        }
+
+        @DisplayName("GIVEN less than five page of transaction received" +
+                "WHEN the function displayTransactionsByPage() is called" +
+                "THEN all the information to display is correct.")
+        @Test
+        void displayTransactionsByPageNotMuchPageReceivedTest() {
+            //GIVEN
+            //less than five page of transaction received
+            String email = "person1@mail.fr";
+            String firstName = "firstName1";
+            String password = "password";
+            String lastname = "lastName1";
+            String email2 = "person2@mail.fr";
+            String firstName2 = "firstName2";
+            String password2 = "password2";
+            String lastname2 = "lastName2";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            Person person1 = new Person(email,password,firstName,lastname);
+            Person person2 = new Person(email2,password2,firstName2,lastname2);
+            List<TransactionBetweenPersons> transactionsList = new ArrayList<>();
+            for(int i =0; i<7; i++)
+            {
+                TransactionBetweenPersons transaction = new TransactionBetweenPersons(person2,i,person1,"");
+                transactionsList.add(transaction);
+            }
+            List<TransactionDTO> transactionsDTOList = new ArrayList<>();
+            for(int i =0; i<7; i++)
+            {
+                TransactionDTO transactionDTO = new TransactionDTO(email, (float) i,email2,"","","");
+                transactionsDTOList.add(transactionDTO);
+            }
+            personDTO.setTransactionReceivedList(transactionsDTOList);
+            person1.setTransactionReceivedList(transactionsList);
+            Integer[] pagesToDisplay = new Integer[5];
+            pagesToDisplay[0] = 1;
+            pagesToDisplay[1] = 2;
+            pagesToDisplay[2] = 3;
+            Mockito.when(personRepository.findById(email)).thenReturn(Optional.of(person1));
+            for(int i = 0;i<7;i++){
+                Mockito.when(transactionService.transformTransactionToTransactionDTO(transactionsList.get(i))).thenReturn(transactionsDTOList.get(i));}
+            //WHEN
+            //the function displayTransactionsByPage() is called
+            ListTransactionPagesDTO result = personService.displayTransactionsByPage(personDTO, 2, 3, "received");
+            //THEN
+            //all the information to display is correct.
+            assertThat(result.getCurrentPage()).isEqualTo(2);
+            assertThat(result.getPagesToDisplay()).isEqualTo(pagesToDisplay);
+            assertThat(result.getTransactionType()).isEqualTo("received");
+            assertThat(result.getTotalNumberOfPage()).isEqualTo(3);
+            assertThat(result.getTransactionsToDisplay()).hasSize(3);
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(3));
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(2));
+            assertThat(result.getTransactionsToDisplay()).contains(transactionsDTOList.get(2));
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(1)).findById(email);
+            verify(transactionService, Mockito.times(7)).transformTransactionToTransactionDTO(any(Transaction.class));
+        }
+
+        @DisplayName("GIVEN a not correct transaction type" +
+                "WHEN the function displayTransactionsByPage() is called " +
+                "THEN a NotValidException is thrown with the expected error message.")
+        @Test
+        void displayTransactionsByPageErrorTypeTransactionTest() {
+            //GIVEN
+            //a not correct transaction type
+            String email = "person1@mail.fr";
+            String firstName = "firstName1";
+            String lastname = "lastName1";
+            PersonDTO personDTO = new PersonDTO(email, firstName, lastname);
+            //WHEN
+            //the function displayTransactionsByPage() is called
+            //THEN
+            //a NotValidException is thrown with the expected error message
+            Exception exception = assertThrows(NotValidException.class, () -> personService.displayTransactionsByPage(personDTO, 2, 3, "error"));
+            assertEquals("The transaction type must be made or received.\n", exception.getMessage());
+            //and the expected methods have been called with expected arguments
+            verify(personRepository, Mockito.times(0)).findById(email);
+            verify(transactionService, Mockito.times(0)).transformTransactionToTransactionDTO(any(Transaction.class));
         }
     }
-
 }
 

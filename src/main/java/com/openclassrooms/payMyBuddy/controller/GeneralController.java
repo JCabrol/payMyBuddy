@@ -32,6 +32,7 @@ public class GeneralController {
     @Autowired
     MessageToAdminService messageToAdminService;
 
+
     @GetMapping("/")
     public ModelAndView getRootPage(HttpServletRequest request) {
         HttpSession session = request.getSession();

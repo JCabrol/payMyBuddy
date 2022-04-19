@@ -226,6 +226,68 @@ public class PersonServiceImpl implements PersonService {
     }
 
     /**
+     * Transform a Person object to a PersonDTO object
+     *
+     * @param person a Person object which has to be transformed into PersonDTO object
+     * @return a PersonDTO object containing all information which can be shown about the person given in argument
+     */
+    @Transactional
+    private PersonDTO transformPersonToPersonDTO(Person person) {
+        log.debug("The function transformPersonToPersonDTO in PersonService is beginning.");
+        PersonDTO personDTO = new PersonDTO(person.getEmail(), person.getFirstName(), person.getLastName());
+        DecimalFormat df = new DecimalFormat("#.##");
+        personDTO.setAvailableBalance(df.format(person.getAvailableBalance()));
+        if (person.getRelations().equals(Collections.emptyList())) {
+            personDTO.setGroup(new ArrayList<>());
+        } else {
+            personDTO.setGroup(person.getRelations()
+                    .stream()
+                    .map(person1 -> new PersonDTO(person1.getEmail(), person1.getFirstName(), person1.getLastName()))
+                    .collect(Collectors.toList()));
+        }
+        if (person.getTransactionMadeList().equals(Collections.emptyList())) {
+            personDTO.setTransactionMadeList(new ArrayList<>());
+        } else {
+            personDTO.setTransactionMadeList(person.getTransactionMadeList()
+                    .stream()
+                    .map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction))
+                    .collect(Collectors.toList()));
+        }
+        if (person.getTransactionReceivedList().equals(Collections.emptyList())) {
+            personDTO.setTransactionReceivedList(new ArrayList<>());
+        } else {
+            personDTO.setTransactionReceivedList(person.getTransactionReceivedList()
+                    .stream()
+                    .map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction))
+                    .collect(Collectors.toList()));
+        }
+        if (person.getBankAccountList().equals(Collections.emptyList())) {
+            personDTO.setBankAccountDTOList(new ArrayList<>());
+        } else {
+            personDTO.setBankAccountDTOList(getPersonBankAccounts(personDTO)
+                    .stream()
+                    .map(bankAccount -> bankAccountService.transformBankAccountToBankAccountDTO(bankAccount))
+                    .collect(Collectors.toList()));
+        }
+        log.debug("The function transformPersonToPersonDTO in PersonService is ending without exception.");
+        return personDTO;
+    }
+
+    /**
+     * Get all the active bank account owned by the person given in argument
+     *
+     * @param personDTO a PersonDTO object whose bank accounts has to be returned
+     * @return list of BankAccounts
+     */
+    public List<BankAccount> getPersonBankAccounts(PersonDTO personDTO) {
+        log.debug("The function getPersonBankAccounts in PersonService is beginning.");
+        Person person = getPerson(personDTO.getEmail());
+        List<BankAccount> bankAccountList = person.getBankAccountList().stream().filter(BankAccount::isActiveBankAccount).collect(Collectors.toList());
+        log.debug("The function getPersonBankAccounts in PersonService is ending without any exception.");
+        return bankAccountList;
+    }
+
+    /**
      * Encode and update a person's password
      *
      * @param personDTO a PersonDTO object whose password has to be modified
@@ -301,14 +363,13 @@ public class PersonServiceImpl implements PersonService {
     /**
      * Add a person in another person's group to permit transactions
      *
-     * @param groupOwnerDTO       - a String which is the id of the person to reactivate
-     * @param newPersonInGroupDTO -
-     * @return a String which is a success message indicating the person has been reactivated
-     * @throws ObjectNotExistingAnymoreException when the person to reactivate doesn't exist
-     * @throws ObjectAlreadyExistingException    when
+     * @param groupOwnerDTO a PersonDTO object which is the group owner
+     * @param newPersonInGroupDTO a PersonConnectionDTO object which is the new person to add in the group
+     * @return a String which is a success message indicating the new person has been added in the group
+     * @throws ObjectAlreadyExistingException when the person to add is already present in the group
      */
     @Override
-    public String addPersonInGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO newPersonInGroupDTO) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException {
+    public String addPersonInGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO newPersonInGroupDTO) throws ObjectAlreadyExistingException {
         log.debug("The function addPersonInGroup in PersonService is beginning.");
         Person groupOwner = getPerson(groupOwnerDTO.getEmail());
         Person newPersonInGroup = getPerson(newPersonInGroupDTO.getEmail());
@@ -324,8 +385,16 @@ public class PersonServiceImpl implements PersonService {
         return result;
     }
 
+    /**
+     * Remove a person from another person's group to prohibit transactions
+     *
+     * @param groupOwnerDTO a PersonDTO object which is the group owner
+     * @param personRemovedFromGroup a PersonConnectionDTO object which is the person to remove from the group
+     * @return a String which is a success message indicating the person has been removed from the group
+     * @throws NothingToDoException when the person to remove is not present in the group
+     */
     @Override
-    public String removePersonFromGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO personRemovedFromGroup) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException {
+    public String removePersonFromGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO personRemovedFromGroup) throws NothingToDoException {
         log.debug("The function addPersonInGroup in PersonService is beginning.");
         Person groupOwner = getPerson(groupOwnerDTO.getEmail());
         Person personRemoved = getPerson(personRemovedFromGroup.getEmail());
@@ -341,6 +410,12 @@ public class PersonServiceImpl implements PersonService {
         return result;
     }
 
+    /**
+     * Get all active personDTO object in the application which are not present in the list of the personDTO given in argument
+     *
+     * @param personDTO a PersonDTO object which is the group owner
+     * @return a list of PersonDTO object which are all the active person not present in the person list
+     */
     @Override
     public List<PersonDTO> getAllNotFriendPersonsDTO(PersonDTO personDTO) {
         log.debug("The function getAllNotFriendPersonsDTO in PersonService is beginning.");
@@ -354,7 +429,45 @@ public class PersonServiceImpl implements PersonService {
         return allActiveNotFriend;
     }
 
+    /**
+     * Get all the transactions made by the person given in argument
+     *
+     * @param personDTO a PersonDTO object which is the person whose transactions have to be returned
+     * @return a list of TransactionDTO object which are all the transactions made by the person given in argument
+     */
+    @Override
+    public List<TransactionDTO> getPersonTransactionsMade(PersonDTO personDTO) {
+        log.debug("The function getTransactionsMade in PersonService is beginning.");
+        Person person = getPerson(personDTO.getEmail());
+        List<Transaction> transactionsList = person.getTransactionMadeList();
+        transactionsList.sort(Comparator.comparing(Transaction::getDateTime));
+        List<TransactionDTO> transactionsMade = transactionsList.stream().map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction)).collect(Collectors.toList());
+        log.debug("The function getTransactionsMade in PersonService is ending without any exception.");
+        return transactionsMade;
+    }
 
+    /**
+     * Get all the transactions received by the person given in argument
+     *
+     * @param personDTO a PersonDTO object which is the person whose transactions have to be returned
+     * @return a list of TransactionDTO object which are all the transactions received by the person given in argument
+     */
+    @Override
+    public List<TransactionDTO> getPersonTransactionsReceived(PersonDTO personDTO) {
+        log.debug("The function getTransactionsReceived in PersonService is beginning.");
+        Person person = getPerson(personDTO.getEmail());
+        List<TransactionDTO> transactionsReceived = person.getTransactionReceivedList().stream().map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction)).collect(Collectors.toList());
+        log.debug("The function getTransactionsReceived in PersonService is ending without any exception.");
+        return transactionsReceived;
+    }
+
+    /**
+     * Add a bank account to a person
+     *
+     * @param personDTO a PersonDTO object which is the person to which a bank account has to be added
+     * @param bankAccountDTO a BankAccountDTO object containing information given by user to create and add a bank account
+     * @return a success message indicating the bank account has been created and added to the person list
+     */
     @Override
     public String addBankAccount(PersonDTO personDTO, BankAccountDTO bankAccountDTO) {
         log.debug("The function addBankAccount in PersonService is beginning.");
@@ -370,6 +483,13 @@ public class PersonServiceImpl implements PersonService {
         return message;
     }
 
+    /**
+     * Remove a bank account from a person bank account list
+     *
+     * @param personDTO a PersonDTO object which is the person to which a bank account has to be removed
+     * @param bankAccountDTO a BankAccountDTO object which is the bank account to remove
+     * @return a success message indicating the bank account has been removed from the person list
+     */
     @Override
     public String removeBankAccount(PersonDTO personDTO, BankAccountDTO bankAccountDTO) {
         log.debug("The function removeBankAccount in PersonService is beginning.");
@@ -385,81 +505,18 @@ public class PersonServiceImpl implements PersonService {
         return message;
     }
 
-
-    @Transactional
-    private PersonDTO transformPersonToPersonDTO(Person person) {
-        log.debug("The function transformPersonToPersonDTO in PersonService is beginning.");
-        PersonDTO personDTO = new PersonDTO(person.getEmail(), person.getFirstName(), person.getLastName());
-        DecimalFormat df = new DecimalFormat("#.##");
-        personDTO.setAvailableBalance(df.format(person.getAvailableBalance()));
-        if (person.getRelations().equals(Collections.emptyList())) {
-            personDTO.setGroup(new ArrayList<>());
-        } else {
-            personDTO.setGroup(person.getRelations()
-                    .stream()
-                    .map(person1 -> new PersonDTO(person1.getEmail(), person1.getFirstName(), person1.getLastName()))
-                    .collect(Collectors.toList()));
-        }
-        if (person.getTransactionMadeList().equals(Collections.emptyList())) {
-            personDTO.setTransactionMadeList(new ArrayList<>());
-        } else {
-            personDTO.setTransactionMadeList(person.getTransactionMadeList()
-                    .stream()
-                    .map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction))
-                    .collect(Collectors.toList()));
-        }
-        if (person.getTransactionReceivedList().equals(Collections.emptyList())) {
-            personDTO.setTransactionReceivedList(new ArrayList<>());
-        } else {
-            personDTO.setTransactionReceivedList(person.getTransactionReceivedList()
-                    .stream()
-                    .map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction))
-                    .collect(Collectors.toList()));
-        }
-        if (person.getBankAccountList().equals(Collections.emptyList())) {
-            personDTO.setBankAccountDTOList(new ArrayList<>());
-        } else {
-            personDTO.setBankAccountDTOList(getPersonBankAccounts(personDTO)
-                    .stream()
-                    .map(bankAccount -> bankAccountService.transformBankAccountToBankAccountDTO(bankAccount))
-                    .collect(Collectors.toList()));
-        }
-        log.debug("The function transformPersonToPersonDTO in PersonService is ending without exception.");
-        return personDTO;
-    }
-
-
-    public List<BankAccount> getPersonBankAccounts(PersonDTO personDTO) {
-        log.debug("The function getPersonBankAccounts in PersonService is beginning.");
-        Person person = getPerson(personDTO.getEmail());
-        List<BankAccount> bankAccountList = person.getBankAccountList().stream().filter(BankAccount::isActiveBankAccount).collect(Collectors.toList());
-        log.debug("The function getPersonBankAccounts in PersonService is ending without any exception.");
-        return bankAccountList;
-    }
-
+    /**
+     * Return all necessary information to display transactions by page
+     *
+     * @param personDTO a PersonDTO object which is the person whose transactions have to be displayed
+     * @param pageNumber an int which is the number of the page to display
+     * @param numberOfTransactionByPage which is the number of transactions to display on one page
+     * @param transactionType a String which can be either "made" or "received" indicating the type of transaction to display
+     * @return a ListTransactionPageDTO object containing all information to display the right transactions
+     * @throws NotValidException when the transaction type is not correct ("made" or "received")
+     */
     @Override
-    public List<TransactionDTO> getPersonTransactionsMade(PersonDTO personDTO) {
-        log.debug("The function getTransactionsMade in PersonService is beginning.");
-        Person person = getPerson(personDTO.getEmail());
-        List<Transaction> transactionsList = person.getTransactionMadeList();
-        transactionsList.sort(Comparator.comparing(Transaction::getDateTime));
-        List<TransactionDTO> transactionsMade = transactionsList.stream().map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction)).collect(Collectors.toList());
-        log.debug("The function getTransactionsMade in PersonService is ending without any exception.");
-        return transactionsMade;
-    }
-
-    @Override
-    public List<TransactionDTO> getPersonTransactionsReceived(PersonDTO personDTO) {
-        log.debug("The function getTransactionsReceived in PersonService is beginning.");
-        Person person = getPerson(personDTO.getEmail());
-        List<TransactionDTO> transactionsReceived = person.getTransactionReceivedList().stream().map(transaction -> transactionService.transformTransactionToTransactionDTO(transaction)).collect(Collectors.toList());
-        log.debug("The function getTransactionsReceived in PersonService is ending without any exception.");
-        return transactionsReceived;
-    }
-
-
-    @Override
-    public ListTransactionPagesDTO displayTransactionsByPage(PersonDTO personDTO, int pageNumber, int numberOfTransactionByPage, String transactionType) {
+    public ListTransactionPagesDTO displayTransactionsByPage(PersonDTO personDTO, int pageNumber, int numberOfTransactionByPage, String transactionType) throws NotValidException {
         log.debug("The function displayTransactionsByPage in PersonService is beginning.");
         List<TransactionDTO> allTransactions;
         if (transactionType.equals("made")) {

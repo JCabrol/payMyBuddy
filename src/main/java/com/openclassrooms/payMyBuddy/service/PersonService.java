@@ -108,20 +108,77 @@ public interface PersonService {
      */
     String reactivateAccount(String email) throws NotFoundObjectException;
 
-    String addPersonInGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO newPersonInGroupDTO) throws ObjectAlreadyExistingException, ObjectNotExistingAnymoreException;
+    /**
+     * Add a person in another person's group to permit transactions
+     *
+     * @param groupOwnerDTO a PersonDTO object which is the group owner
+     * @param newPersonInGroupDTO a PersonConnectionDTO object which is the new person to add in the group
+     * @return a String which is a success message indicating the new person has been added in the group
+     * @throws ObjectAlreadyExistingException when the person to add is already present in the group
+     */
+    String addPersonInGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO newPersonInGroupDTO) throws ObjectAlreadyExistingException;
 
-    String removePersonFromGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO personRemovedFromGroup) throws ObjectNotExistingAnymoreException, ObjectAlreadyExistingException;
+    /**
+     * Remove a person from another person's group to prohibit transactions
+     *
+     * @param groupOwnerDTO a PersonDTO object which is the group owner
+     * @param personRemovedFromGroup a PersonConnectionDTO object which is the person to remove from the group
+     * @return a String which is a success message indicating the person has been removed from the group
+     * @throws NothingToDoException when the person to remove is not present in the group
+     */
+    String removePersonFromGroup(PersonDTO groupOwnerDTO, PersonConnectionDTO personRemovedFromGroup) throws NothingToDoException;
 
+    /**
+     * Get all active personDTO object in the application which are not present in the list of the personDTO given in argument
+     *
+     * @param personDTO a PersonDTO object which is the group owner
+     * @return a list of PersonDTO object which are all the active person not present in the person list
+     */
     List<PersonDTO> getAllNotFriendPersonsDTO(PersonDTO personDTO);
 
+    /**
+     * Get all the transactions made by the person given in argument
+     *
+     * @param personDTO a PersonDTO object which is the person whose transactions have to be returned
+     * @return a list of TransactionDTO object which are all the transactions made by the person given in argument
+     */
     List<TransactionDTO> getPersonTransactionsMade(PersonDTO personDTO);
 
+    /**
+     * Get all the transactions received by the person given in argument
+     *
+     * @param personDTO a PersonDTO object which is the person whose transactions have to be returned
+     * @return a list of TransactionDTO object which are all the transactions received by the person given in argument
+     */
     List<TransactionDTO> getPersonTransactionsReceived(PersonDTO personDTO);
 
-    ListTransactionPagesDTO displayTransactionsByPage(PersonDTO personDTO, int pageNumber, int numberOfTransactionByPage, String transactionType);
-
+    /**
+     * Add a bank account to a person
+     *
+     * @param personDTO a PersonDTO object which is the person to which a bank account has to be added
+     * @param bankAccountDTO a BankAccountDTO object containing information given by user to create and add a bank account
+     * @return a success message indicating the bank account has been created and added to the person list
+     */
     String addBankAccount(PersonDTO personDTO, BankAccountDTO bankAccountDTO);
 
+    /**
+     * Remove a bank account from a person bank account list
+     *
+     * @param personDTO a PersonDTO object which is the person to which a bank account has to be removed
+     * @param bankAccountDTO a BankAccountDTO object which is the bank account to remove
+     * @return a success message indicating the bank account has been removed from the person list
+     */
     String removeBankAccount(PersonDTO personDTO, BankAccountDTO bankAccountDTO);
 
+    /**
+     * Return all necessary information to display transactions by page
+     *
+     * @param personDTO a PersonDTO object which is the person whose transactions have to be displayed
+     * @param pageNumber an int which is the number of the page to display
+     * @param numberOfTransactionByPage which is the number of transactions to display on one page
+     * @param transactionType a String which can be either "made" or "received" indicating the type of transaction to display
+     * @return a ListTransactionPageDTO object containing all information to display the right transactions
+     * @throws NotValidException when the transaction type is not correct ("made" or "received")
+     */
+    ListTransactionPagesDTO displayTransactionsByPage(PersonDTO personDTO, int pageNumber, int numberOfTransactionByPage, String transactionType);
 }
