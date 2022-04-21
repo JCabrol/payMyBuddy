@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,7 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("ControllerTests")
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("test")
 @DirtiesContext(classMode = AFTER_CLASS)
 @AutoConfigureMockMvc
 public class GeneralControllerIntegrationTests {
@@ -79,6 +77,7 @@ public class GeneralControllerIntegrationTests {
                     .andExpect(model().attribute("activePage", "Home"));
 
         }
+
         @Test
         @DisplayName("GIVEN an error message " +
                 "WHEN the uri /home is called, " +
@@ -101,6 +100,7 @@ public class GeneralControllerIntegrationTests {
                     .andExpect(model().attribute("errorMessage", "Your email or your password hasn't been found, please try to login again"));
 
         }
+
         @Test
         @DisplayName("GIVEN an error message " +
                 "WHEN the uri /home is called, " +

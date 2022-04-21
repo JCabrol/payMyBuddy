@@ -6,6 +6,8 @@ import com.openclassrooms.payMyBuddy.model.DTO.PersonDTO;
 import com.openclassrooms.payMyBuddy.model.DTO.PersonInscriptionDTO;
 import com.openclassrooms.payMyBuddy.service.MessageToAdminService;
 import com.openclassrooms.payMyBuddy.service.PersonService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -32,7 +34,7 @@ public class GeneralController {
     @Autowired
     MessageToAdminService messageToAdminService;
 
-
+    @ApiOperation(value = "Invalidates old session and redirect to post root page.")
     @GetMapping("/")
     public ModelAndView getRootPage(HttpServletRequest request) {
         HttpSession session = request.getSession();
@@ -40,6 +42,7 @@ public class GeneralController {
         return postRootPage();
     }
 
+    @ApiOperation(value = "Redirect to the home page.")
     @PostMapping("/")
     public ModelAndView postRootPage() {
         RedirectView redirect = new RedirectView();
@@ -47,6 +50,7 @@ public class GeneralController {
         return new ModelAndView(redirect);
     }
 
+    @ApiOperation(value = "Redirect to the home page.")
     @GetMapping("/login")
     public ModelAndView login() {
         RedirectView redirect = new RedirectView();
@@ -54,6 +58,7 @@ public class GeneralController {
         return new ModelAndView(redirect);
     }
 
+    @ApiOperation(value = "Displays the home page and the login modal.")
     @Transactional
     @GetMapping("/home")
     public ModelAndView getHomePage(String error) {
@@ -72,6 +77,7 @@ public class GeneralController {
         return new ModelAndView(viewName, model);
     }
 
+    @ApiOperation(value = "Displays the inscription form.")
     @Transactional
     @GetMapping("/inscription")
     public ModelAndView showInscription() {
@@ -83,6 +89,9 @@ public class GeneralController {
         return new ModelAndView(viewName, model);
     }
 
+    @ApiOperation(value = "Submit and check information from inscription form." +
+            "\nCreate a new user, log it and redirect to home page if everything is OK," +
+            "\nredirect to inscription form otherwise.")
     @Transactional
     @PostMapping("/inscription")
     public ModelAndView submitInscription(@Valid @ModelAttribute("personDTO") PersonInscriptionDTO personDTO, BindingResult bindingResult, ModelMap model, HttpServletRequest request) {
@@ -109,6 +118,7 @@ public class GeneralController {
         }
     }
 
+    @ApiOperation(value = "Displays the form permitting to send messages to administrator.")
     @Transactional
     @GetMapping("/home/contact")
     public ModelAndView contact(String message) {
@@ -127,6 +137,9 @@ public class GeneralController {
         return new ModelAndView(viewName, model);
     }
 
+    @ApiOperation(value = "Submit and check message, " +
+            "\nsend the message and redirect to contact page if everything is ok." +
+            "\nredirect to contact page and displays error messages otherwise.")
     @Transactional
     @PostMapping("/home/contact")
     public ModelAndView sendMessage(@Valid @ModelAttribute("messageDTO") MessageDTO messageDTO, BindingResult bindingResult, ModelMap model) {

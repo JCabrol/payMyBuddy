@@ -4,6 +4,7 @@ import com.openclassrooms.payMyBuddy.model.DTO.*;
 import com.openclassrooms.payMyBuddy.service.BankAccountService;
 import com.openclassrooms.payMyBuddy.service.PersonService;
 import com.openclassrooms.payMyBuddy.service.TransactionService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -39,6 +40,7 @@ public class ProfileController {
     String activeSubpage = "activeSubpage";
     String connectedPerson = "personDTO";
 
+    @ApiOperation(value = "Displays profile page.")
     @Transactional
     @GetMapping("/home/profile")
     public ModelAndView showProfile(String messageProfile, String messagePassword, String messageTransaction, String messageAccount) {
@@ -61,6 +63,7 @@ public class ProfileController {
         return new ModelAndView(viewName, model);
     }
 
+    @ApiOperation(value = "Submit and check modifications about information profile. Displays success message and new information if everything is ok, error message otherwise. Redirect to profile page.")
     @Transactional
     @PostMapping("/home/profile")
     public ModelAndView submitProfile(@Valid @ModelAttribute("updatePersonDTO") UpdatePersonDTO updatePersonDTO, BindingResult bindingResult, ModelMap model) {
@@ -86,6 +89,7 @@ public class ProfileController {
         return new ModelAndView(redirect, model);
     }
 
+    @ApiOperation(value = "Submit and check new password. Displays success message if everything is ok, error message otherwise. Redirect to profile page.")
     @Transactional
     @PostMapping("/home/profile/password")
     public ModelAndView submitNewPassword(@Valid @ModelAttribute("changePasswordDTO") ChangePasswordDTO changePasswordDTO, BindingResult bindingResult, ModelMap model) {
@@ -112,6 +116,7 @@ public class ProfileController {
         }
     }
 
+    @ApiOperation(value = "Submit and check a money transfer with a bank account. Displays success message and new information if everything is ok, error message otherwise. Redirect to profile page.")
     @Transactional
     @PostMapping("/home/profile/transferBank")
     public ModelAndView submitBankTransfer(@Valid @ModelAttribute("transactionDTO") TransactionBankDTO transactionDTO, BindingResult bindingResult, String button, ModelMap model) {
@@ -167,6 +172,7 @@ public class ProfileController {
         return new ModelAndView(redirect, model);
     }
 
+    @ApiOperation(value = "Displays manage bank accounts page.")
     @Transactional
     @GetMapping("/home/profile/manageBankAccounts")
     public ModelAndView addNewBankAccount() {
@@ -184,6 +190,7 @@ public class ProfileController {
         return new ModelAndView(viewName, model);
     }
 
+    @ApiOperation(value = "Submit and check new bank account. Displays success message and redirect to profile page if everything is ok, redirect to bank account page with error message otherwise.")
     @Transactional
     @PostMapping("/home/profile/submitNewBankAccount")
     public ModelAndView submitNewBankAccount(@Valid @ModelAttribute("bankAccountSelected") BankAccountDTO bankAccountSelected, BindingResult bindingResult, ModelMap model) {
@@ -223,6 +230,7 @@ public class ProfileController {
         }
     }
 
+    @ApiOperation(value = "Submit and check the removing of a bank account. Displays success message and redirect to profile page if everything is ok, redirect to bank account page with error message otherwise.")
     @Transactional
     @PostMapping("/home/profile/removeBankAccount")
     public ModelAndView removeBankAccount(@Valid @ModelAttribute("bankAccountToRemove") BankAccountTransactionDTO bankAccountToRemove, BindingResult bindingResult, ModelMap model) {
