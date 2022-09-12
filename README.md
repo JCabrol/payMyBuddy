@@ -2,9 +2,20 @@
 
 A transfer money application permitting to send easily money to other person connected.
 
+A project done as part of my Java application developper training (project n°6).
+
+The main skills acquired with this project were:
+
+* design the technical architecture of an application using UML diagram
+* implement a data schema in a relational database
+* make a design diagram of the application database
+* build a java web application with the repository pattern
+
+ Here are the [presentation slideshows](https://github.com/JCabrol/payMyBuddy/blob/master/Cabrol_Justine_5_Presentation_022022.ppsx) I made for this project.
+
 ## Technical specifications
 
-PayMyBuddy version 0.0.1-SNAPSHOT uses 
+
 * Java 13
 * Maven 4.0.0
 * Spring Boot 2.6.3
