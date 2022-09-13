@@ -2,6 +2,11 @@
 
 A transfer money application permitting to send easily money to other person connected.
 
+A SpringBoot application with security and responsive design...
+
+![image](https://user-images.githubusercontent.com/74394605/189933401-a00ff3e2-46b3-44d4-a651-c8fcabb54067.png)
+![image](https://user-images.githubusercontent.com/74394605/189933702-232274b0-d105-40b6-bd87-d1a9cf3ee849.png)
+
 A project done as part of my Java application developper training (project n°6).
 
 The main skills acquired with this project were:
@@ -15,11 +20,33 @@ The main skills acquired with this project were:
 
 ## Technical specifications
 
-
+**Code:** 
 * Java 13
 * Maven 4.0.0
 * Spring Boot 2.6.3
+
+**Data:**
 * MySql 8.0
+* Spring Data JPA
+
+**Security:**
+* Spring Security
+
+**Tests:**
+* JUnit
+* Mockito
+
+**Templates:**
+* Thymeleaf
+* Bootstrap 5
+
+**Measures, documentation,monitoring and code quality:**
+* JaCoCo
+* Surefire
+* Swagger2
+* Spring Boot Actuators
+* Log4j
+* Sonarcloud ([Here is my sonarcloud repository](https://sonarcloud.io/summary/new_code?id=JCabrol_payMyBuddy))
 
 ## UML class diagram
 
@@ -35,4 +62,4 @@ The physical data model explaining the structure of the database tables.
 
 ## Database SQL scripts
 
-The database SQL scripts are present in the file ***data.sql*** located at ***src/main/resources/data.sql***.
+The database SQL scripts are present in the file ***data.sql*** located at [***src/main/resources/data.sql***](https://github.com/JCabrol/payMyBuddy/blob/master/src/main/resources/schema.sql).
